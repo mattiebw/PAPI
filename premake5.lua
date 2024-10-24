@@ -6,11 +6,11 @@ workspace "PAPI"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
-IncludeDir["spdlog"] = "PAPI/Vendor/spdlog/include"
+IncludeDir["spdlog"] = "PAPI/Vendor/spdlog/include" -- MW @todo @build @perf: Consider moving to compiled spdlog
 IncludeDir["SDL"] = "PAPI/Vendor/SDL/include"
 IncludeDir["imgui"] = "PAPI/Vendor/imgui/"
 
---include "PAPI/Vendor/imgui.lua"
+include "PAPI/Vendor/imgui.lua"
 
 project "PAPI"
 	kind "ConsoleApp"
@@ -20,7 +20,8 @@ project "PAPI"
 	targetdir ("Build/%{prj.name}/" .. outputdir)
 	objdir ("Build/%{prj.name}/Intermediates/" .. outputdir)
 
-	pchheader "papipch.h"
+	usestandardpreprocessor 'On'
+	pchheader(iif(_ACTION == "vs2022", "papipch.h", "PAPI/PAPI/Include/papipch.h"))
 	pchsource "PAPI/Source/papipch.cpp"
 
 	vpaths {
@@ -31,8 +32,6 @@ project "PAPI"
 	files { 
 		"PAPI/Include/**.h", "PAPI/Include/**.hpp", 
 		"PAPI/Source/**.cpp", "PAPI/Source/**.c",
-
-		"PAPI/Vendor/PPK_ASSERT/Source/*.cpp"
 	}
 
 	includedirs 
@@ -58,6 +57,9 @@ project "PAPI"
 	defines {
 		"_CRT_SECURE_NO_WARNINGS"
 	}
+
+	filter "configurations:Dist"
+		postbuildcommands { "{COPYDIR} " .. path.getdirectory(".") .. "\"./PAPI/Content/\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/Content/\""}
 
 os.mkdir("PAPI/Source")
 os.mkdir("PAPI/Include")

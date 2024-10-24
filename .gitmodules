@@ -1,0 +1,6 @@
+[submodule "PAPI/Vendor/spdlog"]
+	path = PAPI/Vendor/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "PAPI/Vendor/imgui"]
+	path = PAPI/Vendor/imgui
+	url = https://github.com/ocornut/imgui
