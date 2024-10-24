@@ -16,8 +16,13 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+      with:
+        submodules: recursive
     - name: Create Project Files
-      run: Scripts\GenerateProjectFiles.bat
+      run: |
+       cd Scripts
+       GenerateProjectsWindows.bat
+       cd ..
     - name: Set up msbuild
       uses: microsoft/setup-msbuild@v2
     - name: Build
