@@ -428,3 +428,4 @@ Chip8Emulator/imgui.ini
 !Scripts/Bin/luasocket.dll
 *.sln
 *.vcxproj
+*.vcxproj.filters
