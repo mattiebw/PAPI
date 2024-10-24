@@ -21,7 +21,7 @@ jobs:
     - name: Create Project Files
       run: |
        cd Scripts
-       GenerateProjectsWindows.bat
+       Invoke-Expression ".\GenerateProjectsWindows.bat"
        cd ..
     - name: Set up msbuild
       uses: microsoft/setup-msbuild@v2
