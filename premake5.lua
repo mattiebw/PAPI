@@ -45,13 +45,13 @@ project "PAPI"
 
 	libdirs 
 	{
-		"PAPI/Vendor/SDL/lib"
+		"PAPI/Vendor/SDL/lib/x64"
 	}
 
 	links
 	{
 		"imgui",
-		"SDL3-static"
+		"SDL3"
 	}
 
 	defines {
