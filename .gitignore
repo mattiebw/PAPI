@@ -424,7 +424,7 @@ FodyWeavers.xsd
 
 !Scripts/Bin
 Build
-Chip8Emulator/imgui.ini
+PAPI/imgui.ini
 !Scripts/Bin/luasocket.dll
 *.sln
 *.vcxproj
