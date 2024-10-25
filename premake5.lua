@@ -72,7 +72,13 @@ project "PAPI"
 		postbuildcommands { "{COPYDIR} " .. path.getdirectory(".") .. "\"./PAPI/Content/\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/Content/\""}
 
 	filter "system:windows"
-		postbuildcommands { "{COPY} " .. path.getdirectory(".") .. "\"./PAPI/Vendor/SDL/lib/Win64/SDL3.dll\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/\"" }
+		postbuildcommands { "{COPYFILE} " .. path.getdirectory(".") .. "\"./PAPI/Vendor/SDL/lib/Win64/SDL3.dll\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/\"" }
+
+	filter "system:linux"
+		postbuildcommands { "{COPYFILE} " .. path.getdirectory(".") .. "\"./PAPI/Vendor/SDL/lib/Linux64/libSDL3.so\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/\"" }
+		postbuildcommands { "{COPYFILE} " .. path.getdirectory(".") .. "\"./PAPI/Vendor/SDL/lib/Linux64/libSDL3.so.0\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/\"" }
+		postbuildcommands { "{COPYFILE} " .. path.getdirectory(".") .. "\"./PAPI/Vendor/SDL/lib/Linux64/libSDL3.so.0.1.5\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/\"" }
+		postbuildcommands { "{COPYFILE} \"./RunPAPI.sh\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/\"" }
 
 os.mkdir("PAPI/Source")
 os.mkdir("PAPI/Include")
