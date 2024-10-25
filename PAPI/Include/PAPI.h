@@ -1,3 +1,3 @@
 #pragma once
 
-extern bool s_ShouldRestart;
+extern bool g_ShouldRestart;

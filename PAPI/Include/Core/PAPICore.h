@@ -63,3 +63,42 @@ constexpr Ref<T> CreateRef(Args&&... args)
 {
 	return std::make_shared<T>(std::forward<Args>(args)...);
 }
+
+#define PAPI_ASSERT SDL_assert
+
+struct SemVer
+{
+	short Major;
+	short Minor;
+	short Patch;
+
+	SemVer() : Major(0), Minor(0), Patch(0) {}
+	explicit SemVer(const short major) : Major(major), Minor(0), Patch(0) {}
+	SemVer(const short major, const short minor, const short patch) : Major(major), Minor(minor), Patch(patch) {}
+
+	// SemVer comparison operators
+	bool operator==(const SemVer& other) const
+	{
+		return Major == other.Major && Minor == other.Minor && Patch == other.Patch;
+	}
+
+	bool operator!=(const SemVer& other) const
+	{
+		return !(*this == other);
+	}
+
+	bool operator<(const SemVer& other) const
+	{
+		if (Major < other.Major)
+			return true;
+		if (Major > other.Major)
+			return false;
+
+		if (Minor < other.Minor)
+			return true;
+		if (Minor > other.Minor)
+			return false;
+
+		return Patch < other.Patch;
+	}
+};

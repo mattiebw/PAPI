@@ -71,6 +71,9 @@ project "PAPI"
 	filter "configurations:Dist"
 		postbuildcommands { "{COPYDIR} " .. path.getdirectory(".") .. "\"./PAPI/Content/\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/Content/\""}
 
+	filter "system:windows"
+		postbuildcommands { "{COPY} " .. path.getdirectory(".") .. "\"./PAPI/Vendor/SDL/lib/Win64/SDL3.dll\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/\"" }
+
 os.mkdir("PAPI/Source")
 os.mkdir("PAPI/Include")
 
