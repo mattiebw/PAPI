@@ -429,3 +429,4 @@ PAPI/imgui.ini
 *.sln
 *.vcxproj
 *.vcxproj.filters
+Makefile
