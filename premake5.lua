@@ -1,6 +1,6 @@
 workspace "PAPI"
 	configurations { "Debug", "Release", "Dist" }
-	platforms { "Win64" }
+	platforms { "Win64", "Linux" }
 	startproject "PAPI"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
@@ -21,7 +21,8 @@ project "PAPI"
 	objdir ("Build/%{prj.name}/Intermediates/" .. outputdir)
 
 	usestandardpreprocessor 'On'
-	pchheader(iif(_ACTION == "vs2022", "papipch.h", "PAPI/PAPI/Include/papipch.h"))
+	--pchheader(iif(_ACTION == "vs2022", "papipch.h", "PAPI/PAPI/Include/papipch.h"))
+	pchheader("papipch.h")
 	pchsource "PAPI/Source/papipch.cpp"
 
 	vpaths {
@@ -98,4 +99,8 @@ filter "system:windows"
 
 filter "platforms:Win64"
 	system "Windows"
+	architecture "x64"
+
+filter "platforms:Linux"
+	system "linux"
 	architecture "x64"
