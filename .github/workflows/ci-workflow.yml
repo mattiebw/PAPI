@@ -32,3 +32,35 @@ jobs:
       with:
         name: PAPI Windows x64 ${{ matrix.config }}
         path: Build/PAPI/${{ matrix.config }}-windows-x86_64\
+
+  linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: [Debug, Release, Dist]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    - name: Create Project Files
+      run: |
+       cd Scripts
+       bash GenerateProjectsLinux.sh
+       cd ..
+    - name: String Case
+      id: string
+      uses: ASzc/change-string-case-action@v6
+      with:
+        string: ${{ matrix.config }}
+    - name: Set up make
+      uses: pkgxdev/setup@v1
+      with:
+        +: gcc
+    - name: Build
+      run: make config=${{ steps.string.outputs.lowercase }}_linux
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4.4.3
+      with:
+        name: PAPI Linux x64 ${{ matrix.config }}
+        path: Build/PAPI/${{ matrix.config }}-linux-x86_64\
