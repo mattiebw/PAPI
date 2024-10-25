@@ -14,6 +14,7 @@ IncludeDir["glm"] = "PAPI/Vendor/glm/Include"
 include "PAPI/Vendor/imgui.lua"
 
 project "PAPI"
+	cppdialect "C++20"
 	kind "ConsoleApp"
 	staticruntime "On"
 	language "C++"
@@ -104,7 +105,6 @@ filter "configurations:Dist"
 	runtime "Release"
 
 filter "system:windows"
-	cppdialect "C++17"
 	systemversion "latest"
 	defines { "PAPI_PLATFORM_WINDOWS" }
 

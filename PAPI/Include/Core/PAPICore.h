@@ -11,6 +11,12 @@
 	#define FORCEINLINE inline
 #endif
 
+#if __cplusplus >= 201703L or (defined(_MSVC_LANG) and _MSVC_LANG >= 201703L)
+	#define NODISCARD [[nodiscard]]
+#else
+	#define NODISCARD
+#endif
+
 // -----------------------------------------------------------------------------------------------
 // Array size macro
 // From winnt.h:

@@ -15,9 +15,9 @@ public:
 	void Run();
 	void Shutdown();
 
-	[[nodiscard]] FORCEINLINE bool IsRunning() const { return m_Running; }
-	[[nodiscard]] FORCEINLINE bool IsInitialised() const { return m_Initialised; }
-	[[nodiscard]] FORCEINLINE std::string_view GetError() const { return m_Error; }
+	NODISCARD FORCEINLINE bool IsRunning() const { return m_Running; }
+	NODISCARD FORCEINLINE bool IsInitialised() const { return m_Initialised; }
+	NODISCARD FORCEINLINE std::string_view GetError() const { return m_Error; }
 
 protected:
 	bool InitSDL();
