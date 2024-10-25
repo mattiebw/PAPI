@@ -16,6 +16,9 @@
 #include <unordered_map>
 #include <unordered_set>
 
+// GLM
+#include <glm/glm.hpp>
+
 // Core project includes
 #include <SDL3/SDL_assert.h>
 #include "Core/PAPICore.h"

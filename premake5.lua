@@ -9,6 +9,7 @@ IncludeDir = {}
 IncludeDir["spdlog"] = "PAPI/Vendor/spdlog/include" -- MW @todo @build @perf: Consider moving to compiled spdlog
 IncludeDir["SDL"] = "PAPI/Vendor/SDL/include"
 IncludeDir["imgui"] = "PAPI/Vendor/imgui/"
+IncludeDir["glm"] = "PAPI/Vendor/glm/Include"
 
 include "PAPI/Vendor/imgui.lua"
 
@@ -40,6 +41,7 @@ project "PAPI"
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.SDL}",
 		"%{IncludeDir.imgui}",
+		"%{IncludeDir.glm}",
 
 		"PAPI/Include"
 	}
