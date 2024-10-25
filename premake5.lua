@@ -44,9 +44,20 @@ project "PAPI"
 		"PAPI/Include"
 	}
 
-	libdirs 
+	filter "system:windows"
 	{
-		"PAPI/Vendor/SDL/lib/x64"
+		libdirs 
+		{
+			"PAPI/Vendor/SDL/lib/Win64"
+		}
+	}
+
+	filter "system:linux"
+	{
+		libdirs 
+		{
+			"PAPI/Vendor/SDL/lib/Linux64"
+		}
 	}
 
 	links
