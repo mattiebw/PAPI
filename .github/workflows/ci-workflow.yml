@@ -63,4 +63,4 @@ jobs:
       uses: actions/upload-artifact@v4.4.3
       with:
         name: PAPI Linux x64 ${{ matrix.config }}
-        path: Build/PAPI/${{ matrix.config }}-linux-x86_64\
+        path: ./Build/PAPI/${{ matrix.config }}-linux-x86_64/
