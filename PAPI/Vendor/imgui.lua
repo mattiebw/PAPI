@@ -43,3 +43,11 @@ project "ImGui"
 		runtime "Release"
 		optimize "on"
         symbols "off"
+
+	filter "platforms:Win64"
+		system "Windows"
+		architecture "x64"
+	
+	filter "platforms:Linux64"
+		system "linux"
+		architecture "x64"
