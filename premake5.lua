@@ -45,20 +45,18 @@ project "PAPI"
 	}
 
 	filter "system:windows"
-	{
 		libdirs 
 		{
 			"PAPI/Vendor/SDL/lib/Win64"
 		}
-	}
 
 	filter "system:linux"
-	{
 		libdirs 
 		{
 			"PAPI/Vendor/SDL/lib/Linux64"
 		}
-	}
+
+	filter {}
 
 	links
 	{
