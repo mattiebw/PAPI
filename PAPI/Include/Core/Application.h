@@ -17,7 +17,7 @@ public:
 	void Run();
 	void Shutdown();
 
-	static NODISCARD FORCEINLINE Application* Get() { return s_Instance; }
+	NODISCARD static FORCEINLINE Application* Get() { return s_Instance; }
 	
 	NODISCARD FORCEINLINE bool IsRunning() const { return m_Running; }
 	NODISCARD FORCEINLINE bool IsInitialised() const { return m_Initialised; }
