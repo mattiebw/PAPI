@@ -2,17 +2,7 @@
 #include "Core/Window.h"
 
 #include <SDL3/SDL_messagebox.h>
-#include <SDL3/SDL_timer.h>
-
-static void Test(glm::vec2 vec)
-{
-	PAPI_INFO("Test. X: {}, Y: {}", vec.x, vec.y);
-}
-
-static void EchoTest(const std::string& str)
-{
-	PAPI_INFO("Static Echo: {}", str);
-}
+#include <SDL3/SDL_video.h>
 
 Window::Window(const WindowSpecification& spec)
 {
@@ -36,22 +26,11 @@ Window::Window(const WindowSpecification& spec)
 	SDL_SetWindowMaximumSize(m_Window, spec.MaxSize.x, spec.MaxSize.y);
 	SDL_SetWindowResizable(m_Window, spec.Resizable);
 
-	Show();
+	// Associate the Window object with the SDL window, so we can call Window functions from SDL events
+	SDL_PropertiesID props = SDL_GetWindowProperties(m_Window);
+	SDL_SetPointerProperty(props, "Window", this);
 	
-	uint64_t begin = SDL_GetPerformanceCounter();
-	for (int i = 0; i < 100000; i++)
-	{
-		Delegate<bool, glm::vec2> testDelegate;
-		testDelegate.BindLambda([] (glm::vec2 v) { return v.x == 1; });
-		testDelegate.Execute({ 1, 2 });
-
-		Delegate<glm::vec3, glm::vec2> test2;
-		test2.BindMethod(this, &Window::Test);
-		test2.Execute({ 1, 2 });
-	}
-	uint64_t end = SDL_GetPerformanceCounter();
-	auto result = fmt::format("Delegates x100000: {:.10f}s", (end - begin) / (float)SDL_GetPerformanceFrequency());
-	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Results", result.c_str(), m_Window);
+	Show();
 }
 
 Window::~Window()
@@ -64,23 +43,32 @@ void Window::Show()
 {
 	PAPI_ASSERT(m_Window && "Window is not initialised");
 	SDL_ShowWindow(m_Window);
+	m_IsVisible = true;
 }
 
 void Window::Hide()
 {
 	PAPI_ASSERT(m_Window && "Window is not initialised");
 	SDL_HideWindow(m_Window);
+	m_IsVisible = false;
 }
 
-void Window::Destroy()
+void Window::Close()
 {
-	PAPI_INFO("Destroying window '{}'", m_Specification.Title);
+	PAPI_INFO("Closing window '{}'", m_Specification.Title);
+
+	bool shouldDestroy = OnCloseRequested.Execute();
+	if (!shouldDestroy)
+		return;
+
+	OnClose.Execute();
+	
 	if (m_Window != nullptr)
 		SDL_DestroyWindow(m_Window);
 	m_Window = nullptr;
 }
 
-glm::vec3 Window::Test(glm::vec2 vec)
+void Window::Destroy()
 {
-	return glm::vec3(vec, 0.0f);
+	Close();
 }

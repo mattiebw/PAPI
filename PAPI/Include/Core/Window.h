@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <SDL3/SDL_scancode.h>
 #include <SDL3/SDL_video.h>
 
 struct WindowSpecification
@@ -25,12 +26,20 @@ public:
 	void Close();
 	void Destroy();
 
-	NODISCARD bool IsOpen() const;
+	NODISCARD FORCEINLINE bool IsVisible() const { return m_IsVisible; };
 	NODISCARD FORCEINLINE bool IsValid() const { return m_Window != nullptr; }
 
-	glm::vec3 Test(glm::vec2 vec);
+	CascadingMulticastDelegate<false, const glm::ivec2&> OnResize;
+	CascadingMulticastDelegate<false> OnCloseRequested;
+	MulticastDelegate<> OnClose;
+	CascadingMulticastDelegate<false, SDL_Scancode, bool> OnKeyPressed;
+	CascadingMulticastDelegate<false, SDL_Scancode> OnKeyReleased;
+	CascadingMulticastDelegate<false, uint8_t> OnMouseButtonDown;
+	CascadingMulticastDelegate<false, uint8_t> OnMouseButtonUp;
+	CascadingMulticastDelegate<false, const glm::vec2&> OnMouseMove;
 	
 protected:
+	bool m_IsVisible = false;
 	SDL_Window* m_Window = nullptr;
 	WindowSpecification m_Specification;
 };

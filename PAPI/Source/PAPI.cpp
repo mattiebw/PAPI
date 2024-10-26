@@ -26,8 +26,6 @@ int main(int argc, char *argv[])
 			g_ShouldRestart = false;
 			return -1;
 		}
-		
-        g_ShouldRestart = false;
 	}
 	while (g_ShouldRestart);
 

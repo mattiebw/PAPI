@@ -12,6 +12,7 @@ class Application
 {
 public:
 	Application(const ApplicationSpecification& spec);
+	~Application();
 
 	bool Init();
 	void Run();
@@ -25,6 +26,10 @@ public:
 
 protected:
 	bool InitSDL();
+
+	void PollEvents();
+	void Update();
+	void Render();
 
 	void ShutdownSDL();
 
