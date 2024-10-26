@@ -5,14 +5,29 @@
 #include <SDL3/SDL_filesystem.h>
 #include <SDL3/SDL_messagebox.h>
 
+#include "Core/Window.h"
+
+Application* Application::s_Instance = nullptr;
+
 Application::Application(const ApplicationSpecification& spec)
 {
+	PAPI_ASSERT(s_Instance == nullptr && "There can only be one application instance");
+	s_Instance = this;
 	m_Specification = spec;
 }
 
 bool Application::Init()
 {
+	// First, initialise our core APIs.
 	if (!InitSDL())
+		return false;
+
+	// Create the main window.
+	m_MainWindow = CreateRef<Window>(WindowSpecification{
+		.Title = m_Specification.AppName,
+		.Centered = true
+	});
+	if (!m_MainWindow->IsValid()) // If the window is invalid, we can't continue.
 		return false;
 
 	return true;
@@ -29,6 +44,8 @@ void Application::Run()
 
 void Application::Shutdown()
 {
+	if (m_MainWindow && m_MainWindow->IsValid())
+		m_MainWindow->Destroy();
 	ShutdownSDL();
 }
 

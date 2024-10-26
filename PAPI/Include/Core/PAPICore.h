@@ -3,6 +3,8 @@
 #define BIT(x) (1 << (x))
 
 // MSVC compiler intrinsics
+// MW @todo: Add intrinsics for other compilers (gcc/clang)
+// MW @todo: Consider adding FORCEINLINE_DEBUGGABLE (does not inline in debug builds)
 #ifdef PAPI_PLATFORM_WINDOWS
 	#define UNALIGNED __unaligned
 	#define FORCEINLINE __forceinline

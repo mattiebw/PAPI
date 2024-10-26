@@ -23,6 +23,7 @@
 #include <SDL3/SDL_assert.h>
 #include "Core/PAPICore.h"
 #include "Core/PAPILog.h"
+#include "Core/Delegate/Delegate.h"
 
 // Platform specific
 #ifdef PAPI_PLATFORM_WINDOWS

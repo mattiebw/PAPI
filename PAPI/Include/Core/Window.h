@@ -17,12 +17,26 @@ class Window
 {
 public:
 	Window(const WindowSpecification &spec);
+	~Window();
 
 	void Show();
 	void Hide();
 	
 	void Close();
+	void Destroy();
 
+	NODISCARD bool IsOpen() const;
+	NODISCARD FORCEINLINE bool IsValid() const { return m_Window != nullptr; }
+
+	void OnResizeTest(glm::vec2 newSize);
+	bool WindowCoolTest(const WindowSpecification& spec);
+	bool CascadingTestFunc(const std::string& str);
+
+	Delegate<void, const std::string&> Echo;
+	Delegate<bool, const WindowSpecification&> IsWindowCool;
+	MulticastDelegate<glm::vec2> OnResize;
+	CascadingMulticastDelegate<true, const std::string&> CascadingTest;
+	
 protected:
 	SDL_Window* m_Window = nullptr;
 	WindowSpecification m_Specification;
