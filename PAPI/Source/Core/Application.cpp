@@ -12,8 +12,8 @@
 
 Application *Application::s_Instance = nullptr;
 
-Application::Application(ApplicationSpecification spec)
-	: m_Specification(std::move(spec))
+Application::Application(const ApplicationSpecification &spec)
+	: m_Specification(spec)
 {
 	PAPI_ASSERT(s_Instance == nullptr && "There can only be one application instance");
 	s_Instance = this;

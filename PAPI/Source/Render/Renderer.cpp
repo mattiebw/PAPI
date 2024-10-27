@@ -5,6 +5,8 @@
 #include "Core/Window.h"
 #include "Render/Viewport.h"
 
+Viewport *Renderer::s_CurrentViewport = nullptr;
+
 Renderer::~Renderer()
 {
 	Shutdown();
@@ -77,6 +79,8 @@ void Renderer::Shutdown()
 		m_Window = nullptr;
 	}
 
+	m_Viewport = nullptr;
+
 	m_Initialised = false;
 }
 
@@ -87,7 +91,9 @@ void Renderer::BeginFrame()
 void Renderer::Render()
 {
 	PAPI_ASSERT(m_Viewport && "No viewport set");
+	s_CurrentViewport = m_Viewport.get();
 	m_Viewport->Render();
+	s_CurrentViewport = nullptr;
 }
 
 void Renderer::EndFrame()

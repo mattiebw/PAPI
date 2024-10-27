@@ -16,6 +16,8 @@ public:
 	NODISCARD FORCEINLINE Ref<Camera> GetCamera() const { return m_Camera; }
 	NODISCARD FORCEINLINE glm::ivec2  GetOffset() const { return m_Offset; }
 	NODISCARD FORCEINLINE glm::ivec2  GetSize() const { return m_Size; }
+	NODISCARD FORCEINLINE int         GetWidth() const { return m_Size.x; }
+	NODISCARD FORCEINLINE int         GetHeight() const { return m_Size.y; }
 
 	FORCEINLINE void SetCamera(Ref<Camera> camera) { m_Camera = camera; }
 	FORCEINLINE void SetOffset(const glm::ivec2 &offset) { m_Offset = offset; }

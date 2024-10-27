@@ -18,6 +18,7 @@
 
 // GLM
 #include <glm/glm.hpp>
+#include "glm/gtc/type_ptr.hpp"
 
 // GLAD
 #include <Vendor/glad/gl.h>
@@ -27,6 +28,7 @@
 #include "Core/PAPICore.h"
 #include "Core/PAPILog.h"
 #include "Core/Delegate/Delegate.h"
+#include "Core/Transform.h"
 
 // Platform specific
 #ifdef PAPI_PLATFORM_WINDOWS

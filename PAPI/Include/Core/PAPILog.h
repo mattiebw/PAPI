@@ -46,7 +46,7 @@ public:
 	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
 
 	template <typename Context>
-	constexpr auto format(glm::ivec2 const &vec, Context &ctx) const
+	constexpr auto format(const glm::ivec2 &vec, Context &ctx) const
 	{
 		return fmt::format_to(ctx.out(), "({}, {})", vec.x, vec.y);
 	}
@@ -59,7 +59,7 @@ public:
 	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
 
 	template <typename Context>
-	constexpr auto format(glm::ivec3 const &vec, Context &ctx) const
+	constexpr auto format(const glm::ivec3 &vec, Context &ctx) const
 	{
 		return fmt::format_to(ctx.out(), "({}, {}, {})", vec.x, vec.y, vec.z);
 	}
@@ -72,7 +72,7 @@ public:
 	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
 
 	template <typename Context>
-	constexpr auto format(glm::vec2 const &vec, Context &ctx) const
+	constexpr auto format(const glm::vec2 &vec, Context &ctx) const
 	{
 		return fmt::format_to(ctx.out(), "({}, {})", vec.x, vec.y);
 	}
@@ -85,7 +85,7 @@ public:
 	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
 
 	template <typename Context>
-	constexpr auto format(glm::vec3 const &vec, Context &ctx) const
+	constexpr auto format(const glm::vec3 &vec, Context &ctx) const
 	{
 		return fmt::format_to(ctx.out(), "({}, {}, {})", vec.x, vec.y, vec.z);
 	}

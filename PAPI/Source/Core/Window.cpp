@@ -10,7 +10,8 @@ Window::Window(const WindowSpecification &spec)
 
 	PAPI_TRACE("Creating window \"{}\"", m_Specification.Title);
 
-	m_Window = SDL_CreateWindow(m_Specification.Title.c_str(), m_Specification.Size.x, m_Specification.Size.y, SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL);
+	m_Window = SDL_CreateWindow(m_Specification.Title.c_str(), m_Specification.Size.x, m_Specification.Size.y,
+	                            SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL);
 	if (!m_Window)
 	{
 		std::string error = fmt::format("Failed to create window: {}", SDL_GetError());
@@ -34,13 +35,13 @@ Window::Window(const WindowSpecification &spec)
 	SDL_SetPointerProperty(props, "Window", this);
 
 	// MW @gotcha: Don't set up delegates here that capture because the window will likely move around in memory and the this pointer will be invalid
-	OnResize.BindLambda([] (Window *window, const glm::ivec2 &size)
+	OnResize.BindLambda([](Window *window, const glm::ivec2 &size)
 	{
 		PAPI_INFO("Window \"{}\" resized to {}", window->GetTitle(), size);
 		window->m_Specification.Size = size;
 		return false;
 	});
-	
+
 	Show();
 }
 
