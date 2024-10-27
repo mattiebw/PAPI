@@ -54,8 +54,8 @@ void Application::Run()
 {
 	m_Running = true;
 
-	m_MainWindow->OnClose.BindLambda([this] { m_Running = false; });
-	m_MainWindow->OnKeyPressed.BindLambda([this](SDL_Scancode scancode, bool repeat)
+	m_MainWindow->OnClose.BindLambda([this](Window* window) { m_Running = false; });
+	m_MainWindow->OnKeyPressed.BindLambda([this](Window* window, SDL_Scancode scancode, bool repeat)
 	{
 		if (scancode == SDL_SCANCODE_ESCAPE)
 			m_Running = false;
@@ -70,6 +70,7 @@ void Application::Run()
 
 		return false;
 	});
+	m_MainWindow->OnResize.BindLambda([](Window* window, const glm::ivec2 &size) { PAPI_INFO("Window {} resized to {}", window->GetTitle(), size); return false; });
 
 	uint64_t time = SDL_GetPerformanceCounter();
 	uint64_t last = time;
@@ -145,7 +146,7 @@ void Application::PollEvents()
 			{
 				SDL_PropertiesID props = SDL_GetWindowProperties(SDL_GetWindowFromEvent(&e));
 				if (Window *window = static_cast<Window*>(SDL_GetPointerProperty(props, "Window", nullptr)))
-					window->OnResize.Execute(*reinterpret_cast<const glm::ivec2*>(&e.window.data1));
+					window->OnResize.Execute(std::move(window), *reinterpret_cast<const glm::ivec2*>(&e.window.data1));
 				// Skip creating a temporary glm::ivec2
 			}
 			break;
@@ -159,7 +160,7 @@ void Application::PollEvents()
 					window                 = static_cast<Window*>(SDL_GetPointerProperty(props, "Window", window));
 				}
 				PAPI_ASSERT(window && "No window, but key event?");
-				window->OnKeyPressed.Execute(std::move(e.key.scancode), std::move(e.key.repeat));
+				window->OnKeyPressed.Execute(std::move(window), std::move(e.key.scancode), std::move(e.key.repeat));
 			}
 			break;
 		case SDL_EVENT_KEY_UP:
@@ -172,7 +173,7 @@ void Application::PollEvents()
 					window                 = static_cast<Window*>(SDL_GetPointerProperty(props, "Window", window));
 				}
 				PAPI_ASSERT(window && "No window, but key event?");
-				window->OnKeyReleased.Execute(std::move(e.key.scancode));
+				window->OnKeyReleased.Execute(std::move(window), std::move(e.key.scancode));
 			}
 			break;
 		}

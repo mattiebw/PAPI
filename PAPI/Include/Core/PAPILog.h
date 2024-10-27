@@ -35,3 +35,14 @@ void AddSinkToLog(const spdlog::sink_ptr &sink);
 	#define PAPI_ERROR_NO_NEWLINE(format, ...)     
 	#define PAPI_CRITICAL_NO_NEWLINE(format, ...)  
 #endif
+
+
+template <>
+class fmt::formatter<glm::ivec2> {
+public:
+	constexpr auto parse (format_parse_context& ctx) { return ctx.begin(); }
+	template <typename Context>
+	constexpr auto format (glm::ivec2 const& vec, Context& ctx) const {
+		return fmt::format_to(ctx.out(), "({},{})", vec.x, vec.y);
+	}
+};

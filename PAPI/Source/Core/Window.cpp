@@ -32,6 +32,8 @@ Window::Window(const WindowSpecification &spec)
 	SDL_PropertiesID props = SDL_GetWindowProperties(m_Window);
 	SDL_SetPointerProperty(props, "Window", this);
 
+	// MW @gotcha: Don't set up delegates here because the window will likely move around in memory and the this pointer will be invalid
+	
 	Show();
 }
 
@@ -66,11 +68,11 @@ void Window::Close()
 {
 	PAPI_TRACE("Closing window \"{}\"", m_Specification.Title);
 
-	bool shouldDestroy = OnCloseRequested.Execute();
+	bool shouldDestroy = OnCloseRequested.Execute(this);
 	if (!shouldDestroy)
 		return;
 
-	OnClose.Execute();
+	OnClose.Execute(this);
 
 	if (m_Window != nullptr)
 		SDL_DestroyWindow(m_Window);
@@ -80,4 +82,10 @@ void Window::Close()
 void Window::Destroy()
 {
 	Close();
+}
+
+void Window::SetTitle(std::string_view title)
+{
+	SDL_SetWindowTitle(m_Window, title.data());
+	m_Specification.Title = title;
 }

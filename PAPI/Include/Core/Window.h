@@ -32,14 +32,17 @@ public:
 	NODISCARD FORCEINLINE bool IsVisible() const { return m_IsVisible; };
 	NODISCARD FORCEINLINE bool IsValid() const { return m_Window != nullptr; }
 
-	CascadingMulticastDelegate<false, const glm::ivec2&>  OnResize;
-	CascadingMulticastDelegate<false>                     OnCloseRequested;
-	MulticastDelegate<>                                   OnClose;
-	CascadingMulticastDelegate<false, SDL_Scancode, bool> OnKeyPressed;
-	CascadingMulticastDelegate<false, SDL_Scancode>       OnKeyReleased;
-	CascadingMulticastDelegate<false, uint8_t>            OnMouseButtonDown;
-	CascadingMulticastDelegate<false, uint8_t>            OnMouseButtonUp;
-	CascadingMulticastDelegate<false, const glm::vec2&>   OnMouseMove;
+	void                              SetTitle(std::string_view title);
+	NODISCARD FORCEINLINE std::string GetTitle() const { return m_Specification.Title; }
+
+	CascadingMulticastDelegate<false, Window*, const glm::ivec2&>  OnResize;
+	CascadingMulticastDelegate<false, Window*>                     OnCloseRequested;
+	MulticastDelegate<Window*>                                     OnClose;
+	CascadingMulticastDelegate<false, Window*, SDL_Scancode, bool> OnKeyPressed;
+	CascadingMulticastDelegate<false, Window*, SDL_Scancode>       OnKeyReleased;
+	CascadingMulticastDelegate<false, Window*, uint8_t>            OnMouseButtonDown;
+	CascadingMulticastDelegate<false, Window*, uint8_t>            OnMouseButtonUp;
+	CascadingMulticastDelegate<false, Window*, const glm::vec2&>   OnMouseMove;
 
 protected:
 	bool                m_IsVisible = false;
