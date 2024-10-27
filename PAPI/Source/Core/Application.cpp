@@ -8,6 +8,7 @@
 
 #include "PAPI.h"
 #include "Core/Window.h"
+#include "Render/Renderer.h"
 
 Application* Application::s_Instance = nullptr;
 
@@ -40,7 +41,7 @@ bool Application::Init()
 		return false;
 	}
 
-	if (!InitOpenGL())
+	if (!InitRenderer())
 	{
 		Shutdown();
 		return false;
@@ -87,9 +88,16 @@ void Application::Run()
 
 void Application::Shutdown()
 {
+	if (m_Renderer)
+		m_Renderer->Shutdown();
 	if (m_MainWindow && m_MainWindow->IsValid())
 		m_MainWindow->Destroy();
 	ShutdownSDL();
+}
+
+void Application::ShowError(const char *message, const char *title)
+{
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title, message, nullptr);
 }
 
 bool Application::InitSDL()
@@ -105,32 +113,17 @@ bool Application::InitSDL()
 	return true;
 }
 
-bool Application::InitOpenGL()
+bool Application::InitRenderer()
 {
-	static bool glInitialised = false;
-	if (glInitialised)
-		return true;
-
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
-	SDL_GLContext context = m_MainWindow->GetContext();
-	
-	int version = gladLoadGL(SDL_GL_GetProcAddress);
-	if (version == 0)
+	m_Renderer = CreateRef<Renderer>();
+	if (!m_Renderer->Init(m_MainWindow))
 	{
-		m_Error = "Failed to initialise OpenGL with GLAD";
+		m_Error = "Failed to initialise renderer";
 		PAPI_ERROR("{}", m_Error);
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "OpenGL Initialisation Error", m_Error.c_str(), nullptr);
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Renderer Initialisation Error", m_Error.c_str(), nullptr);
 		return false;
 	}
 
-	glInitialised = true;
-	PAPI_INFO("Initialised OpenGL v{}.{}", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
-	PAPI_INFO("   OpenGL Vendor: {}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
-	PAPI_INFO("   OpenGL Renderer: {}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
 	return true;
 }
 

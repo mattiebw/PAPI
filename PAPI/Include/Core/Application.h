@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+class Renderer;
 class Window;
 
 struct ApplicationSpecification
@@ -11,22 +12,24 @@ struct ApplicationSpecification
 class Application
 {
 public:
-	Application(const ApplicationSpecification& spec);
+	Application(const ApplicationSpecification &spec);
 	~Application();
 
 	bool Init();
 	void Run();
 	void Shutdown();
 
+	void ShowError(const char *message, const char *title = "Error");
+
 	NODISCARD static FORCEINLINE Application* Get() { return s_Instance; }
-	
-	NODISCARD FORCEINLINE bool IsRunning() const { return m_Running; }
-	NODISCARD FORCEINLINE bool IsInitialised() const { return m_Initialised; }
+
+	NODISCARD FORCEINLINE bool             IsRunning() const { return m_Running; }
+	NODISCARD FORCEINLINE bool             IsInitialised() const { return m_Initialised; }
 	NODISCARD FORCEINLINE std::string_view GetError() const { return m_Error; }
 
 protected:
 	bool InitSDL();
-	bool InitOpenGL();
+	bool InitRenderer();
 
 	void PollEvents();
 	void Update();
@@ -34,11 +37,12 @@ protected:
 
 	void ShutdownSDL();
 
-	static Application* s_Instance;
-	
+	static Application *s_Instance;
+
 	ApplicationSpecification m_Specification;
 	Ref<Window>              m_MainWindow;
-	bool                     m_Running = false;
+	Ref<Renderer>            m_Renderer;
+	bool                     m_Running     = false;
 	bool                     m_Initialised = false;
 	std::string              m_Error;
 };
