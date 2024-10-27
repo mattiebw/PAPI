@@ -78,7 +78,10 @@ void Window::Close()
 
 	bool shouldDestroy = OnCloseRequested.Execute(this);
 	if (!shouldDestroy)
+	{
+		PAPI_TRACE("Window \"{}\"'s closure was cancelled by delegates!", m_Specification.Title);
 		return;
+	}
 
 	OnClose.Execute(this);
 
@@ -89,6 +92,15 @@ void Window::Close()
 
 void Window::Destroy()
 {
+	OnClose.UnbindAll();
+	OnCloseRequested.UnbindAll();
+	OnKeyPressed.UnbindAll();
+	OnKeyReleased.UnbindAll();
+	OnResize.UnbindAll();
+	OnMouseMove.UnbindAll();
+	OnMouseButtonDown.UnbindAll();
+	OnMouseButtonUp.UnbindAll();
+	
 	Close();
 }
 

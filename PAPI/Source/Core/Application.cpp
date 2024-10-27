@@ -12,8 +12,8 @@
 
 Application *Application::s_Instance = nullptr;
 
-Application::Application(const ApplicationSpecification &spec)
-	: m_Specification(spec)
+Application::Application(ApplicationSpecification spec)
+	: m_Specification(std::move(spec))
 {
 	PAPI_ASSERT(s_Instance == nullptr && "There can only be one application instance");
 	s_Instance = this;
@@ -21,6 +21,7 @@ Application::Application(const ApplicationSpecification &spec)
 
 Application::~Application()
 {
+	Shutdown();
 	s_Instance = nullptr;
 }
 
@@ -29,6 +30,8 @@ bool Application::Init()
 	// First, initialise our core APIs.
 	if (!InitSDL())
 		return false;
+
+	m_Initialised = true; // Set initialised to true so we can shut down properly.
 
 	// Create the main window.
 	m_MainWindow = CreateRef<Window>(WindowSpecification{
@@ -54,11 +57,14 @@ void Application::Run()
 {
 	m_Running = true;
 
-	m_MainWindow->OnClose.BindLambda([this](Window *window) { m_Running = false; });
-	m_MainWindow->OnKeyPressed.BindLambda([this](Window *window, SDL_Scancode scancode, bool repeat)
+	m_MainWindow->OnClose.BindLambda([](Window *window)
+	{
+		Get()->m_Running = false;
+	});
+	m_MainWindow->OnKeyPressed.BindLambda([](Window *window, SDL_Scancode scancode, bool repeat)
 	{
 		if (scancode == SDL_SCANCODE_ESCAPE)
-			m_Running = false;
+			Get()->m_MainWindow->Close();
 		else if (scancode == SDL_SCANCODE_R && !repeat)
 		{
 			g_ShouldRestart = !g_ShouldRestart;
@@ -88,11 +94,22 @@ void Application::Run()
 
 void Application::Shutdown()
 {
+	if (!m_Initialised)
+		return;
+
 	if (m_Renderer)
+	{
 		m_Renderer->Shutdown();
+		m_Renderer = nullptr;
+	}
 	if (m_MainWindow && m_MainWindow->IsValid())
+	{
 		m_MainWindow->Destroy();
+		m_MainWindow = nullptr;
+	}
 	ShutdownSDL();
+	m_Running = false;
+	m_Initialised = false;
 }
 
 void Application::ShowError(const char *message, const char *title)

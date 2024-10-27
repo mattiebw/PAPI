@@ -9,6 +9,8 @@ template <typename ReturnType, typename... ArgTypes>
 class IDelegate
 {
 public:
+	virtual ~IDelegate() = default;
+	
 	virtual ReturnType Execute(ArgTypes &&... args) = 0;
 };
 
@@ -16,6 +18,8 @@ template <typename ReturnType, typename... ArgTypes>
 class StaticDelegate : public IDelegate<ReturnType, ArgTypes...>
 {
 public:
+	virtual ~StaticDelegate() override = default;
+	
 	using FunctionType = ReturnType(*)(ArgTypes...);
 
 	explicit StaticDelegate(FunctionType function)
@@ -38,6 +42,8 @@ template <typename Lambda, typename ReturnType, typename... ArgTypes>
 class LambdaDelegate : public IDelegate<ReturnType, ArgTypes...>
 {
 public:
+	virtual ~LambdaDelegate() override = default;
+	
 	explicit LambdaDelegate(Lambda &&lambda)
 		: m_Lambda(std::forward<Lambda>(lambda))
 	{
@@ -58,6 +64,8 @@ template <typename Class, typename ReturnType, typename... ArgTypes>
 class MethodDelegate : public IDelegate<ReturnType, ArgTypes...>
 {
 public:
+	virtual ~MethodDelegate() override = default;
+	
 	using MethodType = ReturnType(Class::*)(ArgTypes...);
 
 	explicit MethodDelegate(Class *object, MethodType method)
