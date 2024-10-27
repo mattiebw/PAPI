@@ -35,7 +35,16 @@ bool Application::Init()
 		.Centered = true
 	});
 	if (!m_MainWindow->IsValid()) // If the window is invalid, we can't continue.
+	{
+		Shutdown();
 		return false;
+	}
+
+	if (!InitOpenGL())
+	{
+		Shutdown();
+		return false;
+	}
 
 	return true;
 }
@@ -96,6 +105,35 @@ bool Application::InitSDL()
 	return true;
 }
 
+bool Application::InitOpenGL()
+{
+	static bool glInitialised = false;
+	if (glInitialised)
+		return true;
+
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+	SDL_GLContext context = m_MainWindow->GetContext();
+	
+	int version = gladLoadGL(SDL_GL_GetProcAddress);
+	if (version == 0)
+	{
+		m_Error = "Failed to initialise OpenGL with GLAD";
+		PAPI_ERROR("{}", m_Error);
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "OpenGL Initialisation Error", m_Error.c_str(), nullptr);
+		return false;
+	}
+
+	glInitialised = true;
+	PAPI_INFO("Initialised OpenGL v{}.{}", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
+	PAPI_INFO("   OpenGL Vendor: {}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
+	PAPI_INFO("   OpenGL Renderer: {}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+	return true;
+}
+
 void Application::PollEvents()
 {
 	SDL_Event e;
@@ -126,8 +164,8 @@ void Application::PollEvents()
 					SDL_PropertiesID props = SDL_GetWindowProperties(sdlWindow);
 					window = static_cast<Window*>(SDL_GetPointerProperty(props, "Window", window));
 				}
-				if (window)
-					window->OnKeyPressed.Execute(std::move(e.key.scancode), std::move(e.key.repeat));
+				PAPI_ASSERT(window && "No window, but key event?");
+				window->OnKeyPressed.Execute(std::move(e.key.scancode), std::move(e.key.repeat));
 			}
 			break;
 		case SDL_EVENT_KEY_UP:
@@ -139,8 +177,8 @@ void Application::PollEvents()
 					SDL_PropertiesID props = SDL_GetWindowProperties(sdlWindow);
 					window = static_cast<Window*>(SDL_GetPointerProperty(props, "Window", window));
 				}
-				if (window)
-					window->OnKeyReleased.Execute(std::move(e.key.scancode));
+				PAPI_ASSERT(window && "No window, but key event?");
+				window->OnKeyReleased.Execute(std::move(e.key.scancode));
 			}
 			break;
 		}

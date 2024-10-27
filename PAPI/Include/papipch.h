@@ -19,6 +19,9 @@
 // GLM
 #include <glm/glm.hpp>
 
+// GLAD
+#include <Vendor/glad/gl.h>
+
 // Core project includes
 #include <SDL3/SDL_assert.h>
 #include "Core/PAPICore.h"

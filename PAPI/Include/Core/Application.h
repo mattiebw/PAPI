@@ -26,6 +26,7 @@ public:
 
 protected:
 	bool InitSDL();
+	bool InitOpenGL();
 
 	void PollEvents();
 	void Update();

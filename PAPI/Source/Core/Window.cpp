@@ -8,7 +8,7 @@ Window::Window(const WindowSpecification& spec)
 {
 	m_Specification = spec;
 	
-	m_Window = SDL_CreateWindow(spec.Title.c_str(), spec.Size.x, spec.Size.y, SDL_WINDOW_HIDDEN);
+	m_Window = SDL_CreateWindow(spec.Title.c_str(), spec.Size.x, spec.Size.y, SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL);
 	if (!m_Window)
 	{
 		std::string error = fmt::format("Failed to create window: {}", SDL_GetError());
@@ -37,6 +37,13 @@ Window::~Window()
 {
 	if (IsValid())
 		Destroy();
+}
+
+SDL_GLContext Window::GetContext()
+{
+	if (m_Context == nullptr)
+		m_Context = SDL_GL_CreateContext(m_Window);
+	return m_Context;
 }
 
 void Window::Show()

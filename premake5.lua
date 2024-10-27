@@ -11,7 +11,9 @@ IncludeDir["SDL"] = "PAPI/Vendor/SDL/include"
 IncludeDir["imgui"] = "PAPI/Vendor/imgui/"
 IncludeDir["glm"] = "PAPI/Vendor/glm/Include"
 
+group "Vendor"
 include "PAPI/Vendor/imgui.lua"
+group ""
 
 project "PAPI"
 	cppdialect "C++20"
