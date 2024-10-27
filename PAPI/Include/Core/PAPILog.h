@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+// MW @gotcha: This file should only be included in the PCH, or else the Linux build will fail due to redefinition
+//			   fmt overloads at the end of the file.
+
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/fmt/ostr.h" // Needed for logging some types
@@ -40,9 +43,9 @@ void AddSinkToLog(const spdlog::sink_ptr &sink);
 template <>
 class fmt::formatter<glm::ivec2> {
 public:
-	inline constexpr auto parse (format_parse_context& ctx) { return ctx.begin(); }
+	constexpr auto parse (format_parse_context& ctx) { return ctx.begin(); }
 	template <typename Context>
-	inline constexpr auto format (glm::ivec2 const& vec, Context& ctx) const {
+	constexpr auto format (glm::ivec2 const& vec, Context& ctx) const {
 		return fmt::format_to(ctx.out(), "({},{})", vec.x, vec.y);
 	}
 };

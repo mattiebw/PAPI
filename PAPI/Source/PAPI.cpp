@@ -4,7 +4,6 @@
 #include <SDL3/SDL_main.h>
 
 #include "Core/Application.h"
-#include "Core/PAPILog.h"
 
 bool g_ShouldRestart = false;
 
