@@ -8,6 +8,8 @@ Window::Window(const WindowSpecification &spec)
 {
 	m_Specification = spec;
 
+	PAPI_TRACE("Creating window \"{}\"", spec.Title);
+
 	m_Window = SDL_CreateWindow(spec.Title.c_str(), spec.Size.x, spec.Size.y, SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL);
 	if (!m_Window)
 	{
@@ -62,7 +64,7 @@ void Window::Hide()
 
 void Window::Close()
 {
-	PAPI_INFO("Closing window '{}'", m_Specification.Title);
+	PAPI_TRACE("Closing window \"{}\"", m_Specification.Title);
 
 	bool shouldDestroy = OnCloseRequested.Execute();
 	if (!shouldDestroy)

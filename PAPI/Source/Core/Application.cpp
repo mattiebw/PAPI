@@ -185,6 +185,8 @@ void Application::Update()
 
 void Application::Render()
 {
+	m_Renderer->BeginFrame();
+	m_Renderer->EndFrame();
 }
 
 void Application::ShutdownSDL()

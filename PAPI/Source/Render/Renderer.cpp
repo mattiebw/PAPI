@@ -11,7 +11,7 @@ Renderer::~Renderer()
 
 bool Renderer::Init(Ref<Window> window)
 {
-	PAPI_INFO("Initialising renderer");
+	PAPI_TRACE("Initialising renderer");
 
 	m_Window      = window;
 	m_Initialised = true;
@@ -24,10 +24,6 @@ bool Renderer::Init(Ref<Window> window)
 
 bool Renderer::InitOpenGL()
 {
-	static bool glInitialised = false;
-	if (glInitialised)
-		return true;
-
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
@@ -35,6 +31,10 @@ bool Renderer::InitOpenGL()
 
 	PAPI_ASSERT(m_Window && "Window should be set");
 	m_Context = m_Window->GetContext();
+
+	static bool glInitialised = false;
+	if (glInitialised)
+		return true;
 
 	int version = gladLoadGL(SDL_GL_GetProcAddress);
 	if (version == 0)
@@ -57,6 +57,17 @@ void Renderer::Shutdown()
 {
 	if (!m_Initialised)
 		return;
-	PAPI_INFO("Shutting down renderer");
+	PAPI_TRACE("Shutting down renderer");
 	m_Initialised = false;
+}
+
+void Renderer::BeginFrame()
+{
+	glClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, m_ClearColor.a);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void Renderer::EndFrame()
+{
+	SDL_GL_SwapWindow(m_Window->GetHandle());
 }
