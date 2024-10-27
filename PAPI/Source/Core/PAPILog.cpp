@@ -8,12 +8,12 @@
 
 std::shared_ptr<spdlog::logger> g_PAPILogger;
 
-void InitLog(const char* prefPath)
+void InitLog(const char *prefPath)
 {
 #ifdef PAPI_NO_LOG
 	return;
 #endif
-	
+
 	if (!g_PAPILogger)
 	{
 		spdlog::set_pattern("%^[%T] %n: %v%$");
@@ -27,8 +27,9 @@ void InitLog(const char* prefPath)
 		// Ensure the logs folder exists inside the pref path (if it exists), as spdlog fails to create the file if the folder does not exist AND it is an absolute path.
 		if (prefPath)
 			std::filesystem::create_directories(fmt::format("{}Logs", prefPath));
-		std::string path = fmt::format("{}Logs{}{}.txt", prefPath != nullptr ? prefPath : "", static_cast<char>(std::filesystem::path::preferred_separator), buffer.str());
-		
+		std::string path = fmt::format("{}Logs{}{}.txt", prefPath != nullptr ? prefPath : "",
+		                               static_cast<char>(std::filesystem::path::preferred_separator), buffer.str());
+
 		sinks.push_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>(path));
 		sinks.push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
 
@@ -37,7 +38,7 @@ void InitLog(const char* prefPath)
 	}
 }
 
-void AddSinkToLog(const spdlog::sink_ptr& sink)
+void AddSinkToLog(const spdlog::sink_ptr &sink)
 {
 	PAPI_ASSERT(g_PAPILogger && "Must initialise the logger before adding sinks to it");
 	g_PAPILogger->sinks().push_back(sink);

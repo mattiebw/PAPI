@@ -11,17 +11,18 @@ bool g_ShouldRestart = false;
 int main(int argc, char *argv[])
 {
 	InitLog(SDL_GetPrefPath("PAPI", "papi"));
-	
+
 	do
 	{
 		PAPI_INFO("Welcome to PAPI, papi");
 
-		Application application({ "PAPI", SemVer(1, 0, 0) });
+		Application application({"PAPI", SemVer(1, 0, 0)});
 		if (application.Init())
 		{
 			application.Run();
 			application.Shutdown();
-		} else
+		}
+		else
 		{
 			g_ShouldRestart = false;
 			return -1;

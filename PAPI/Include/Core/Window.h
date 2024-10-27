@@ -21,7 +21,7 @@ public:
 	~Window();
 
 	NODISCARD SDL_GLContext GetContext();
-	
+
 	void Show();
 	void Hide();
 

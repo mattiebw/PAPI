@@ -5,14 +5,14 @@
 // Use handles instead of searching through array
 // Optimisation: lots of dynamic allocations
 
-template<typename ReturnType, typename... ArgTypes>
+template <typename ReturnType, typename... ArgTypes>
 class IDelegate
 {
 public:
-	virtual ReturnType Execute(ArgTypes&&... args) = 0;
+	virtual ReturnType Execute(ArgTypes &&... args) = 0;
 };
 
-template<typename ReturnType, typename... ArgTypes>
+template <typename ReturnType, typename... ArgTypes>
 class StaticDelegate : public IDelegate<ReturnType, ArgTypes...>
 {
 public:
@@ -20,9 +20,10 @@ public:
 
 	explicit StaticDelegate(FunctionType function)
 		: m_Function(function)
-	{ }
+	{
+	}
 
-	virtual ReturnType Execute(ArgTypes&&... args) override
+	ReturnType Execute(ArgTypes &&... args) override
 	{
 		return m_Function(std::forward<ArgTypes>(args)...);
 	}
@@ -33,26 +34,27 @@ private:
 	FunctionType m_Function;
 };
 
-template<typename Lambda, typename ReturnType, typename... ArgTypes>
+template <typename Lambda, typename ReturnType, typename... ArgTypes>
 class LambdaDelegate : public IDelegate<ReturnType, ArgTypes...>
 {
 public:
-	explicit LambdaDelegate(Lambda&& lambda)
+	explicit LambdaDelegate(Lambda &&lambda)
 		: m_Lambda(std::forward<Lambda>(lambda))
-	{ }
+	{
+	}
 
-	virtual ReturnType Execute(ArgTypes&&... args) override
+	ReturnType Execute(ArgTypes &&... args) override
 	{
 		return m_Lambda(std::forward<ArgTypes>(args)...);
 	}
 
 	NODISCARD FORCEINLINE Lambda GetLambda() { return m_Lambda; }
-	
+
 private:
 	Lambda m_Lambda;
 };
 
-template<typename Class, typename ReturnType, typename... ArgTypes>
+template <typename Class, typename ReturnType, typename... ArgTypes>
 class MethodDelegate : public IDelegate<ReturnType, ArgTypes...>
 {
 public:
@@ -60,22 +62,23 @@ public:
 
 	explicit MethodDelegate(Class *object, MethodType method)
 		: m_Object(object), m_Method(method)
-	{ }
+	{
+	}
 
-	virtual ReturnType Execute(ArgTypes&&... args) override
+	ReturnType Execute(ArgTypes &&... args) override
 	{
 		return (m_Object->*m_Method)(std::forward<ArgTypes>(args)...);
 	}
 
 	NODISCARD FORCEINLINE Class* GetObject() { return m_Object; }
 	NODISCARD FORCEINLINE MethodType GetMethod() { return m_Method; }
-	
+
 private:
-	Class *m_Object;
+	Class *    m_Object;
 	MethodType m_Method;
 };
 
-template<typename ReturnType, typename... ArgTypes>
+template <typename ReturnType, typename... ArgTypes>
 class Delegate
 {
 public:
@@ -86,18 +89,19 @@ public:
 		m_Delegate = delegate;
 	}
 
-	FORCEINLINE void BindLambda(auto&& lambda)
+	FORCEINLINE void BindLambda(auto &&lambda)
 	{
-		Bind(CreateRef<LambdaDelegate<decltype(lambda), ReturnType, ArgTypes...>>(std::forward<decltype(lambda)>(lambda)));
+		Bind(CreateRef<LambdaDelegate<decltype(lambda), ReturnType, ArgTypes...>>(
+			std::forward<decltype(lambda)>(lambda)));
 	}
 
-	FORCEINLINE void BindStatic(ReturnType(*function)(ArgTypes...))
+	FORCEINLINE void BindStatic(ReturnType (*function)(ArgTypes...))
 	{
 		Bind(CreateRef<StaticDelegate<ReturnType, ArgTypes...>>(function));
 	}
 
-	template<typename T>
-	FORCEINLINE void BindMethod(T* object, auto method)
+	template <typename T>
+	FORCEINLINE void BindMethod(T *object, auto method)
 	{
 		Bind(CreateRef<MethodDelegate<T, ReturnType, ArgTypes...>>(object, method));
 	}
@@ -107,13 +111,13 @@ public:
 		m_Delegate = nullptr;
 	}
 
-	FORCEINLINE ReturnType Execute(ArgTypes&&... args)
+	FORCEINLINE ReturnType Execute(ArgTypes &&... args)
 	{
 		PAPI_ASSERT(m_Delegate != nullptr);
 		return m_Delegate->Execute(std::forward<ArgTypes>(args)...);
 	}
 
-	FORCEINLINE ReturnType ExecuteIfBound(ArgTypes&&... args)
+	FORCEINLINE ReturnType ExecuteIfBound(ArgTypes &&... args)
 	{
 		if (m_Delegate != nullptr)
 			return m_Delegate->Execute(std::forward<ArgTypes>(args)...);
@@ -121,12 +125,12 @@ public:
 	}
 
 	NODISCARD FORCEINLINE bool IsBound() { return m_Delegate != nullptr; }
-	
+
 private:
 	Ref<DelegateType> m_Delegate = nullptr;
 };
 
-template<typename... ArgTypes>
+template <typename... ArgTypes>
 class MulticastDelegate
 {
 public:
@@ -144,14 +148,14 @@ public:
 			m_Delegates.erase(it);
 	}
 
-	void BindStatic(void(*function)(ArgTypes...))
+	void BindStatic(void (*function)(ArgTypes...))
 	{
 		Bind(CreateRef<StaticDelegate<void, ArgTypes...>>(function));
 	}
 
-	void UnbindStatic(void(*function)(ArgTypes...))
+	void UnbindStatic(void (*function)(ArgTypes...))
 	{
-		auto it = std::find_if(m_Delegates.begin(), m_Delegates.end(), [&](const Ref<DelegateType>& delegate)
+		auto it = std::find_if(m_Delegates.begin(), m_Delegates.end(), [&](const Ref<DelegateType> &delegate)
 		{
 			auto staticDelegate = std::dynamic_pointer_cast<StaticDelegate<void, ArgTypes...>>(delegate);
 			return staticDelegate && staticDelegate->GetFunction() == function;
@@ -160,32 +164,33 @@ public:
 			m_Delegates.erase(it);
 	}
 
-	void BindLambda(auto&& lambda)
+	void BindLambda(auto &&lambda)
 	{
 		Bind(CreateRef<LambdaDelegate<decltype(lambda), void, ArgTypes...>>(std::forward<decltype(lambda)>(lambda)));
 	}
 
-	void UnbindLambda(auto&& lambda)
+	void UnbindLambda(auto &&lambda)
 	{
-		auto it = std::find_if(m_Delegates.begin(), m_Delegates.end(), [&](const Ref<DelegateType>& delegate)
+		auto it = std::find_if(m_Delegates.begin(), m_Delegates.end(), [&](const Ref<DelegateType> &delegate)
 		{
-			auto lambdaDelegate = std::dynamic_pointer_cast<LambdaDelegate<decltype(lambda), void, ArgTypes...>>(delegate);
+			auto lambdaDelegate = std::dynamic_pointer_cast<LambdaDelegate<
+				decltype(lambda), void, ArgTypes...>>(delegate);
 			return lambdaDelegate && lambdaDelegate->GetLambda() == lambda;
 		});
 		if (it != m_Delegates.end())
 			m_Delegates.erase(it);
 	}
 
-	template<typename T>
-	void BindMethod(T* object, auto method)
+	template <typename T>
+	void BindMethod(T *object, auto method)
 	{
 		Bind(CreateRef<MethodDelegate<T, void, ArgTypes...>>(object, method));
 	}
 
-	template<typename T>
-	void UnbindMethod(T* object, auto method)
+	template <typename T>
+	void UnbindMethod(T *object, auto method)
 	{
-		auto it = std::find_if(m_Delegates.begin(), m_Delegates.end(), [&](const Ref<DelegateType>& delegate)
+		auto it = std::find_if(m_Delegates.begin(), m_Delegates.end(), [&](const Ref<DelegateType> &delegate)
 		{
 			auto methodDelegate = std::dynamic_pointer_cast<MethodDelegate<T, void, ArgTypes...>>(delegate);
 			return methodDelegate && methodDelegate->GetObject() == object && methodDelegate->GetMethod() == method;
@@ -199,18 +204,18 @@ public:
 		m_Delegates.clear();
 	}
 
-	void Execute(ArgTypes&&... args)
+	void Execute(ArgTypes &&... args)
 	{
-		for (auto& delegate : m_Delegates)
+		for (auto &delegate : m_Delegates)
 			delegate->Execute(std::forward<ArgTypes>(args)...);
 	}
-	
+
 private:
 	std::vector<Ref<DelegateType>> m_Delegates;
 };
 
 // MW @copypaste: most of the code is the same as MulticastDelegate, but with a different return type and Execute logic.
-template<bool ContinueIf = true, typename... ArgTypes>
+template <bool ContinueIf = true, typename... ArgTypes>
 class CascadingMulticastDelegate
 {
 public:
@@ -228,14 +233,14 @@ public:
 			m_Delegates.erase(it);
 	}
 
-	void BindStatic(bool(*function)(ArgTypes...))
+	void BindStatic(bool (*function)(ArgTypes...))
 	{
 		Bind(CreateRef<StaticDelegate<bool, ArgTypes...>>(function));
 	}
 
-	void UnbindStatic(bool(*function)(ArgTypes...))
+	void UnbindStatic(bool (*function)(ArgTypes...))
 	{
-		auto it = std::find_if(m_Delegates.begin(), m_Delegates.end(), [&](const Ref<DelegateType>& delegate)
+		auto it = std::find_if(m_Delegates.begin(), m_Delegates.end(), [&](const Ref<DelegateType> &delegate)
 		{
 			auto staticDelegate = std::dynamic_pointer_cast<StaticDelegate<bool, ArgTypes...>>(delegate);
 			return staticDelegate && staticDelegate->GetFunction() == function;
@@ -244,32 +249,33 @@ public:
 			m_Delegates.erase(it);
 	}
 
-	void BindLambda(auto&& lambda)
+	void BindLambda(auto &&lambda)
 	{
 		Bind(CreateRef<LambdaDelegate<decltype(lambda), bool, ArgTypes...>>(std::forward<decltype(lambda)>(lambda)));
 	}
 
-	void UnbindLambda(auto&& lambda)
+	void UnbindLambda(auto &&lambda)
 	{
-		auto it = std::find_if(m_Delegates.begin(), m_Delegates.end(), [&](const Ref<DelegateType>& delegate)
+		auto it = std::find_if(m_Delegates.begin(), m_Delegates.end(), [&](const Ref<DelegateType> &delegate)
 		{
-			auto lambdaDelegate = std::dynamic_pointer_cast<LambdaDelegate<decltype(lambda), bool, ArgTypes...>>(delegate);
+			auto lambdaDelegate = std::dynamic_pointer_cast<LambdaDelegate<
+				decltype(lambda), bool, ArgTypes...>>(delegate);
 			return lambdaDelegate && lambdaDelegate->GetLambda() == lambda;
 		});
 		if (it != m_Delegates.end())
 			m_Delegates.erase(it);
 	}
 
-	template<typename T>
-	void BindMethod(T* object, auto method)
+	template <typename T>
+	void BindMethod(T *object, auto method)
 	{
 		Bind(CreateRef<MethodDelegate<T, bool, ArgTypes...>>(object, method));
 	}
 
-	template<typename T>
-	void UnbindMethod(T* object, auto method)
+	template <typename T>
+	void UnbindMethod(T *object, auto method)
 	{
-		auto it = std::find_if(m_Delegates.begin(), m_Delegates.end(), [&](const Ref<DelegateType>& delegate)
+		auto it = std::find_if(m_Delegates.begin(), m_Delegates.end(), [&](const Ref<DelegateType> &delegate)
 		{
 			auto methodDelegate = std::dynamic_pointer_cast<MethodDelegate<T, bool, ArgTypes...>>(delegate);
 			return methodDelegate && methodDelegate->GetObject() == object && methodDelegate->GetMethod() == method;
@@ -283,16 +289,16 @@ public:
 		m_Delegates.clear();
 	}
 
-	bool Execute(ArgTypes&&... args)
+	bool Execute(ArgTypes &&... args)
 	{
-		for (auto& delegate : m_Delegates)
+		for (auto &delegate : m_Delegates)
 		{
 			if (delegate->Execute(std::forward<ArgTypes>(args)...) != ContinueIf)
 				return false;
 		}
 		return true;
 	}
-	
+
 private:
 	std::vector<Ref<DelegateType>> m_Delegates;
 };

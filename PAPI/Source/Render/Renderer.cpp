@@ -13,12 +13,12 @@ bool Renderer::Init(Ref<Window> window)
 {
 	PAPI_INFO("Initialising renderer");
 
-	m_Window = window;
+	m_Window      = window;
 	m_Initialised = true;
-	
+
 	if (!InitOpenGL())
 		return false;
-	
+
 	return true;
 }
 
@@ -27,7 +27,7 @@ bool Renderer::InitOpenGL()
 	static bool glInitialised = false;
 	if (glInitialised)
 		return true;
-	
+
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
@@ -35,11 +35,11 @@ bool Renderer::InitOpenGL()
 
 	PAPI_ASSERT(m_Window && "Window should be set");
 	m_Context = m_Window->GetContext();
-	
+
 	int version = gladLoadGL(SDL_GL_GetProcAddress);
 	if (version == 0)
 	{
-		const char* error = "Failed to initialise OpenGL with GLAD";
+		const char *error = "Failed to initialise OpenGL with GLAD";
 		PAPI_ERROR("{}", error);
 		Application::Get()->ShowError(error, "OpenGL Error");
 		return false;

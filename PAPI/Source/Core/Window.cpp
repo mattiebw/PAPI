@@ -4,10 +4,10 @@
 #include <SDL3/SDL_messagebox.h>
 #include <SDL3/SDL_video.h>
 
-Window::Window(const WindowSpecification& spec)
+Window::Window(const WindowSpecification &spec)
 {
 	m_Specification = spec;
-	
+
 	m_Window = SDL_CreateWindow(spec.Title.c_str(), spec.Size.x, spec.Size.y, SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL);
 	if (!m_Window)
 	{
@@ -29,7 +29,7 @@ Window::Window(const WindowSpecification& spec)
 	// Associate the Window object with the SDL window, so we can call Window functions from SDL events
 	SDL_PropertiesID props = SDL_GetWindowProperties(m_Window);
 	SDL_SetPointerProperty(props, "Window", this);
-	
+
 	Show();
 }
 
@@ -69,7 +69,7 @@ void Window::Close()
 		return;
 
 	OnClose.Execute();
-	
+
 	if (m_Window != nullptr)
 		SDL_DestroyWindow(m_Window);
 	m_Window = nullptr;

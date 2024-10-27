@@ -6,8 +6,8 @@
 
 extern std::shared_ptr<spdlog::logger> g_PAPILogger;
 
-void InitLog(const char* prefPath);
-void AddSinkToLog(const spdlog::sink_ptr& sink);
+void InitLog(const char *prefPath);
+void AddSinkToLog(const spdlog::sink_ptr &sink);
 
 #ifndef PAPI_NO_LOG
 	#define PAPI_TRACE(format, ...)                  g_PAPILogger->trace(format "\n" __VA_OPT__(,) __VA_ARGS__)

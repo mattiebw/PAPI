@@ -58,7 +58,7 @@ template <typename T>
 using Scope = std::unique_ptr<T>;
 
 template <typename T, typename... Args>
-constexpr Scope<T> CreateScope(Args&&... args)
+constexpr Scope<T> CreateScope(Args &&... args)
 {
 	return std::make_unique<T>(std::forward<Args>(args)...);
 }
@@ -67,7 +67,7 @@ template <typename T>
 using Ref = std::shared_ptr<T>;
 
 template <typename T, typename... Args>
-constexpr Ref<T> CreateRef(Args&&... args)
+constexpr Ref<T> CreateRef(Args &&... args)
 {
 	return std::make_shared<T>(std::forward<Args>(args)...);
 }
@@ -80,22 +80,30 @@ struct SemVer
 	short Minor;
 	short Patch;
 
-	SemVer() : Major(0), Minor(0), Patch(0) {}
-	explicit SemVer(const short major) : Major(major), Minor(0), Patch(0) {}
-	SemVer(const short major, const short minor, const short patch) : Major(major), Minor(minor), Patch(patch) {}
+	SemVer() : Major(0), Minor(0), Patch(0)
+	{
+	}
+
+	explicit SemVer(const short major) : Major(major), Minor(0), Patch(0)
+	{
+	}
+
+	SemVer(const short major, const short minor, const short patch) : Major(major), Minor(minor), Patch(patch)
+	{
+	}
 
 	// SemVer comparison operators
-	bool operator==(const SemVer& other) const
+	bool operator==(const SemVer &other) const
 	{
 		return Major == other.Major && Minor == other.Minor && Patch == other.Patch;
 	}
 
-	bool operator!=(const SemVer& other) const
+	bool operator!=(const SemVer &other) const
 	{
 		return !(*this == other);
 	}
 
-	bool operator<(const SemVer& other) const
+	bool operator<(const SemVer &other) const
 	{
 		if (Major < other.Major)
 			return true;
