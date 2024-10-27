@@ -8,9 +8,9 @@ Window::Window(const WindowSpecification &spec)
 {
 	m_Specification = spec;
 
-	PAPI_TRACE("Creating window \"{}\"", spec.Title);
+	PAPI_TRACE("Creating window \"{}\"", m_Specification.Title);
 
-	m_Window = SDL_CreateWindow(spec.Title.c_str(), spec.Size.x, spec.Size.y, SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL);
+	m_Window = SDL_CreateWindow(m_Specification.Title.c_str(), m_Specification.Size.x, m_Specification.Size.y, SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL);
 	if (!m_Window)
 	{
 		std::string error = fmt::format("Failed to create window: {}", SDL_GetError());
@@ -19,20 +19,27 @@ Window::Window(const WindowSpecification &spec)
 		return;
 	}
 
-	if (spec.Centered)
+	m_Specification.OriginalSize = m_Specification.Size;
+	if (m_Specification.Centered)
 		SDL_SetWindowPosition(m_Window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	else
-		SDL_SetWindowPosition(m_Window, spec.Position.x, spec.Position.y);
+		SDL_SetWindowPosition(m_Window, m_Specification.Position.x, m_Specification.Position.y);
 
-	SDL_SetWindowMinimumSize(m_Window, spec.MinSize.x, spec.MinSize.y);
-	SDL_SetWindowMaximumSize(m_Window, spec.MaxSize.x, spec.MaxSize.y);
-	SDL_SetWindowResizable(m_Window, spec.Resizable);
+	SDL_SetWindowMinimumSize(m_Window, m_Specification.MinSize.x, m_Specification.MinSize.y);
+	SDL_SetWindowMaximumSize(m_Window, m_Specification.MaxSize.x, m_Specification.MaxSize.y);
+	SDL_SetWindowResizable(m_Window, m_Specification.Resizable);
 
 	// Associate the Window object with the SDL window, so we can call Window functions from SDL events
 	SDL_PropertiesID props = SDL_GetWindowProperties(m_Window);
 	SDL_SetPointerProperty(props, "Window", this);
 
-	// MW @gotcha: Don't set up delegates here because the window will likely move around in memory and the this pointer will be invalid
+	// MW @gotcha: Don't set up delegates here that capture because the window will likely move around in memory and the this pointer will be invalid
+	OnResize.BindLambda([] (Window *window, const glm::ivec2 &size)
+	{
+		PAPI_INFO("Window \"{}\" resized to {}", window->GetTitle(), size);
+		window->m_Specification.Size = size;
+		return false;
+	});
 	
 	Show();
 }

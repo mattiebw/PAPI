@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 // MW @gotcha: This file should only be included in the PCH, or else the Linux build will fail due to redefinition
-//			   fmt overloads at the end of the file.
+//             fmt overloads at the end of the file.
 
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
@@ -40,41 +40,53 @@ void AddSinkToLog(const spdlog::sink_ptr &sink);
 #endif
 
 template <>
-class fmt::formatter<glm::ivec2> {
+class fmt::formatter<glm::ivec2>
+{
 public:
-	constexpr auto parse (format_parse_context& ctx) { return ctx.begin(); }
+	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
+
 	template <typename Context>
-	constexpr auto format (glm::ivec2 const& vec, Context& ctx) const {
+	constexpr auto format(glm::ivec2 const &vec, Context &ctx) const
+	{
 		return fmt::format_to(ctx.out(), "({}, {})", vec.x, vec.y);
 	}
 };
 
 template <>
-class fmt::formatter<glm::ivec3> {
+class fmt::formatter<glm::ivec3>
+{
 public:
-	constexpr auto parse (format_parse_context& ctx) { return ctx.begin(); }
+	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
+
 	template <typename Context>
-	constexpr auto format (glm::ivec3 const& vec, Context& ctx) const {
+	constexpr auto format(glm::ivec3 const &vec, Context &ctx) const
+	{
 		return fmt::format_to(ctx.out(), "({}, {}, {})", vec.x, vec.y, vec.z);
 	}
 };
 
 template <>
-class fmt::formatter<glm::vec2> {
+class fmt::formatter<glm::vec2>
+{
 public:
-	constexpr auto parse (format_parse_context& ctx) { return ctx.begin(); }
+	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
+
 	template <typename Context>
-	constexpr auto format (glm::vec2 const& vec, Context& ctx) const {
+	constexpr auto format(glm::vec2 const &vec, Context &ctx) const
+	{
 		return fmt::format_to(ctx.out(), "({}, {})", vec.x, vec.y);
 	}
 };
 
 template <>
-class fmt::formatter<glm::vec3> {
+class fmt::formatter<glm::vec3>
+{
 public:
-	constexpr auto parse (format_parse_context& ctx) { return ctx.begin(); }
+	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
+
 	template <typename Context>
-	constexpr auto format (glm::vec3 const& vec, Context& ctx) const {
+	constexpr auto format(glm::vec3 const &vec, Context &ctx) const
+	{
 		return fmt::format_to(ctx.out(), "({}, {}, {})", vec.x, vec.y, vec.z);
 	}
 };

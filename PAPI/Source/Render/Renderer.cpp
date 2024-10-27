@@ -3,6 +3,7 @@
 
 #include "Core/Application.h"
 #include "Core/Window.h"
+#include "Render/Viewport.h"
 
 Renderer::~Renderer()
 {
@@ -18,6 +19,10 @@ bool Renderer::Init(Ref<Window> window)
 
 	if (!InitOpenGL())
 		return false;
+
+	m_Window->OnResize.BindMethod(this, &Renderer::OnWindowResize);
+
+	m_Viewport = CreateRef<Viewport>();
 
 	return true;
 }
@@ -53,18 +58,36 @@ bool Renderer::InitOpenGL()
 	return true;
 }
 
+bool Renderer::OnWindowResize(Window *window, const glm::ivec2 &size)
+{
+	m_Viewport->SetSize(size);
+	return false;
+}
+
 void Renderer::Shutdown()
 {
 	if (!m_Initialised)
 		return;
+
 	PAPI_TRACE("Shutting down renderer");
+
+	if (m_Window)
+	{
+		m_Window->OnResize.UnbindMethod(this, &Renderer::OnWindowResize);
+		m_Window = nullptr;
+	}
+
 	m_Initialised = false;
 }
 
 void Renderer::BeginFrame()
 {
-	glClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, m_ClearColor.a);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void Renderer::Render()
+{
+	PAPI_ASSERT(m_Viewport && "No viewport set");
+	m_Viewport->Render();
 }
 
 void Renderer::EndFrame()

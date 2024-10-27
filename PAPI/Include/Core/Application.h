@@ -12,7 +12,7 @@ struct ApplicationSpecification
 class Application
 {
 public:
-	Application(const ApplicationSpecification &spec);
+	Application(ApplicationSpecification spec);
 	~Application();
 
 	bool Init();

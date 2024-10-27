@@ -7,9 +7,10 @@ struct WindowSpecification
 	std::string Title = "Window";
 
 	// (0, 0) for default position. Ignored if Centered is true.
-	glm::ivec2 Position = {0, 0};
-	glm::ivec2 Size     = {800, 600}, MinSize = {0, 0}, MaxSize = {0, 0};
-	bool       Centered = true;
+	glm::ivec2 Position     = {0, 0};
+	glm::ivec2 Size         = {800, 600}, MinSize = {0, 0}, MaxSize = {0, 0};
+	glm::ivec2 OriginalSize = Size;
+	bool       Centered     = true;
 
 	bool Resizable = true;
 };

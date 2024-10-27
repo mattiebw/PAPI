@@ -12,11 +12,11 @@
 
 Application *Application::s_Instance = nullptr;
 
-Application::Application(const ApplicationSpecification &spec)
+Application::Application(ApplicationSpecification spec)
+	: m_Specification(std::move(spec))
 {
 	PAPI_ASSERT(s_Instance == nullptr && "There can only be one application instance");
-	s_Instance      = this;
-	m_Specification = spec;
+	s_Instance = this;
 }
 
 Application::~Application()
@@ -54,8 +54,8 @@ void Application::Run()
 {
 	m_Running = true;
 
-	m_MainWindow->OnClose.BindLambda([this](Window* window) { m_Running = false; });
-	m_MainWindow->OnKeyPressed.BindLambda([this](Window* window, SDL_Scancode scancode, bool repeat)
+	m_MainWindow->OnClose.BindLambda([this](Window *window) { m_Running = false; });
+	m_MainWindow->OnKeyPressed.BindLambda([this](Window *window, SDL_Scancode scancode, bool repeat)
 	{
 		if (scancode == SDL_SCANCODE_ESCAPE)
 			m_Running = false;
@@ -70,7 +70,6 @@ void Application::Run()
 
 		return false;
 	});
-	m_MainWindow->OnResize.BindLambda([](Window* window, const glm::ivec2 &size) { PAPI_INFO("Window {} resized to {}", window->GetTitle(), size); return false; });
 
 	uint64_t time = SDL_GetPerformanceCounter();
 	uint64_t last = time;
@@ -187,6 +186,7 @@ void Application::Update()
 void Application::Render()
 {
 	m_Renderer->BeginFrame();
+	m_Renderer->Render();
 	m_Renderer->EndFrame();
 }
 
