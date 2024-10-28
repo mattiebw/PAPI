@@ -28,6 +28,7 @@
 #include "Core/PAPICore.h"
 #include "Core/PAPILog.h"
 #include "Core/Delegate/Delegate.h"
+#include "Core/Utility/MathUtil.h"
 #include "Core/Transform.h"
 
 // Platform specific
