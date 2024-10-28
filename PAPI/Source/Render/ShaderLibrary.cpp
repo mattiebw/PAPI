@@ -8,7 +8,7 @@ std::unordered_map<std::string, Ref<Shader>> ShaderLibrary::s_Shaders;
 Ref<Shader> ShaderLibrary::CreateShader(std::string_view name)
 {
 	std::string newName = std::string(name);
-	Ref<Shader> shader  = Shader::CreateShaderProgram(newName);
+	Ref<Shader> shader  = CreateRef<Shader>(newName);
 	AddShader(shader, newName);
 	return shader;
 }

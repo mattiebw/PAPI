@@ -108,7 +108,7 @@ void Application::Shutdown()
 		m_MainWindow = nullptr;
 	}
 	ShutdownSDL();
-	m_Running = false;
+	m_Running     = false;
 	m_Initialised = false;
 }
 
