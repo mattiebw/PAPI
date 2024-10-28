@@ -23,17 +23,17 @@ int32_t Shader::AddStageFromSource(GLenum stage, std::string_view source)
 	if (!IsValidShaderStage(stage))
 	{
 		PAPI_ERROR("Shader::AddStage of shader \"{0}\" called with invalid stage enum: {1}.\nShould be one of: "
-		         "GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_TESS_EVALUATION_SHADER, GL_TESS_CONTROL_SHADER, GL_COMPUTE_SHADER",
-		         m_Name, stage);
+		           "GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_TESS_EVALUATION_SHADER, GL_TESS_CONTROL_SHADER, GL_COMPUTE_SHADER",
+		           m_Name, stage);
 		return -1;
 	}
 
 	for (uint32_t i = 0; i < m_UsedVertexAttributes; i++)
 		glEnableVertexAttribArray(i);
-	
+
 	int32_t     shaderID = glCreateShader(stage);
 	const auto  length   = static_cast<int32_t>(source.length());
-	const char* data     = source.data();
+	const char *data     = source.data();
 	glShaderSource(shaderID, 1, &data, &length);
 	glCompileShader(shaderID);
 
@@ -45,7 +45,7 @@ int32_t Shader::AddStageFromSource(GLenum stage, std::string_view source)
 		static GLchar message[1024];
 		glGetShaderInfoLog(shaderID, 1024, &logLength, message);
 		PAPI_ERROR_NO_NEWLINE("In shader {0}, failed to compile {1}: {2}", m_Name, GetShaderTypeString(stage),
-		                    std::string_view(&message[0], logLength));
+		                      std::string_view(&message[0], logLength));
 		glDeleteShader(shaderID);
 		return -1;
 	}
@@ -85,10 +85,10 @@ int32_t Shader::AddStageFromFile(GLenum stage, std::string_view source)
 int32_t Shader::LinkProgram()
 {
 	BindAttributes();
-	
+
 	for (uint32_t i = 0; i < m_UsedVertexAttributes; i++)
 		glEnableVertexAttribArray(i);
-	
+
 	// Create the program and attach and link all shaders
 	for (const int32_t shaderID : m_ShaderStages)
 		glAttachShader(m_ProgramID, shaderID);
@@ -162,7 +162,7 @@ void Shader::CleanUp()
 {
 	// if (Renderer::GetBoundShader() == this)
 	// 	Renderer::BindShader(nullptr);
-	
+
 	glDeleteProgram(m_ProgramID);
 	m_ProgramID = 0;
 }
@@ -188,6 +188,10 @@ const char* Shader::GetShaderTypeString(GLenum type)
 	// return fmt::format("Unknown Shader Type ({0})", type).c_str();
 	}
 }
+
+// MW @todo: Here we have manual uniform location caching.
+// There are GL functions to get all uniform locations, get their names, and then cache them like that, without
+// needing to query each one individually.
 
 int Shader::GetUniformLocation(std::string_view uniformName)
 {
@@ -235,7 +239,7 @@ void Shader::SetUniform2f(std::string_view uniformName, float x, float y) const
 	glUniform2f(GetUniformLocation(uniformName), x, y);
 }
 
-void Shader::SetUniformVec2(std::string_view uniformName, const glm::vec2& vec) const
+void Shader::SetUniformVec2(std::string_view uniformName, const glm::vec2 &vec) const
 {
 	glUniform2f(GetUniformLocation(uniformName), vec.x, vec.y);
 }
@@ -245,7 +249,7 @@ void Shader::SetUniform3f(std::string_view uniformName, float x, float y, float 
 	glUniform3f(GetUniformLocation(uniformName), x, y, z);
 }
 
-void Shader::SetUniformVec3(std::string_view uniformName, const glm::vec3& vec) const
+void Shader::SetUniformVec3(std::string_view uniformName, const glm::vec3 &vec) const
 {
 	glUniform3f(GetUniformLocation(uniformName), vec.x, vec.y, vec.z);
 }
@@ -255,17 +259,17 @@ void Shader::SetUniform4f(std::string_view uniformName, float x, float y, float 
 	glUniform4f(GetUniformLocation(uniformName), x, y, z, w);
 }
 
-void Shader::SetUniformVec4(std::string_view uniformName, const glm::vec4& vec) const
+void Shader::SetUniformVec4(std::string_view uniformName, const glm::vec4 &vec) const
 {
 	glUniform4f(GetUniformLocation(uniformName), vec.x, vec.y, vec.z, vec.w);
 }
 
-void Shader::SetUniformMatrix3f(std::string_view uniformName, const glm::mat3& vec) const
+void Shader::SetUniformMatrix3f(std::string_view uniformName, const glm::mat3 &vec) const
 {
 	glUniformMatrix3fv(GetUniformLocation(uniformName), 1, GL_FALSE, value_ptr(vec));
 }
 
-void Shader::SetUniformMatrix4f(std::string_view uniformName, const glm::mat4& matrix) const
+void Shader::SetUniformMatrix4f(std::string_view uniformName, const glm::mat4 &matrix) const
 {
 	glUniformMatrix4fv(GetUniformLocation(uniformName), 1, GL_FALSE, value_ptr(matrix));
 }
@@ -287,4 +291,3 @@ void Shader::SetUniform1b(std::string_view uniformName, bool value) const
 {
 	glUniform1i(GetUniformLocation(uniformName), value ? 1 : 0);
 }
-

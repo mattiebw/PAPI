@@ -8,7 +8,7 @@ std::unordered_map<std::string, Ref<Shader>> ShaderLibrary::s_Shaders;
 Ref<Shader> ShaderLibrary::CreateShader(std::string_view name)
 {
 	std::string newName = std::string(name);
-	Ref<Shader> shader = Shader::CreateShaderProgram(newName);
+	Ref<Shader> shader  = Shader::CreateShaderProgram(newName);
 	AddShader(shader, newName);
 	return shader;
 }
@@ -29,7 +29,7 @@ void ShaderLibrary::AddShader(const Ref<Shader> &shader)
 	AddShader(shader, shader->GetName());
 }
 
-void ShaderLibrary::AddShader(const Ref<Shader> &shader, const std::string& name)
+void ShaderLibrary::AddShader(const Ref<Shader> &shader, const std::string &name)
 {
 	PAPI_ASSERT(!ShaderExists(name) && "Shader with name already exists in library");
 	s_Shaders[name] = shader;
