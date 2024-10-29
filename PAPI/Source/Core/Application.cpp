@@ -65,11 +65,11 @@ void Application::Run()
 	{
 		Get()->m_Running = false;
 	});
-	m_MainWindow->OnKeyPressed.BindLambda([](Window *window, SDL_Scancode scancode, bool repeat)
+	m_MainWindow->OnKeyPressed.BindLambda([](Window *window, Scancode scancode, bool repeat)
 	{
-		if (scancode == SDL_SCANCODE_ESCAPE)
+		if (scancode == PAPI_KEY_ESCAPE)
 			Get()->m_MainWindow->Close();
-		else if (scancode == SDL_SCANCODE_R && !repeat)
+		else if (scancode == PAPI_KEY_R && !repeat)
 		{
 			g_ShouldRestart = !g_ShouldRestart;
 			if (g_ShouldRestart)
@@ -152,7 +152,7 @@ bool Application::InitRenderer()
 
 void Application::PreUpdate()
 {
-	Input::UpdateKeyArrays();
+	Input::PreUpdate();
 }
 
 void Application::PollEvents()
@@ -173,13 +173,15 @@ void Application::PollEvents()
 			{
 				SDL_PropertiesID props = SDL_GetWindowProperties(SDL_GetWindowFromEvent(&e));
 				if (Window *window = static_cast<Window*>(SDL_GetPointerProperty(props, "Window", nullptr)))
+				{
+					// Skip creating a temporary glm::ivec2
 					window->OnResize.Execute(std::move(window), *reinterpret_cast<const glm::ivec2*>(&e.window.data1));
-				// Skip creating a temporary glm::ivec2
+				}
 			}
 			break;
 		case SDL_EVENT_KEY_DOWN:
 			{
-				Input::ProcessInputEvent(e.key);
+				Input::ProcessKeyboardInputEvent(e.key);
 
 				Window *    window    = m_MainWindow.get();
 				SDL_Window *sdlWindow = SDL_GetWindowFromEvent(&e);
@@ -189,12 +191,13 @@ void Application::PollEvents()
 					window                 = static_cast<Window*>(SDL_GetPointerProperty(props, "Window", window));
 				}
 				PAPI_ASSERT(window && "No window, but key event?");
-				window->OnKeyPressed.Execute(std::move(window), std::move(e.key.scancode), std::move(e.key.repeat));
+				window->OnKeyPressed.Execute(std::move(window), static_cast<Scancode>(e.key.scancode),
+				                             std::move(e.key.repeat));
 			}
 			break;
 		case SDL_EVENT_KEY_UP:
 			{
-				Input::ProcessInputEvent(e.key);
+				Input::ProcessKeyboardInputEvent(e.key);
 
 				Window *    window    = m_MainWindow.get();
 				SDL_Window *sdlWindow = SDL_GetWindowFromEvent(&e);
@@ -204,7 +207,43 @@ void Application::PollEvents()
 					window                 = static_cast<Window*>(SDL_GetPointerProperty(props, "Window", window));
 				}
 				PAPI_ASSERT(window && "No window, but key event?");
-				window->OnKeyReleased.Execute(std::move(window), std::move(e.key.scancode));
+				window->OnKeyReleased.Execute(std::move(window), static_cast<Scancode>(e.key.scancode));
+			}
+			break;
+		case SDL_EVENT_MOUSE_BUTTON_DOWN:
+		case SDL_EVENT_MOUSE_BUTTON_UP:
+			{
+				Input::ProcessMouseInputEvent(e.button);
+
+				Window *    window    = m_MainWindow.get();
+				SDL_Window *sdlWindow = SDL_GetWindowFromEvent(&e);
+				if (sdlWindow)
+				{
+					SDL_PropertiesID props = SDL_GetWindowProperties(sdlWindow);
+					window                 = static_cast<Window*>(SDL_GetPointerProperty(props, "Window", window));
+				}
+				PAPI_ASSERT(window && "No window, but mouse event?");
+
+				if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
+					window->OnMouseButtonDown.Execute(std::move(window), static_cast<MouseButton>(e.button.button));
+				else
+					window->OnMouseButtonUp.Execute(std::move(window), static_cast<MouseButton>(e.button.button));
+			}
+			break;
+		case SDL_EVENT_MOUSE_MOTION:
+			{
+				Input::ProcessMouseMotionEvent(e.motion);
+
+				Window *    window    = m_MainWindow.get();
+				SDL_Window *sdlWindow = SDL_GetWindowFromEvent(&e);
+				if (sdlWindow)
+				{
+					SDL_PropertiesID props = SDL_GetWindowProperties(sdlWindow);
+					window                 = static_cast<Window*>(SDL_GetPointerProperty(props, "Window", window));
+				}
+
+				window->OnMouseMove.Execute(std::move(window), {e.motion.x, e.motion.y},
+				                            {e.motion.xrel, e.motion.yrel});
 			}
 			break;
 		}
@@ -217,13 +256,26 @@ void Application::Update()
 		PAPI_INFO("Y is down!");
 
 	if (Input::IsKeyDownThisFrame(PAPI_KEY_M))
+	{
 		PAPI_INFO("M is just down!");
+		PAPI_INFO("Mouse pos: {}", Input::GetMousePosition());
+	}
 
 	// if (Input::IsKeyUp(PAPI_KEY_C))
 	// 	PAPI_INFO("C is up!");
 
 	if (Input::IsKeyUpThisFrame(PAPI_KEY_A))
 		PAPI_INFO("A is just up!");
+
+	if (Input::IsMouseButtonDownThisFrame(PAPI_MOUSE_BUTTON_LEFT))
+		PAPI_INFO("LMB just down");
+
+	if (Input::IsMouseButtonUpThisFrame(PAPI_MOUSE_BUTTON_MIDDLE))
+		PAPI_INFO("MMB just up");
+
+	glm::vec2 mouseDelta = Input::GetMouseDelta();
+	if (mouseDelta != glm::vec2(0.0f))
+		PAPI_INFO("Mouse delta: {}", mouseDelta);
 }
 
 void Application::Render()

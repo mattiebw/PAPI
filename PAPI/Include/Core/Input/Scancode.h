@@ -376,3 +376,5 @@ typedef enum Scancode
     PAPI_KEY_COUNT = 512 /**< not a key, just marks the number of scancodes for array bounds */
 
 } Scancode;
+
+NODISCARD const char* ScancodeToString(Scancode scancode);
