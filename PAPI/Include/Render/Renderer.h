@@ -4,10 +4,15 @@
 class Viewport;
 class Window;
 
+struct RendererSpecification
+{
+	bool VSync = false;
+};
+
 class Renderer
 {
 public:
-	Renderer() = default;
+	Renderer(RendererSpecification rendererSpecification);
 	~Renderer();
 
 	NODISCARD static FORCEINLINE Viewport* GetCurrentViewport() { return s_CurrentViewport; }
@@ -23,10 +28,11 @@ private:
 	bool InitOpenGL();
 	bool OnWindowResize(Window *window, const glm::ivec2 &size);
 
-	bool          m_Initialised = false;
-	Ref<Window>   m_Window      = nullptr;
-	Ref<Viewport> m_Viewport    = nullptr; // For now, we only have one viewport. We could change this to 
-	SDL_GLContext m_Context     = nullptr; // support multiple viewports, for example, for split-screen games.
+	RendererSpecification m_Specification;
+	bool                  m_Initialised = false;
+	Ref<Window>           m_Window      = nullptr;
+	Ref<Viewport>         m_Viewport    = nullptr; // For now, we only have one viewport. We could change this to 
+	SDL_GLContext         m_Context     = nullptr; // support multiple viewports, for example, for split-screen games.
 
 	static Viewport *s_CurrentViewport;
 

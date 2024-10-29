@@ -82,13 +82,13 @@ void Application::Run()
 	});
 
 	uint64_t time = SDL_GetPerformanceCounter();
-	uint64_t last = time;
 	while (m_Running)
 	{
-		last = time;
+		uint64_t last = time;
 		time = SDL_GetPerformanceCounter();
-		const uint64_t delta = time - last;
-		double deltaTime = static_cast<double>(delta * 1000) / static_cast<double>(SDL_GetPerformanceFrequency());
+		double deltaTime = (time - last) / static_cast<double>(SDL_GetPerformanceFrequency());
+
+		PAPI_INFO("FPS: {} (frame time: {:.2f}ms)", 1.0 / deltaTime, deltaTime * 1000);
 
 		PreUpdate();
 		PollEvents();
@@ -138,7 +138,10 @@ bool Application::InitSDL()
 
 bool Application::InitRenderer()
 {
-	m_Renderer = CreateRef<Renderer>();
+	m_Renderer = CreateRef<Renderer>(RendererSpecification{
+		.VSync = false
+	});
+	
 	if (!m_Renderer->Init(m_MainWindow))
 	{
 		m_Error = "Failed to initialise renderer; check the log!";
@@ -252,30 +255,6 @@ void Application::PollEvents()
 
 void Application::Update()
 {
-	if (Input::IsKeyDown(PAPI_KEY_Y))
-		PAPI_INFO("Y is down!");
-
-	if (Input::IsKeyDownThisFrame(PAPI_KEY_M))
-	{
-		PAPI_INFO("M is just down!");
-		PAPI_INFO("Mouse pos: {}", Input::GetMousePosition());
-	}
-
-	// if (Input::IsKeyUp(PAPI_KEY_C))
-	// 	PAPI_INFO("C is up!");
-
-	if (Input::IsKeyUpThisFrame(PAPI_KEY_A))
-		PAPI_INFO("A is just up!");
-
-	if (Input::IsMouseButtonDownThisFrame(PAPI_MOUSE_BUTTON_LEFT))
-		PAPI_INFO("LMB just down");
-
-	if (Input::IsMouseButtonUpThisFrame(PAPI_MOUSE_BUTTON_MIDDLE))
-		PAPI_INFO("MMB just up");
-
-	glm::vec2 mouseDelta = Input::GetMouseDelta();
-	if (mouseDelta != glm::vec2(0.0f))
-		PAPI_INFO("Mouse delta: {}", mouseDelta);
 }
 
 void Application::Render()

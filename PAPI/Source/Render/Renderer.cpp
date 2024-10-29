@@ -10,11 +10,16 @@ Viewport *Renderer::s_CurrentViewport = nullptr;
 // This is to enable the high-performance GPU on systems with both integrated and dedicated GPUs.
 // MW @todo: This only works on Windows, and only with NVIDIA and AMD GPUs!
 #ifdef PAPI_PLATFORM_WINDOWS
-	extern "C" {
-		_declspec(dllexport) DWORD NvOptimusEnablement = 1;
-		_declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
-	}
+extern "C" {
+_declspec(dllexport) DWORD NvOptimusEnablement                  = 1;
+_declspec(dllexport) int   AmdPowerXpressRequestHighPerformance = 1;
+}
 #endif
+
+Renderer::Renderer(RendererSpecification rendererSpecification)
+	: m_Specification(std::move(rendererSpecification))
+{
+}
 
 Renderer::~Renderer()
 {
@@ -65,6 +70,10 @@ bool Renderer::InitOpenGL()
 	PAPI_INFO("Initialised OpenGL v{}.{}", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
 	PAPI_INFO("   OpenGL Vendor: {}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
 	PAPI_INFO("   OpenGL Renderer: {}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+
+	SDL_GL_SetSwapInterval(m_Specification.VSync ? 1 : 0);
+	PAPI_INFO("Initialised renderer");
+	PAPI_INFO("   VSync: {}", m_Specification.VSync ? "On" : "Off");
 
 	return true;
 }
