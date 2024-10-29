@@ -9,7 +9,7 @@ The APIs we're planning on using:
 - [OpenGL](https://en.wikipedia.org/wiki/OpenGL) - Rendering
 - [Steamworks](https://partner.steamgames.com/doc/sdk) - Networking (GameNetworkingSockets), Steam integration
 - [FMOD](https://www.fmod.com/) - Audio
-- [FastNoiseLite)[https://github.com/Auburn/FastNoiseLite] - Noise for world gen
+- [FastNoiseLite](https://github.com/Auburn/FastNoiseLite) - Noise for world gen
 - Maybe more! We could do physics? But probably not...
 
 ### Building
