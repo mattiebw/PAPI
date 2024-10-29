@@ -15,6 +15,6 @@ The APIs we're planning on using:
 ### Building
 First, you have to clone the repo. Ensure you do this with the ``recursive`` flag. Better yet, use a GUI, such as [GitHub Desktop](https://desktop.github.com/download/), and use the clone button. It will clone recursively automatically.
 
-Once you have cloned, run **Scripts/GenerateProjectsWindows.bat** (or **GenerateProjectsLinux.sh** if you're on Windows).
+Once you have cloned, run **Scripts/GenerateProjectsWindows.bat** (or **GenerateProjectsLinux.sh** if you're on Linux).
 
-Assuming you're on Windows, there will now be a **PAPI.sln** file in the root directory, which you can open in Visual Studio 2022, and build like normal.
+Assuming you're on Windows, there will now be a **PAPI.sln** file in the root directory, which you can open in Visual Studio 2022, and build and run like normal.
