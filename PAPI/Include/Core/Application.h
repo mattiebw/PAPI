@@ -31,6 +31,7 @@ protected:
 	bool InitSDL();
 	bool InitRenderer();
 
+	void PreUpdate();
 	void PollEvents();
 	void Update();
 	void Render();

@@ -7,6 +7,7 @@
 #include <SDL3/SDL_timer.h>
 
 #include "PAPI.h"
+#include "Core/Input.h"
 #include "Core/Window.h"
 #include "Render/Renderer.h"
 
@@ -40,6 +41,7 @@ bool Application::Init()
 	});
 	if (!m_MainWindow->IsValid()) // If the window is invalid, we can't continue.
 	{
+		m_Error = "Failed to create main window";
 		Shutdown();
 		return false;
 	}
@@ -49,6 +51,8 @@ bool Application::Init()
 		Shutdown();
 		return false;
 	}
+
+	Input::Init();
 
 	return true;
 }
@@ -86,6 +90,7 @@ void Application::Run()
 		const uint64_t delta = time - last;
 		double deltaTime = static_cast<double>(delta * 1000) / static_cast<double>(SDL_GetPerformanceFrequency());
 
+		PreUpdate();
 		PollEvents();
 		Update();
 		Render();
@@ -135,13 +140,18 @@ bool Application::InitRenderer()
 	m_Renderer = CreateRef<Renderer>();
 	if (!m_Renderer->Init(m_MainWindow))
 	{
-		m_Error = "Failed to initialise renderer";
+		m_Error = "Failed to initialise renderer; check the log!";
 		PAPI_ERROR("{}", m_Error);
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Renderer Initialisation Error", m_Error.c_str(), nullptr);
 		return false;
 	}
 
 	return true;
+}
+
+void Application::PreUpdate()
+{
+	Input::UpdateKeyArrays();
 }
 
 void Application::PollEvents()
@@ -168,6 +178,8 @@ void Application::PollEvents()
 			break;
 		case SDL_EVENT_KEY_DOWN:
 			{
+				Input::ProcessInputEvent(e.key);
+
 				Window *    window    = m_MainWindow.get();
 				SDL_Window *sdlWindow = SDL_GetWindowFromEvent(&e);
 				if (sdlWindow)
@@ -181,6 +193,8 @@ void Application::PollEvents()
 			break;
 		case SDL_EVENT_KEY_UP:
 			{
+				Input::ProcessInputEvent(e.key);
+
 				Window *    window    = m_MainWindow.get();
 				SDL_Window *sdlWindow = SDL_GetWindowFromEvent(&e);
 				if (sdlWindow)
@@ -198,6 +212,17 @@ void Application::PollEvents()
 
 void Application::Update()
 {
+	if (Input::IsKeyDown(PAPI_KEY_Y))
+		PAPI_INFO("Y is down!");
+
+	if (Input::IsKeyDownThisFrame(PAPI_KEY_M))
+		PAPI_INFO("M is just down!");
+
+	// if (Input::IsKeyUp(PAPI_KEY_C))
+	// 	PAPI_INFO("C is up!");
+
+	if (Input::IsKeyUpThisFrame(PAPI_KEY_A))
+		PAPI_INFO("A is just up!");
 }
 
 void Application::Render()
