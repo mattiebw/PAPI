@@ -102,6 +102,7 @@ void Application::Shutdown()
 	if (!m_Initialised)
 		return;
 
+	Input::Shutdown();
 	if (m_Renderer)
 	{
 		m_Renderer->Shutdown();
