@@ -7,7 +7,7 @@
 #include <SDL3/SDL_timer.h>
 
 #include "PAPI.h"
-#include "Core/Input.h"
+#include "Core/Input/Input.h"
 #include "Core/Window.h"
 #include "Render/Renderer.h"
 

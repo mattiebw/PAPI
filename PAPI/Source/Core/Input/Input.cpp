@@ -1,5 +1,5 @@
 ﻿#include "papipch.h"
-#include "Core/Input.h"
+#include "Core/Input/Input.h"
 
 bool Input::s_Keys[PAPI_KEY_COUNT];
 bool Input::s_PreviousKeys[PAPI_KEY_COUNT];

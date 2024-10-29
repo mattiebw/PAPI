@@ -36,7 +36,7 @@ protected:
 	void Update();
 	void Render();
 
-	void ShutdownSDL();
+	static void ShutdownSDL();
 
 	static Application *s_Instance;
 
