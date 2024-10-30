@@ -100,7 +100,7 @@ void Window::Destroy()
 	OnMouseMove.UnbindAll();
 	OnMouseButtonDown.UnbindAll();
 	OnMouseButtonUp.UnbindAll();
-	
+
 	Close();
 }
 

@@ -118,3 +118,9 @@ void Renderer::EndFrame()
 {
 	SDL_GL_SwapWindow(m_Window->GetHandle());
 }
+
+void Renderer::SetVSync(bool enabled)
+{
+	m_Specification.VSync = enabled;
+	SDL_GL_SetSwapInterval(enabled ? 1 : 0);
+}

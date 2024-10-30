@@ -2,6 +2,8 @@
 
 class Shader;
 
+// MW @todo: For now, we only support one shader library. Are there any reasons to have multiple?
+
 class ShaderLibrary
 {
 public:
@@ -13,7 +15,7 @@ public:
 
 	NODISCARD FORCEINLINE static bool ShaderExists(std::string_view name)
 	{
-		return s_Shaders.find(name.data()) != s_Shaders.end();
+		return s_Shaders.contains(name.data());
 	}
 
 private:

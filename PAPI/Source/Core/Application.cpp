@@ -84,8 +84,8 @@ void Application::Run()
 	uint64_t time = SDL_GetPerformanceCounter();
 	while (m_Running)
 	{
-		uint64_t last = time;
-		time = SDL_GetPerformanceCounter();
+		uint64_t last    = time;
+		time             = SDL_GetPerformanceCounter();
 		double deltaTime = (time - last) / static_cast<double>(SDL_GetPerformanceFrequency());
 
 		PAPI_INFO("FPS: {} (frame time: {:.2f}ms)", 1.0 / deltaTime, deltaTime * 1000);
@@ -141,7 +141,7 @@ bool Application::InitRenderer()
 	m_Renderer = CreateRef<Renderer>(RendererSpecification{
 		.VSync = false
 	});
-	
+
 	if (!m_Renderer->Init(m_MainWindow))
 	{
 		m_Error = "Failed to initialise renderer; check the log!";

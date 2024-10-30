@@ -32,8 +32,8 @@ void Input::ProcessMouseInputEvent(const SDL_MouseButtonEvent &event)
 
 void Input::ProcessMouseMotionEvent(const SDL_MouseMotionEvent &event)
 {
-	s_MousePosition = { event.x, event.y };
-	s_MouseDelta = { event.xrel, event.yrel };
+	s_MousePosition = {event.x, event.y};
+	s_MouseDelta    = {event.xrel, event.yrel};
 }
 
 const char* MouseButtonToString(MouseButton button)

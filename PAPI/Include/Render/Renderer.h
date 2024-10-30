@@ -24,6 +24,8 @@ public:
 	void Render();
 	void EndFrame();
 
+	void SetVSync(bool enabled);
+
 private:
 	bool InitOpenGL();
 	bool OnWindowResize(Window *window, const glm::ivec2 &size);
@@ -35,6 +37,4 @@ private:
 	SDL_GLContext         m_Context     = nullptr; // support multiple viewports, for example, for split-screen games.
 
 	static Viewport *s_CurrentViewport;
-
-	glm::vec4 m_ClearColor = {0.1f, 0.1f, 0.1f, 1};
 };
