@@ -12,9 +12,11 @@ struct ApplicationSpecification
 class Application
 {
 public:
-	Application(ApplicationSpecification spec);
+	Application(const ApplicationSpecification &spec);
+	Application(ApplicationSpecification &&spec);
 	~Application();
 
+	void Construct();
 	bool Init();
 	void Run();
 	void Shutdown();

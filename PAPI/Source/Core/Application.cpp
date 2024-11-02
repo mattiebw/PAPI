@@ -13,17 +13,28 @@
 
 Application *Application::s_Instance = nullptr;
 
-Application::Application(ApplicationSpecification spec)
+Application::Application(const ApplicationSpecification &spec)
+	: m_Specification(spec)
+{
+	Construct();
+}
+
+Application::Application(ApplicationSpecification &&spec)
 	: m_Specification(std::move(spec))
 {
-	PAPI_ASSERT(s_Instance == nullptr && "There can only be one application instance");
-	s_Instance = this;
+	Construct();
 }
 
 Application::~Application()
 {
 	Shutdown();
 	s_Instance = nullptr;
+}
+
+void Application::Construct()
+{
+	PAPI_ASSERT(s_Instance == nullptr && "There can only be one application instance");
+	s_Instance = this;
 }
 
 bool Application::Init()
@@ -248,6 +259,8 @@ void Application::PollEvents()
 				window->OnMouseMove.Execute(std::move(window), {e.motion.x, e.motion.y},
 				                            {e.motion.xrel, e.motion.yrel});
 			}
+			break;
+		default: // Just here to suppress warnings.
 			break;
 		}
 	}

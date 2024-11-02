@@ -4,3 +4,6 @@
 [submodule "PAPI/Vendor/imgui"]
 	path = PAPI/Vendor/imgui
 	url = https://github.com/ocornut/imgui
+[submodule "PAPI/Vendor/stb"]
+	path = PAPI/Vendor/stb
+	url = https://github.com/nothings/stb.git

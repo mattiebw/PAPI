@@ -10,6 +10,7 @@ IncludeDir["spdlog"] = "PAPI/Vendor/spdlog/include" -- MW @todo @build @perf: Co
 IncludeDir["SDL"] = "PAPI/Vendor/SDL/include"
 IncludeDir["imgui"] = "PAPI/Vendor/imgui/"
 IncludeDir["glm"] = "PAPI/Vendor/glm/Include"
+IncludeDir["stb"] = "PAPI/Vendor/stb"
 
 group "Vendor"
 include "PAPI/Vendor/imgui.lua"
@@ -45,6 +46,7 @@ project "PAPI"
 		"%{IncludeDir.SDL}",
 		"%{IncludeDir.imgui}",
 		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb}",
 
 		"PAPI/Include"
 	}
@@ -73,8 +75,7 @@ project "PAPI"
 		"_CRT_SECURE_NO_WARNINGS"
 	}
 
-	filter "configurations:Dist"
-		postbuildcommands { "{COPYDIR} " .. path.getdirectory(".") .. "\"./PAPI/Content/\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/Content/\""}
+	postbuildcommands { "{COPYDIR} " .. path.getdirectory(".") .. "\"./PAPI/Content/\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/Content/\""}
 
 	filter "system:windows"
 		postbuildcommands { "{COPYFILE} " .. path.getdirectory(".") .. "\"./PAPI/Vendor/SDL/lib/Win64/SDL3.dll\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/\"" }
