@@ -31,6 +31,15 @@ struct Buffer
         other.Size = 0;
     }
 
+    Buffer &operator=(const Buffer &other) = default;
+    Buffer &operator=(Buffer &&other) noexcept
+    {
+        Data = other.Data;
+        Size = other.Size;
+        other.Data = nullptr;
+        other.Size = 0;
+    };
+
     ~Buffer() = default; // The buffer is non-owning, so we don't want to free on deconstruct.
 
     FORCEINLINE_DEBUGGABLE void Allocate(size_t size)
