@@ -1,0 +1,40 @@
+# PAPI TODO
+- [x] Basic project setup
+	- [x] Add initial libraries
+	- [x] Logging
+	- [x] Windowing
+	- [x] Events/delegates
+- [ ] Rendering Setup
+	- [x] Buffer classes
+	- [x] Shader class
+	- [x] Texture class
+	- [ ] Framebuffer class
+	- [ ] Tilemap/Spritesheet. Generation of atlas from individual texture files?
+		- https://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
+- [ ] Layer system - or something so applications can start to do stuff with the "core".
+- [ ] ImGUI for debug UI
+	- [x] Add to project
+	- [ ] Initialise context, etc. 
+	- [ ] Hook up to rendering
+	- [ ] Expose to layers
+- [ ] The "world" (or worlds).
+- [ ] Entities (ecs? or something more traditional but slower).
+	- [ ] Provision for multiplayer sided-ness.
+- [ ] Renderer
+	- [ ] Draw indexed
+	- [ ] Draw sprite (instanced?)
+	- [ ] Tilemap rendering
+- [ ] Basic asset system?
+- [ ] Text rendering
+	- [ ] Add freetype, msdfgen
+	- [ ] MSDF atlas generation
+	- [ ] Cache atlases 
+	- [ ] Shader
+	- [ ] Rendering functions
+- [ ] Audio system
+	- [ ] Add FMOD
+	- [ ] Work out how to use it
+- [ ] Level generation
+	- [ ] Add FastNoiseLite
+- [ ] Do we want to do physics? Physics itself isn't insanely hard, but it would be hard to integrate with multiplayer.
+	- https://gamedev.stackexchange.com/questions/6645/lag-compensation-with-networked-2d-games 
