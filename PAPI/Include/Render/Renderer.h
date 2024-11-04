@@ -26,6 +26,14 @@ public:
 
 	void SetVSync(bool enabled);
 
+	static void GLErrorCallback(GLenum source,
+				 GLenum type,
+				 GLuint id,
+				 GLenum severity,
+				 GLsizei length,
+				 const GLchar* message,
+				 const void* userParam);
+
 private:
 	bool InitOpenGL();
 	bool OnWindowResize(Window *window, const glm::ivec2 &size);

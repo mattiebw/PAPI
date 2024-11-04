@@ -93,12 +93,12 @@ os.mkdir("PAPI/Source")
 os.mkdir("PAPI/Include")
 
 filter "configurations:Debug"
-	defines { "PAPI_DEBUG", "PAPI_ENABLE_ASSERTS" }
+	defines { "PAPI_DEBUG", "PAPI_ENABLE_ASSERTS", "PAPI_GL_DEBUG" }
 	symbols "On"
 	runtime "Debug"
 
 filter "configurations:Release"
-	defines { "PAPI_RELEASE", "PAPI_ENABLE_ASSERTS" }
+	defines { "PAPI_RELEASE", "PAPI_ENABLE_ASSERTS", "PAPI_GL_DEBUG" }
 	optimize "On"
 	symbols "On"
 	runtime "Release"

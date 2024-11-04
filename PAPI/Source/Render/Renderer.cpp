@@ -50,6 +50,10 @@ bool Renderer::InitOpenGL()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
+	#ifdef PAPI_GL_DEBUG
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+	#endif
+
 	PAPI_ASSERT(m_Window && "Window should be set");
 	m_Context = m_Window->GetContext();
 
@@ -70,6 +74,13 @@ bool Renderer::InitOpenGL()
 		PAPI_INFO("   OpenGL Vendor: {}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
 		PAPI_INFO("   OpenGL Renderer: {}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
 	}
+
+	// Setup error callback
+	#ifdef PAPI_GL_DEBUG
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		glDebugMessageCallback(GLErrorCallback, nullptr);
+	#endif
 	
 	SDL_GL_SetSwapInterval(m_Specification.VSync ? 1 : 0);
 	PAPI_INFO("Initialised renderer");
@@ -123,4 +134,117 @@ void Renderer::SetVSync(bool enabled)
 {
 	m_Specification.VSync = enabled;
 	SDL_GL_SetSwapInterval(enabled ? 1 : 0);
+}
+
+void Renderer::GLErrorCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
+	const GLchar *message, const void *userParam)
+{
+#ifndef PAPI_SHOW_GL_NOTIFICATIONS
+	if (severity == GL_DEBUG_SEVERITY_NOTIFICATION)
+		return;
+#endif
+
+#ifndef PAPI_NO_IGNORED_GL_ERROR_IDS
+	static std::vector<GLuint> ignoredIDs = {131185};
+
+	if (std::find(ignoredIDs.begin(), ignoredIDs.end(), id) != ignoredIDs.end())
+		return;
+#endif
+
+	const char* sourceText;
+	const char* typeText;
+	const char* severityText;
+
+	switch (source)
+	{
+	case GL_DEBUG_SOURCE_API:
+		sourceText = "API";
+		break;
+
+	case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+		sourceText = "Window System";
+		break;
+
+	case GL_DEBUG_SOURCE_SHADER_COMPILER:
+		sourceText = "Shader Compiler";
+		break;
+
+	case GL_DEBUG_SOURCE_THIRD_PARTY:
+		sourceText = "Third Party";
+		break;
+
+	case GL_DEBUG_SOURCE_APPLICATION:
+		sourceText = "Application";
+		break;
+
+	case GL_DEBUG_SOURCE_OTHER:
+		sourceText = "Other";
+		break;
+
+	default:
+		sourceText = "Unknown";
+		break;
+	}
+
+	switch (type)
+	{
+	case GL_DEBUG_TYPE_ERROR:
+		typeText = "Error";
+		break;
+
+	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+		typeText = "Deprecated Behaviour";
+		break;
+
+	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+		typeText = "Undefined Behaviour";
+		break;
+
+	case GL_DEBUG_TYPE_PORTABILITY:
+		typeText = "Portability";
+		break;
+
+	case GL_DEBUG_TYPE_PERFORMANCE:
+		typeText = "Performance";
+		break;
+
+	case GL_DEBUG_TYPE_OTHER:
+		typeText = "Other";
+		break;
+
+	case GL_DEBUG_TYPE_MARKER:
+		typeText = "Marker";
+		break;
+
+	default:
+		typeText = "Unknown";
+		break;
+	}
+
+	switch (severity)
+	{
+	case GL_DEBUG_SEVERITY_HIGH:
+		severityText = "High";
+		break;
+
+	case GL_DEBUG_SEVERITY_MEDIUM:
+		severityText = "Medium";
+		break;
+
+	case GL_DEBUG_SEVERITY_LOW:
+		severityText = "Low";
+		break;
+
+	case GL_DEBUG_SEVERITY_NOTIFICATION:
+		severityText = "Notification";
+		break;
+
+	default:
+		severityText = "Unknown";
+		break;
+	}
+
+	PAPI_ERROR("OpenGL Error ({0} severity, id: {4}): from {1}, {2}: {3}", severityText, sourceText, typeText, message,
+			 id);
+	PAPI_ASSERT(severity == GL_DEBUG_SEVERITY_NOTIFICATION);
 }
