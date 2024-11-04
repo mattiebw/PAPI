@@ -54,23 +54,23 @@ bool Renderer::InitOpenGL()
 	m_Context = m_Window->GetContext();
 
 	static bool glInitialised = false;
-	if (glInitialised)
-		return true;
-
-	int version = gladLoadGL(SDL_GL_GetProcAddress);
-	if (version == 0)
+	if (!glInitialised)
 	{
-		const char *error = "Failed to initialise OpenGL with GLAD";
-		PAPI_ERROR("{}", error);
-		Application::Get()->ShowError(error, "OpenGL Error");
-		return false;
+		int version = gladLoadGL(SDL_GL_GetProcAddress);
+		if (version == 0)
+		{
+			const char *error = "Failed to initialise OpenGL with GLAD";
+			PAPI_ERROR("{}", error);
+			Application::Get()->ShowError(error, "OpenGL Error");
+			return false;
+		}
+		glInitialised = true;
+		
+		PAPI_INFO("Initialised OpenGL v{}.{}", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
+		PAPI_INFO("   OpenGL Vendor: {}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
+		PAPI_INFO("   OpenGL Renderer: {}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
 	}
-
-	glInitialised = true;
-	PAPI_INFO("Initialised OpenGL v{}.{}", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
-	PAPI_INFO("   OpenGL Vendor: {}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
-	PAPI_INFO("   OpenGL Renderer: {}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
-
+	
 	SDL_GL_SetSwapInterval(m_Specification.VSync ? 1 : 0);
 	PAPI_INFO("Initialised renderer");
 	PAPI_INFO("   VSync: {}", m_Specification.VSync ? "On" : "Off");
