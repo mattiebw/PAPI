@@ -27,6 +27,7 @@
 #include <SDL3/SDL_assert.h>
 #include "Core/PAPICore.h"
 #include "Core/PAPILog.h"
+#include "Core/Buffer.h"
 #include "Core/Delegate/Delegate.h"
 #include "Core/Utility/MathUtil.h"
 #include "Core/Transform.h"

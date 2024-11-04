@@ -81,6 +81,12 @@ void Texture::SetData(const uint8_t *data)
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Spec.Width, m_Spec.Height, GL_RGBA, GL_UNSIGNED_BYTE, data);
 }
 
+void Texture::SetData(const Buffer &data)
+{
+	PAPI_ASSERT(data.Size == m_Spec.Width * m_Spec.Height * m_Channels && "Buffer size doesn't match texture size.");
+	SetData(data.Data);
+}
+
 void Texture::Activate(int slot) const
 {
 	PAPI_ASSERT(m_TextureID != 0 && "Texture activated when not initialized");

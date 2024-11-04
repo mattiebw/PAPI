@@ -33,6 +33,7 @@ public:
 	~Texture();
 
 	void SetData(const uint8_t *data);
+	void SetData(const Buffer& data);
 
 	void Activate(int slot = 0) const;
 	void CleanUp();

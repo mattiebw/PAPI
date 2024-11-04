@@ -4,7 +4,6 @@
 
 // MSVC compiler intrinsics
 // MW @todo: Add intrinsics for other compilers (gcc/clang)
-// MW @todo: Consider adding FORCEINLINE_DEBUGGABLE (does not inline in debug builds)
 #ifdef PAPI_PLATFORM_WINDOWS
 	#define UNALIGNED __unaligned
 	#define FORCEINLINE __forceinline
@@ -12,6 +11,12 @@
 	#define UNALIGNED
 	#define FORCEINLINE inline
 #endif
+
+#ifdef PAPI_DEBUG
+	#define FORCEINLINE_DEBUGGABLE 
+#else // ifdef PAPI_DEBUG
+	#define FORCEINLINE_DEBUGGABLE FORCEINLINE
+#endif // elifdef PAPI_DEBUG
 
 #if __cplusplus >= 201703L or (defined(_MSVC_LANG) and _MSVC_LANG >= 201703L)
 	#define NODISCARD [[nodiscard]]
