@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-enum class BufferUsageType
+enum class BufferUsageType : uint8_t
 {
     None = 0,
     StreamDraw, StreamRead, StreamCopy,
@@ -8,7 +8,7 @@ enum class BufferUsageType
     DynamicDraw, DynamicRead, DynamicCopy
 };
 
-enum class ShaderDataType // MW @copypaste: Update below function(s) if enum extended.
+enum class ShaderDataType : uint8_t // MW @copypaste: Update below function(s) if enum extended.
 {
     None = 0,
     Float,
@@ -66,9 +66,9 @@ NODISCARD static uint32_t GetShaderDataTypeSize(ShaderDataType e)
     }
 }
 
-NODISCARD static uint32_t GetShaderDataTypeComponentCount(ShaderDataType e)
+NODISCARD static uint32_t GetShaderDataTypeComponentCount(ShaderDataType type)
 {
-    switch (e)
+    switch (type)
     {
         case ShaderDataType::Float:  return 1;
         case ShaderDataType::Float2: return 2;
@@ -81,6 +81,28 @@ NODISCARD static uint32_t GetShaderDataTypeComponentCount(ShaderDataType e)
         case ShaderDataType::Int3:   return 3;
         case ShaderDataType::Int4:   return 4;
         case ShaderDataType::Bool:   return 1;
+        case ShaderDataType::None:
+        default:
+            PAPI_ASSERT(false && "Unknown shader data type.");
+            return 0;
+    }
+}
+
+NODISCARD static uint32_t ShaderDataTypeToGLBaseType(ShaderDataType type)
+{
+    switch (type)
+    {
+        case ShaderDataType::Float: 
+        case ShaderDataType::Float2:
+        case ShaderDataType::Float3:
+        case ShaderDataType::Float4:
+        case ShaderDataType::Mat3:  
+        case ShaderDataType::Mat4:     return GL_FLOAT;
+        case ShaderDataType::Int: 
+        case ShaderDataType::Int2:
+        case ShaderDataType::Int3:
+        case ShaderDataType::Int4:     return GL_INT;
+        case ShaderDataType::Bool:     return GL_BOOL;
         case ShaderDataType::None:
         default:
             PAPI_ASSERT(false && "Unknown shader data type.");
@@ -123,7 +145,8 @@ public:
     }
 
     NODISCARD FORCEINLINE uint32_t GetStride() const { return m_Stride; }
-    NODISCARD FORCEINLINE const std::vector<BufferElement> GetElements() const { return m_Elements; }
+    NODISCARD FORCEINLINE const std::vector<BufferElement>& GetElements() const { return m_Elements; }
+    NODISCARD FORCEINLINE bool HasElements() const { return m_Elements.size() > 0; }
 
     std::vector<BufferElement>::iterator begin() { return m_Elements.begin(); }
     std::vector<BufferElement>::iterator end() { return m_Elements.end(); }
@@ -167,9 +190,14 @@ private:
 class IndexBuffer
 {
 public:
-    IndexBuffer(uint32_t* indicies, uint32_t count, BufferUsageType type = BufferUsageType::StaticDraw);
+    IndexBuffer(uint32_t* indices, uint32_t count, BufferUsageType type = BufferUsageType::StaticDraw);
     IndexBuffer(const Buffer& buffer, BufferUsageType type = BufferUsageType::StaticDraw);
     ~IndexBuffer();
+    
+    IndexBuffer(IndexBuffer&& other) = delete; // MW @todo: Create other constructors
+    IndexBuffer(const IndexBuffer& other) = delete;
+    IndexBuffer& operator=(const IndexBuffer& other) = delete;
+    IndexBuffer& operator=(IndexBuffer&& other) = delete;
 
     void Bind();
     static void Unbind();
