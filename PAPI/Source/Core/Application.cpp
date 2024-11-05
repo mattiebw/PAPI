@@ -124,7 +124,7 @@ void Application::Run()
 		uint64_t last    = time;
 		time             = SDL_GetPerformanceCounter();
 		double deltaTime = (time - last) / static_cast<double>(SDL_GetPerformanceFrequency());
-		
+
 		m_FPSCounter.AddSample(static_cast<uint16_t>(1.0 / deltaTime));
 
 		static double timeSinceFPSPrinted = 0;

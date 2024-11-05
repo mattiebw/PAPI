@@ -15,7 +15,7 @@ Texture::Texture(const TextureSpecification &spec)
 
 	// Setup texture storage parameters
 	glTextureStorage2D(m_TextureID, 1, GL_RGBA8, m_Spec.Width, m_Spec.Height);
-	
+
 	// Set texture parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLint>(m_Spec.Wrap));
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLint>(m_Spec.Wrap));
@@ -30,7 +30,7 @@ Texture::Texture(std::string_view filename, const TextureSpecification &spec)
 	PAPI_TRACE("Loading texture from file \"{0}\"", filename);
 	stbi_set_flip_vertically_on_load(m_Spec.FlipVertically);
 	uint8_t *data = stbi_load(filename.data(), &m_Spec.Width, &m_Spec.Height, &m_Channels, 4);
-	m_Channels = 4; // Force 4 channels for now
+	m_Channels    = 4; // Force 4 channels for now
 
 	// Error check texture loading
 	if (data == nullptr)
@@ -45,7 +45,7 @@ Texture::Texture(std::string_view filename, const TextureSpecification &spec)
 
 	// Setup texture storage parameters
 	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, m_Spec.Width, m_Spec.Height);
-	
+
 	// Set texture parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLint>(m_Spec.Wrap));
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLint>(m_Spec.Wrap));
