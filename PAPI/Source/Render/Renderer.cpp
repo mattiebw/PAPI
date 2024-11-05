@@ -120,6 +120,11 @@ bool Renderer::InitImGUI()
 		PAPI_ERROR("Failed to initialize ImGUI for OpenGL.");
 		return false;
 	}
+
+	// We'll add our nicer font here.
+	// For now, we're just going to hard-code a content path.
+	auto font = io.Fonts->AddFontFromFileTTF("Content/Fonts/OpenSans-Regular.ttf", 16.0f);
+	io.FontDefault = font;
 	
 	#endif
 

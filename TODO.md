@@ -14,9 +14,10 @@
 - [ ] Layer system - or something so applications can start to do stuff with the "core".
 - [ ] ImGUI for debug UI
 	- [x] Add to project
-	- [ ] Initialise context, etc. 
-	- [ ] Hook up to rendering
-	- [ ] Expose to layers
+	- [x] Initialise context, etc. 
+	- [x] Hook up to rendering
+    - [x] Add custom font.
+	- [ ] Add a nice way for entities and other places to add debugging windows or values.
 - [ ] The "world" (or worlds).
 - [ ] Entities (ecs? or something more traditional but slower).
 	- [ ] Provision for multiplayer sided-ness.
