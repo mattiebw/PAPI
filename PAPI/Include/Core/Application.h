@@ -18,6 +18,7 @@ public:
 
 	void Construct();
 	bool Init();
+	void BindDelegates();
 	void Run();
 	void Shutdown();
 

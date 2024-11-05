@@ -68,10 +68,8 @@ bool Application::Init()
 	return true;
 }
 
-void Application::Run()
+void Application::BindDelegates()
 {
-	m_Running = true;
-
 	m_MainWindow->OnClose.BindLambda([](Window *window)
 	{
 		Get()->m_Running = false;
@@ -91,6 +89,13 @@ void Application::Run()
 
 		return false;
 	});
+}
+
+void Application::Run()
+{
+	m_Running = true;
+
+	BindDelegates();
 
 	uint64_t time = SDL_GetPerformanceCounter();
 	while (m_Running)
@@ -99,7 +104,15 @@ void Application::Run()
 		time             = SDL_GetPerformanceCounter();
 		double deltaTime = (time - last) / static_cast<double>(SDL_GetPerformanceFrequency());
 
-		PAPI_INFO("FPS: {} (frame time: {:.2f}ms)", 1.0 / deltaTime, deltaTime * 1000);
+		static double timeSinceFPSPrinted = 0;
+		if (timeSinceFPSPrinted >= 1)
+		{
+			PAPI_INFO("FPS: {} (frame time: {:.2f}ms)", 1.0 / deltaTime, deltaTime * 1000);
+			timeSinceFPSPrinted = 0;
+		} else
+		{
+			timeSinceFPSPrinted += deltaTime;
+		}
 
 		PreUpdate();
 		PollEvents();
