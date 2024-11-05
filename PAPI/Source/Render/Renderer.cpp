@@ -1,8 +1,12 @@
 ﻿#include "papipch.h"
 #include "Render/Renderer.h"
 
+#include <backends/imgui_impl_opengl3.h>
+#include <backends/imgui_impl_sdl3.h>
+
 #include "Core/Application.h"
 #include "Core/Window.h"
+#include "Core/Input/Input.h"
 #include "Render/Viewport.h"
 
 Viewport *Renderer::s_CurrentViewport = nullptr;
@@ -36,6 +40,8 @@ bool Renderer::Init(Ref<Window> window)
 	if (!InitOpenGL())
 		return false;
 
+	m_ImGUIInitialised = InitImGUI();
+
 	m_Window->OnResize.BindMethod(this, &Renderer::OnWindowResize);
 
 	m_Viewport = CreateRef<Viewport>();
@@ -49,13 +55,16 @@ bool Renderer::InitOpenGL()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8); // MW @todo: Should this be part of the RendererSpec?
 
 	#ifdef PAPI_GL_DEBUG
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 	#endif
 
 	PAPI_ASSERT(m_Window && "Window should be set");
-	m_Context = m_Window->GetContext();
+	m_Context = m_Window->GetGLContext();
 
 	static bool glInitialised = false;
 	if (!glInitialised)
@@ -89,10 +98,49 @@ bool Renderer::InitOpenGL()
 	return true;
 }
 
+bool Renderer::InitImGUI()
+{
+	#ifndef PAPI_NO_IMGUI
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+
+	ImGui::StyleColorsDark();
+	if (!ImGui_ImplSDL3_InitForOpenGL(m_Window->GetHandle(), m_Window->GetGLContext()))
+	{
+		PAPI_ERROR("Failed to initialize ImGUI for SDL3/OpenGL.");
+		return false;
+	}
+	
+	if (!ImGui_ImplOpenGL3_Init("#version 130"))
+	{
+		PAPI_ERROR("Failed to initialize ImGUI for OpenGL.");
+		return false;
+	}
+	
+	#endif
+
+	return true;
+}
+
 bool Renderer::OnWindowResize(Window *window, const glm::ivec2 &size)
 {
 	m_Viewport->SetSize(size);
 	return false;
+}
+
+void Renderer::ShutdownImGUI()
+{
+	#ifndef PAPI_NO_IMGUI
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL3_Shutdown();
+	ImGui::DestroyContext();
+	
+	#endif
 }
 
 void Renderer::Shutdown()
@@ -102,8 +150,11 @@ void Renderer::Shutdown()
 
 	PAPI_TRACE("Shutting down renderer");
 
+	ShutdownImGUI();
+	
 	if (m_Window)
 	{
+		m_Window->DestroyGLContext();
 		m_Window->OnResize.UnbindMethod(this, &Renderer::OnWindowResize);
 		m_Window = nullptr;
 	}
@@ -111,6 +162,13 @@ void Renderer::Shutdown()
 	m_Viewport = nullptr;
 
 	m_Initialised = false;
+}
+
+void Renderer::ProcessSDLEvent(const SDL_Event *e)
+{
+	#ifndef PAPI_NO_IMGUI
+	ImGui_ImplSDL3_ProcessEvent(e);
+	#endif
 }
 
 void Renderer::BeginFrame()
@@ -123,6 +181,31 @@ void Renderer::Render()
 	s_CurrentViewport = m_Viewport.get();
 	m_Viewport->Render();
 	s_CurrentViewport = nullptr;
+	
+	if (m_ImGUIInitialised)
+		RenderImGUI();
+}
+
+void Renderer::RenderImGUI()
+{
+	#ifndef PAPI_NO_IMGUI
+	ImGuiIO& io = ImGui::GetIO();
+	
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplSDL3_NewFrame();
+	ImGui::NewFrame();
+
+	// For now, just a basic demo window.
+	static bool drawDemoWindow = true;
+	if (Input::IsKeyDownThisFrame(PAPI_KEY_I))
+		drawDemoWindow = !drawDemoWindow;
+	if (drawDemoWindow)
+		ImGui::ShowDemoWindow(&drawDemoWindow);
+
+	ImGui::Render();
+	glViewport(0, 0, static_cast<int>(io.DisplaySize.x), static_cast<int>(io.DisplaySize.y));
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	#endif
 }
 
 void Renderer::EndFrame()

@@ -1,4 +1,6 @@
 ﻿#pragma once
+
+#include <SDL3/SDL_events.h>
 #include <SDL3/SDL_video.h>
 
 class Viewport;
@@ -20,6 +22,7 @@ public:
 	bool Init(Ref<Window> window);
 	void Shutdown();
 
+	void ProcessSDLEvent(const SDL_Event* e);
 	void BeginFrame();
 	void Render();
 	void EndFrame();
@@ -36,10 +39,16 @@ public:
 
 private:
 	bool InitOpenGL();
+	bool InitImGUI();
 	bool OnWindowResize(Window *window, const glm::ivec2 &size);
+
+	void RenderImGUI();
+	
+	void ShutdownImGUI();
 
 	RendererSpecification m_Specification;
 	bool                  m_Initialised = false;
+	bool                  m_ImGUIInitialised = false;
 	Ref<Window>           m_Window      = nullptr;
 	Ref<Viewport>         m_Viewport    = nullptr; // For now, we only have one viewport. We could change this to 
 	SDL_GLContext         m_Context     = nullptr; // support multiple viewports, for example, for split-screen games.

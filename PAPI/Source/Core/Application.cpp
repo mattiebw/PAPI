@@ -211,6 +211,8 @@ void Application::PollEvents()
 	SDL_Event e;
 	while (SDL_PollEvent(&e))
 	{
+		m_Renderer->ProcessSDLEvent(&e);
+		
 		switch (e.type)
 		{
 		case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
@@ -309,6 +311,9 @@ void Application::Update()
 
 void Application::Render()
 {
+	if (!m_Renderer || !m_MainWindow || !m_MainWindow->IsValid())
+		return;
+	
 	m_Renderer->BeginFrame();
 	m_Renderer->Render();
 	m_Renderer->EndFrame();

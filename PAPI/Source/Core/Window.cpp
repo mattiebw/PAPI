@@ -51,11 +51,20 @@ Window::~Window()
 		Destroy();
 }
 
-SDL_GLContext Window::GetContext()
+SDL_GLContext Window::GetGLContext()
 {
 	if (m_Context == nullptr)
 		m_Context = SDL_GL_CreateContext(m_Window);
 	return m_Context;
+}
+
+void Window::DestroyGLContext()
+{
+	if (m_Context)
+	{
+		SDL_GL_DestroyContext(m_Context);
+		m_Context = nullptr;
+	}
 }
 
 void Window::Show()

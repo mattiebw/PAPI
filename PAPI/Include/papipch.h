@@ -23,6 +23,11 @@
 // GLAD
 #include <Vendor/glad/gl.h>
 
+// imgui
+#ifndef PAPI_NO_IMGUI
+#include <imgui.h>
+#endif
+
 // Core project includes
 #include <SDL3/SDL_assert.h>
 #include "Core/PAPICore.h"
