@@ -122,9 +122,9 @@ void Application::Run()
 	uint64_t time = SDL_GetPerformanceCounter();
 	while (m_Running)
 	{
-		uint64_t last    = time;
-		time             = SDL_GetPerformanceCounter();
-		m_DeltaTime = (time - last) / static_cast<double>(SDL_GetPerformanceFrequency());
+		uint64_t last = time;
+		time          = SDL_GetPerformanceCounter();
+		m_DeltaTime   = (time - last) / static_cast<double>(SDL_GetPerformanceFrequency());
 
 		m_FPSCounter.AddSample(static_cast<uint16_t>(1.0 / m_DeltaTime));
 
@@ -213,7 +213,7 @@ void Application::PollEvents()
 	while (SDL_PollEvent(&e))
 	{
 		m_Renderer->ProcessSDLEvent(&e);
-		
+
 		switch (e.type)
 		{
 		case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
@@ -309,7 +309,7 @@ void Application::PollEvents()
 void Application::Update()
 {
 	// Tick all of the worlds.
-	for (Ref<World>& world : m_Worlds)
+	for (Ref<World> &world : m_Worlds)
 		world->Tick(m_DeltaTime);
 }
 
@@ -317,7 +317,7 @@ void Application::Render()
 {
 	if (!m_Renderer || !m_MainWindow || !m_MainWindow->IsValid())
 		return;
-	
+
 	m_Renderer->BeginFrame();
 	m_Renderer->Render();
 	m_Renderer->EndFrame();

@@ -5,9 +5,9 @@
 
 void World::Tick(double delta)
 {
-    m_Delta = delta * m_TimeScale;
-    for (Ref<Entity>& entity : m_Entities)
-    {
-        entity->Tick(m_Delta);
-    }
+	m_Delta = delta * m_TimeScale;
+	for (Ref<Entity> &entity : m_Entities)
+	{
+		entity->Tick(m_Delta);
+	}
 }
