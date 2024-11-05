@@ -13,6 +13,27 @@
 
 Application *Application::s_Instance = nullptr;
 
+FPSCounter::FPSCounter()
+{
+	memset(&m_Samples, 0, sizeof(uint16_t) * s_MaxSamples);
+}
+
+void FPSCounter::AddSample(uint16_t fps)
+{
+	m_Samples[m_sampleIndex] = fps;
+	m_sampleIndex            = (m_sampleIndex + 1) % s_MaxSamples;
+	m_Dirty                  = true;
+}
+
+void FPSCounter::RecalculateFPS()
+{
+	int fpsTotal = 0;
+	for (uint16_t m_Sample : m_Samples)
+		fpsTotal += m_Sample;
+	m_FPS   = static_cast<uint16_t>(fpsTotal / s_MaxSamples);
+	m_Dirty = false;
+}
+
 Application::Application(const ApplicationSpecification &spec)
 	: m_Specification(spec)
 {
@@ -103,13 +124,16 @@ void Application::Run()
 		uint64_t last    = time;
 		time             = SDL_GetPerformanceCounter();
 		double deltaTime = (time - last) / static_cast<double>(SDL_GetPerformanceFrequency());
+		
+		m_FPSCounter.AddSample(static_cast<uint16_t>(1.0 / deltaTime));
 
 		static double timeSinceFPSPrinted = 0;
 		if (timeSinceFPSPrinted >= 1)
 		{
-			PAPI_INFO("FPS: {} (frame time: {:.2f}ms)", 1.0 / deltaTime, deltaTime * 1000);
+			PAPI_INFO("FPS: {} (frame time: {:.2f}ms)", m_FPSCounter.GetFPS(), m_FPSCounter.GetAverageFrameTimeMS());
 			timeSinceFPSPrinted = 0;
-		} else
+		}
+		else
 		{
 			timeSinceFPSPrinted += deltaTime;
 		}

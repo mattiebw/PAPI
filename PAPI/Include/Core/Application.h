@@ -9,6 +9,30 @@ struct ApplicationSpecification
 	SemVer      Version = SemVer(1, 0, 0);
 };
 
+class FPSCounter
+{
+public:
+	FPSCounter();
+
+	void                           AddSample(uint16_t fps);
+	NODISCARD FORCEINLINE uint16_t GetFPS()
+	{
+		if (m_Dirty) RecalculateFPS();
+		return m_FPS;
+	};
+	NODISCARD FORCEINLINE double GetAverageFrameTimeMS() { return 1000.0 / GetFPS(); }
+
+private:
+	void RecalculateFPS();
+
+	constexpr static uint16_t s_MaxSamples = 200;
+
+	uint16_t m_Samples[s_MaxSamples];
+	uint8_t  m_sampleIndex = 0;
+	uint16_t m_FPS         = 0;
+	bool     m_Dirty       = true;
+};
+
 class Application
 {
 public:
@@ -46,6 +70,7 @@ protected:
 	ApplicationSpecification m_Specification;
 	Ref<Window>              m_MainWindow;
 	Ref<Renderer>            m_Renderer;
+	FPSCounter               m_FPSCounter;
 	bool                     m_Running     = false;
 	bool                     m_Initialised = false;
 	std::string              m_Error;
