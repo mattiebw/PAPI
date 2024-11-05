@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+class World;
 class Renderer;
 class Window;
 
@@ -53,6 +54,7 @@ public:
 	NODISCARD FORCEINLINE bool             IsRunning() const { return m_Running; }
 	NODISCARD FORCEINLINE bool             IsInitialised() const { return m_Initialised; }
 	NODISCARD FORCEINLINE std::string_view GetError() const { return m_Error; }
+	NODISCARD FORCEINLINE double           GetDeltaTime() const { return m_DeltaTime; }
 
 protected:
 	bool InitSDL();
@@ -70,8 +72,10 @@ protected:
 	ApplicationSpecification m_Specification;
 	Ref<Window>              m_MainWindow;
 	Ref<Renderer>            m_Renderer;
+	std::vector<Ref<World>>  m_Worlds;
 	FPSCounter               m_FPSCounter;
 	bool                     m_Running     = false;
 	bool                     m_Initialised = false;
 	std::string              m_Error;
+	double                   m_DeltaTime = 0;
 };

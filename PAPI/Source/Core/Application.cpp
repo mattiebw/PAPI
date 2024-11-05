@@ -9,6 +9,7 @@
 #include "PAPI.h"
 #include "Core/Input/Input.h"
 #include "Core/Window.h"
+#include "Core/World/World.h"
 #include "Render/Renderer.h"
 
 Application *Application::s_Instance = nullptr;
@@ -123,9 +124,9 @@ void Application::Run()
 	{
 		uint64_t last    = time;
 		time             = SDL_GetPerformanceCounter();
-		double deltaTime = (time - last) / static_cast<double>(SDL_GetPerformanceFrequency());
+		m_DeltaTime = (time - last) / static_cast<double>(SDL_GetPerformanceFrequency());
 
-		m_FPSCounter.AddSample(static_cast<uint16_t>(1.0 / deltaTime));
+		m_FPSCounter.AddSample(static_cast<uint16_t>(1.0 / m_DeltaTime));
 
 		static double timeSinceFPSPrinted = 0;
 		if (timeSinceFPSPrinted >= 1)
@@ -135,7 +136,7 @@ void Application::Run()
 		}
 		else
 		{
-			timeSinceFPSPrinted += deltaTime;
+			timeSinceFPSPrinted += m_DeltaTime;
 		}
 
 		PreUpdate();
@@ -307,6 +308,9 @@ void Application::PollEvents()
 
 void Application::Update()
 {
+	// Tick all of the worlds.
+	for (Ref<World>& world : m_Worlds)
+		world->Tick(m_DeltaTime);
 }
 
 void Application::Render()
