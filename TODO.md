@@ -8,23 +8,39 @@
 	- [x] Buffer classes
 	- [x] Shader class
 	- [x] Texture class
-	- [ ] Framebuffer class
+	- [x] Framebuffer class
 	- [ ] Tilemap/Spritesheet. Generation of atlas from individual texture files?
 		- https://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
-- [ ] Layer system - or something so applications can start to do stuff with the "core".
+    - [ ] Rendering functions
+      - [ ] Draw Quad
+        - [ ] Instancing
+      - [ ] Draw Sprite
+      - [ ] Draw Circle
+      - [ ] Draw Text
+      - [ ] Draw Tilemap
+- [x] Layer system - or something so applications can start to do stuff with the "core".
 - [ ] ImGUI for debug UI
 	- [x] Add to project
 	- [x] Initialise context, etc. 
 	- [x] Hook up to rendering
     - [x] Add custom font.
 	- [ ] Add a nice way for entities and other places to add debugging windows or values.
-- [ ] The "world" (or worlds).
+- [x] The "world" (or worlds).
+- [ ] Networking
+  - [ ] Integrate GNS
+  - [ ] Stream readers and writers for reading messages
+  - [ ] Handshake, check versions?
+- [ ] Steamworks
+  - [ ] Integrate Steamworks into the project
+  - [ ] Initialise the API, start reading data from the client
+  - [ ] Lobbying
+  - [ ] Send data over steam
 - [ ] Entities (ecs? or something more traditional but slower).
-	- [ ] Provision for multiplayer sided-ness.
-- [ ] Renderer
-	- [ ] Draw indexed
-	- [ ] Draw sprite (instanced?)
-	- [ ] Tilemap rendering
+  - [x] Basic reflection - ability to create entity class from a static ID
+    - https://stackoverflow.com/questions/347358/inheriting-constructors
+    - https://stackoverflow.com/questions/4007382/how-to-create-class-objects-dynamically
+  - [ ] Event system
+  - [ ] Provision for multiplayer sided-ness; relevancy.
 - [ ] Basic asset system?
 - [ ] Text rendering
 	- [ ] Add freetype, msdfgen

@@ -3,6 +3,7 @@
 // MW @gotcha: This file should only be included in the PCH, or else the Linux build will fail due to redefinition
 //             fmt overloads at the end of the file.
 
+#include "UUID.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/fmt/ostr.h" // Needed for logging some types
@@ -88,5 +89,18 @@ public:
 	constexpr auto format(const glm::vec3 &vec, Context &ctx) const
 	{
 		return fmt::format_to(ctx.out(), "({}, {}, {})", vec.x, vec.y, vec.z);
+	}
+};
+
+template <>
+class fmt::formatter<UUID>
+{
+public:
+	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
+
+	template <typename Context>
+	constexpr auto format(const UUID &uuid, Context &ctx) const
+	{
+		return fmt::format_to(ctx.out(), "({})", static_cast<uint32_t>(uuid));
 	}
 };

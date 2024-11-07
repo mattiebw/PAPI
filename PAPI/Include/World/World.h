@@ -10,6 +10,9 @@ public:
 	void AddEntity(Ref<Entity> entity)
 	{
 		m_Entities[entity->GetUUID()] = entity;
+		// MW @todo: check if the entity was already in a world.
+		entity->SetWorld(this);
+		entity->AddedToWorld(this);
 	}
 
 	template <typename T, typename... Args>
@@ -20,10 +23,13 @@ public:
 		Ref<Entity> entity = CreateRef<T>(std::forward<Args>(args)...);
 		entity->SetUUID(uuid);
 		entity->SetWorld(this);
+		entity->AddedToWorld(this);
 		m_Entities[uuid] = entity;
 	}
 
 	void UpdateEntityUUID(UUID oldID, UUID newID);
+	void DestroyEntity(UUID id);
+	void DestroyEntity(Entity *entity);
 
 	void Tick(double delta);
 	void Render();
@@ -36,6 +42,7 @@ public:
 		m_TimeScale = timeScale;
 		m_Delta     = m_UnscaledDelta * m_TimeScale;
 	}
+
 
 private:
 	double                                m_TimeScale     = 1.0f;

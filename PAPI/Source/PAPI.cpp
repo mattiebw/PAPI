@@ -4,6 +4,7 @@
 #include <SDL3/SDL_main.h>
 
 #include "Core/Application.h"
+#include "Game/PAPIGameLayer.h"
 
 bool g_ShouldRestart = false;
 
@@ -18,6 +19,7 @@ int main(int argc, char *argv[])
 		Application application({"PAPI", SemVer(1, 0, 0)});
 		if (application.Init())
 		{
+			application.CreateLayer<PAPIGameLayer>();
 			application.Run();
 			application.Shutdown();
 		}

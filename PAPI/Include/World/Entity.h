@@ -2,6 +2,10 @@
 
 class World;
 
+#define ENTITY_CLASS_BODY(typeName) public: using Entity::Entity;\
+    static constexpr uint16_t s_EntityTypeID = crc16(#typeName);\
+    NODISCARD virtual uint16_t GetTypeID() const override { return typeName::s_EntityTypeID; }
+
 class Entity
 {
 public:
@@ -15,6 +19,9 @@ public:
 	Entity(Entity &&other) noexcept            = delete;
 	Entity& operator=(const Entity &other)     = delete;
 	Entity& operator=(Entity &&other) noexcept = delete;
+
+	static Ref<Entity> CreateEntity(uint16_t type, std::string name, const Transform &tf, UUID uuid);
+	static Ref<Entity> CreateEntity(uint16_t type, std::string name, UUID uuid);
 
 	NODISCARD FORCEINLINE const std::string& GetName() const { return m_Name; }
 	NODISCARD FORCEINLINE const glm::vec3&   GetPosition() const { return EntityTransform.Position; }
@@ -31,10 +38,20 @@ public:
 
 	void SetUUID(UUID uuid);
 
+	virtual void SendEvent(uint16_t eventID, Buffer eventData);
+	virtual void ReceiveEntityEvent(uint16_t eventID, Buffer eventData);
+	
+	virtual void AddedToWorld(World *world);
 	virtual void Tick(double delta);
 	virtual void Render();
+	virtual void Destroyed();
 
+	void Destroy();
+	
 	Transform EntityTransform;
+
+	static constexpr uint16_t s_EntityTypeID = crc16("Entity");
+	NODISCARD virtual uint16_t GetTypeID() const { return s_EntityTypeID; };
 	
 private:
 	UUID        m_UUID;

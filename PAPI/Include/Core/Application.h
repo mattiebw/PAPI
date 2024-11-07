@@ -1,5 +1,7 @@
 ﻿#pragma once
+#include "Layer.h"
 
+class Layer;
 class World;
 class Renderer;
 class Window;
@@ -47,6 +49,17 @@ public:
 	void Run();
 	void Shutdown();
 
+	template<typename T>
+	Ref<Layer> CreateLayer()
+	{
+		Ref<Layer> layer = m_Layers.emplace_back(CreateRef<T>());
+		layer->OnAttach();
+		return layer;
+	}
+	
+	void AddLayer(const Ref<Layer> &layer);
+	void RemoveLayer(const Ref<Layer> &layer);
+
 	void ShowError(const char *message, const char *title = "Error");
 
 	NODISCARD static FORCEINLINE Application* Get() { return s_Instance; }
@@ -73,6 +86,7 @@ protected:
 	Ref<Window>              m_MainWindow;
 	Ref<Renderer>            m_Renderer;
 	std::vector<Ref<World>>  m_Worlds;
+	std::vector<Ref<Layer>>  m_Layers;
 	FPSCounter               m_FPSCounter;
 	bool                     m_Running     = false;
 	bool                     m_Initialised = false;

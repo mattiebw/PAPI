@@ -28,3 +28,45 @@ Each application has multiple **World**s, which have multiple **Entity**s. Entit
 each entity type is a subclass and will override the virtual functions such as **Update** and **Render** in the base class.
 
 The world is viewed through a **Viewport**, which contains a reference to a **Camera** and the **Scene** that it is viewing.
+
+### Contributing
+
+#### Creating a new entity
+To create a new entity type, you first need to create a class that publically inherits from Entity. So, in your header:
+```c++
+#pragma once
+
+#include "World/Entity.h"
+
+class Player : public Entity
+{
+};
+```
+
+You also need to define some basic functions, but there's an easy macro for that. Simply add ``ENTITY_CLASS_BODY(EntityName)``
+in your classes body. So we have:
+
+```c++
+#pragma once
+
+#include "World/Entity.h"
+
+class Player : public Entity
+{
+    ENTITY_CLASS_BODY(Player);
+};
+```
+
+Finally, you'll need to register the entity in Entity.cpp for dynamic creation. In Entity::CreateEntity, add an
+ENTITY_TYPE_CASE to the switch statement:
+
+```c++
+switch (type)
+{
+	...
+	ENTITY_TYPE_CASE(Player)
+	default: break;
+}
+```
+
+That's it, the entity should now work and you can override the Update() and Render() functions like normal.

@@ -1,6 +1,8 @@
 ﻿#include "papipch.h"
 #include "World/World.h"
 
+#include <ranges>
+
 #include "World/Entity.h"
 
 void World::UpdateEntityUUID(UUID oldID, UUID newID)
@@ -13,11 +15,30 @@ void World::UpdateEntityUUID(UUID oldID, UUID newID)
 	m_Entities[newID] = entity;
 }
 
+void World::DestroyEntity(UUID id)
+{
+	auto it = m_Entities.find(id);
+	
+	if (it == m_Entities.end())
+	{
+		PAPI_ERROR("Entity with ID {} does not exist", id);
+		return;
+	}
+
+	it->second->Destroyed();
+	m_Entities.erase(it);
+}
+
+void World::DestroyEntity(Entity *entity)
+{
+	DestroyEntity(entity->GetUUID());
+}
+
 void World::Tick(double delta)
 {
 	m_UnscaledDelta = delta;
 	m_Delta = delta * m_TimeScale;
-	for (const auto &[_, entity] : m_Entities)
+	for (const auto &entity : m_Entities | std::views::values)
 	{
 		entity->Tick(m_Delta);
 	}
@@ -25,7 +46,7 @@ void World::Tick(double delta)
 
 void World::Render()
 {
-	for (const auto &[_, entity] : m_Entities)
+	for (const auto &entity : m_Entities | std::views::values)
 	{
 		entity->Render();
 	}

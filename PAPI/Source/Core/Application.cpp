@@ -7,6 +7,7 @@
 #include <SDL3/SDL_timer.h>
 
 #include "PAPI.h"
+#include "Core/Layer.h"
 #include "Core/Input/Input.h"
 #include "Core/Window.h"
 #include "World/World.h"
@@ -167,6 +168,20 @@ void Application::Shutdown()
 	m_Initialised = false;
 }
 
+void Application::AddLayer(const Ref<Layer> &layer)
+{
+	m_Layers.push_back(layer);
+	layer->OnAttach();
+}
+
+void Application::RemoveLayer(const Ref<Layer> &layer)
+{
+	layer->OnDetach();
+	auto it = std::find(m_Layers.begin(), m_Layers.end(), layer);
+	if (it != m_Layers.end())
+		m_Layers.erase(it);
+}
+
 void Application::ShowError(const char *message, const char *title)
 {
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title, message, nullptr);
@@ -308,6 +323,10 @@ void Application::PollEvents()
 
 void Application::Update()
 {
+	// Update our layers
+	for (Ref<Layer> &layer : m_Layers)
+		layer->Update(m_DeltaTime);
+	
 	// Tick all the worlds.
 	for (Ref<World> &world : m_Worlds)
 		world->Tick(m_DeltaTime);
@@ -315,6 +334,10 @@ void Application::Update()
 
 void Application::Render()
 {
+	// Render our layers
+	for (Ref<Layer> &layer : m_Layers)
+		layer->Render(m_DeltaTime);
+	
 	if (!m_Renderer || !m_MainWindow || !m_MainWindow->IsValid())
 		return;
 
