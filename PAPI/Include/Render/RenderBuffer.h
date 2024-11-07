@@ -8,6 +8,37 @@ enum class BufferUsageType : uint8_t
 	DynamicDraw, DynamicRead, DynamicCopy
 };
 
+NODISCARD FORCEINLINE const char* BufferUsageTypeToString(BufferUsageType e)
+{
+	switch (e)
+	{
+		case BufferUsageType::None: return "None";
+		case BufferUsageType::StreamDraw: return "Stream Draw";
+		case BufferUsageType::StreamRead: return "Stream Read";
+		case BufferUsageType::StreamCopy: return "Stream Copy";
+		case BufferUsageType::StaticDraw: return "Static Draw";
+		case BufferUsageType::StaticRead: return "Static Read";
+		case BufferUsageType::StaticCopy: return "Static Copy";
+		case BufferUsageType::DynamicDraw: return "Dynamic Draw";
+		case BufferUsageType::DynamicRead: return "Dynamic Read";
+		case BufferUsageType::DynamicCopy: return "Dynamic Copy";
+		default: return "Unknown";
+	}
+}
+
+template <>
+class fmt::formatter<BufferUsageType>
+{
+public:
+	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
+
+	template <typename Context>
+	constexpr auto format(const BufferUsageType &bufferUsageType, Context &ctx) const
+	{
+		return fmt::format_to(ctx.out(), "{}", BufferUsageTypeToString(bufferUsageType));
+	}
+};
+
 enum class ShaderDataType : uint8_t // MW @copypaste: Update below function(s) if enum extended.
 {
 	None = 0,
@@ -24,25 +55,38 @@ enum class ShaderDataType : uint8_t // MW @copypaste: Update below function(s) i
 	Bool
 };
 
-NODISCARD static const char* ShaderDataTypeToString(ShaderDataType e)
+NODISCARD FORCEINLINE const char* ShaderDataTypeToString(ShaderDataType e)
 {
 	switch (e)
 	{
-	case ShaderDataType::None: return "None";
-	case ShaderDataType::Float: return "Float";
-	case ShaderDataType::Float2: return "Float2";
-	case ShaderDataType::Float3: return "Float3";
-	case ShaderDataType::Float4: return "Float4";
-	case ShaderDataType::Mat3: return "Mat3";
-	case ShaderDataType::Mat4: return "Mat4";
-	case ShaderDataType::Int: return "Int";
-	case ShaderDataType::Int2: return "Int2";
-	case ShaderDataType::Int3: return "Int3";
-	case ShaderDataType::Int4: return "Int4";
-	case ShaderDataType::Bool: return "Bool";
-	default: return "Unknown";
+		case ShaderDataType::None: return "None";
+		case ShaderDataType::Float: return "Float";
+		case ShaderDataType::Float2: return "Float2";
+		case ShaderDataType::Float3: return "Float3";
+		case ShaderDataType::Float4: return "Float4";
+		case ShaderDataType::Mat3: return "Mat3";
+		case ShaderDataType::Mat4: return "Mat4";
+		case ShaderDataType::Int: return "Int";
+		case ShaderDataType::Int2: return "Int2";
+		case ShaderDataType::Int3: return "Int3";
+		case ShaderDataType::Int4: return "Int4";
+		case ShaderDataType::Bool: return "Bool";
+		default: return "Unknown";
 	}
 }
+
+template <>
+class fmt::formatter<ShaderDataType>
+{
+public:
+	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
+
+	template <typename Context>
+	constexpr auto format(const ShaderDataType &shaderDataType, Context &ctx) const
+	{
+		return fmt::format_to(ctx.out(), "{}", ShaderDataTypeToString(shaderDataType));
+	}
+};
 
 NODISCARD static uint32_t GetShaderDataTypeSize(ShaderDataType e)
 {
