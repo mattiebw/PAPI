@@ -35,9 +35,7 @@ public:
 	virtual void Render();
 
 	Transform EntityTransform;
-
-	static constexpr uint32_t s_ID = crc32("hello");
-
+	
 private:
 	UUID        m_UUID;
 	std::string m_Name  = "Entity";
