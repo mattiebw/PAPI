@@ -18,3 +18,13 @@ First, you have to clone the repo. Ensure you do this with the ``recursive`` fla
 Once you have cloned, run **Scripts/GenerateProjectsWindows.bat** (or **GenerateProjectsLinux.sh** if you're on Linux).
 
 Assuming you're on Windows, there will now be a **PAPI.sln** file in the root directory, which you can open in Visual Studio 2022, and build and run like normal.
+
+### Architecture
+
+We have a main **Application** class. This is where the main game loop is, and where the game is updated and rendered.
+We also have a **Window** class, that wraps the SDL window, and a **Input** class, which has Input utility functions.
+
+Each application has multiple **World**s, which have multiple **Entity**s. Entities use a subclass architecture, where 
+each entity type is a subclass and will override the virtual functions such as **Update** and **Render** in the base class.
+
+The world is viewed through a **Viewport**, which contains a reference to a **Camera** and the **Scene** that it is viewing.

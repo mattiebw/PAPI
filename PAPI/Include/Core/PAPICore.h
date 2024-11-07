@@ -123,3 +123,36 @@ struct SemVer
 		return Patch < other.Patch;
 	}
 };
+
+// Generate CRC lookup table
+template <unsigned c, int k = 8>
+struct crcf : crcf<((c & 1) ? 0xedb88320 : 0) ^ (c >> 1), k - 1> {};
+template <unsigned c> struct crcf<c, 0>{enum {value = c};};
+
+#define CRCA(x) CRCB(x) CRCB(x + 128)
+#define CRCB(x) CRCc(x) CRCc(x +  64)
+#define CRCc(x) CRCD(x) CRCD(x +  32)
+#define CRCD(x) CRCE(x) CRCE(x +  16)
+#define CRCE(x) CRCF(x) CRCF(x +   8)
+#define CRCF(x) CRCG(x) CRCG(x +   4)
+#define CRCG(x) CRCH(x) CRCH(x +   2)
+#define CRCH(x) CRCI(x) CRCI(x +   1)
+#define CRCI(x) crcf<x>::value ,
+
+constexpr unsigned crc_table[] = { CRCA(0) }; // Rider doesn't like this, but it compiles fine!
+
+constexpr uint32_t crc32(std::string_view str)
+{
+	uint32_t crc = 0xffffffff;
+	for (auto c : str)
+		crc = (crc >> 8) ^ crc_table[(crc ^ c) & 0xff];
+	return crc ^ 0xffffffff;
+}
+
+constexpr uint16_t crc16(std::string_view str)
+{
+	uint16_t crc = 0xffff;
+	for (auto c : str)
+		crc = (crc >> 8) ^ crc_table[(crc ^ c) & 0xff];
+	return crc ^ 0xffff;
+}

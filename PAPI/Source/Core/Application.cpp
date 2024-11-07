@@ -9,7 +9,7 @@
 #include "PAPI.h"
 #include "Core/Input/Input.h"
 #include "Core/Window.h"
-#include "Core/World/World.h"
+#include "World/World.h"
 #include "Render/Renderer.h"
 
 Application *Application::s_Instance = nullptr;
@@ -308,7 +308,7 @@ void Application::PollEvents()
 
 void Application::Update()
 {
-	// Tick all of the worlds.
+	// Tick all the worlds.
 	for (Ref<World> &world : m_Worlds)
 		world->Tick(m_DeltaTime);
 }

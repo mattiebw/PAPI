@@ -39,6 +39,7 @@ struct Buffer
 		Size       = other.Size;
 		other.Data = nullptr;
 		other.Size = 0;
+		return *this;
 	};
 
 	~Buffer() = default; // The buffer is non-owning, so we don't want to free on deconstruct.
