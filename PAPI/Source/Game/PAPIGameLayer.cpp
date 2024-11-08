@@ -15,6 +15,7 @@ void PAPIGameLayer::OnAttach()
     // Bodging some stuff!
     Application *app = Application::Get();
     Ref<World> world = app->AddWorld();
+    m_World = world.get();
     auto viewport = Application::GetRenderer()->CreateViewport();
     viewport->SetWorld(world);
     auto cam = CreateRef<Camera>();
@@ -41,5 +42,6 @@ void PAPIGameLayer::RenderImGUI(double delta)
 {
     ImGui::Begin("Properties");
     ImGui::DragFloat3("Camera Position", &m_Camera->Transformation.Position.x, 0.1f);
+    ImGui::InputDouble("World Timescale", m_World->GetTimeScaleRef());
     ImGui::End();
 }

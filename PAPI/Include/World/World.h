@@ -37,15 +37,15 @@ public:
 
 	void Clean();
 
-	NODISCARD FORCEINLINE double GetDelta() const { return m_Delta; }
-	NODISCARD FORCEINLINE double GetUnscaledDelta() const { return m_UnscaledDelta; }
-	NODISCARD FORCEINLINE double GetTimeScale() const { return m_TimeScale; }
-	FORCEINLINE void             SetTimeScale(double timeScale)
+	NODISCARD FORCEINLINE double  GetDelta() const { return m_Delta; }
+	NODISCARD FORCEINLINE double  GetUnscaledDelta() const { return m_UnscaledDelta; }
+	NODISCARD FORCEINLINE double  GetTimeScale() const { return m_TimeScale; }
+	NODISCARD FORCEINLINE double* GetTimeScaleRef() { return &m_TimeScale; }
+	FORCEINLINE void              SetTimeScale(double timeScale)
 	{
 		m_TimeScale = timeScale;
 		m_Delta     = m_UnscaledDelta * m_TimeScale;
 	}
-
 
 private:
 	double                                m_TimeScale     = 1.0f;

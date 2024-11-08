@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Core/Layer.h"
 
+class World;
 class Camera;
 
 class PAPIGameLayer : public Layer
@@ -13,5 +14,6 @@ public:
     void RenderImGUI(double delta) override;
 
 private:
+    World* m_World;
     Camera* m_Camera;
 };
