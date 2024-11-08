@@ -1,6 +1,7 @@
 ﻿#include "papipch.h"
 #include "Render/Viewport.h"
 
+#include "Render/Camera.h"
 #include "World/World.h"
 
 void Viewport::Render()
@@ -14,4 +15,18 @@ void Viewport::Render()
 
 	if (m_World)
 		m_World->Render();
+}
+
+void Viewport::SetCamera(const Ref<Camera> &camera)
+{
+	m_Camera = camera;
+	if (m_Camera)
+		m_Camera->Aspect = static_cast<float>(m_Size.x) / static_cast<float>(m_Size.y);
+}
+
+void Viewport::SetSize(const glm::ivec2 &size)
+{
+	if (m_Camera)
+		m_Camera->Aspect = static_cast<float>(size.x) / static_cast<float>(size.y);
+	m_Size = size;
 }

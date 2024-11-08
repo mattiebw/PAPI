@@ -1,6 +1,8 @@
 ﻿#include "papipch.h"
 #include "Render/RenderBuffer.h"
 
+#include "Render/Renderer.h"
+
 uint32_t BufferUsageTypeToGL(BufferUsageType e)
 {
 	switch (e)

@@ -38,6 +38,7 @@ project "PAPI"
 	files { 
 		"PAPI/Include/**.h", "PAPI/Include/**.hpp", 
 		"PAPI/Source/**.cpp", "PAPI/Source/**.c",
+		"PAPI/Content/**",
 		"TODO.md", "README.md",
 	}
 

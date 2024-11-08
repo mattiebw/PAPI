@@ -22,6 +22,7 @@ public:
 		UUID        uuid;
 		Ref<Entity> entity = CreateRef<T>(std::forward<Args>(args)...);
 		entity->SetUUID(uuid);
+		entity->Created();
 		entity->SetWorld(this);
 		entity->AddedToWorld(this);
 		m_Entities[uuid] = entity;
@@ -33,6 +34,8 @@ public:
 
 	void Tick(double delta);
 	void Render();
+
+	void Clean();
 
 	NODISCARD FORCEINLINE double GetDelta() const { return m_Delta; }
 	NODISCARD FORCEINLINE double GetUnscaledDelta() const { return m_UnscaledDelta; }

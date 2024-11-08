@@ -152,6 +152,10 @@ void Application::Shutdown()
 	if (!m_Initialised)
 		return;
 
+	for (const Ref<World>& world : m_Worlds)
+		world->Clean();
+	m_Worlds.clear();
+
 	Input::Shutdown();
 	if (m_Renderer)
 	{
@@ -180,6 +184,20 @@ void Application::RemoveLayer(const Ref<Layer> &layer)
 	auto it = std::find(m_Layers.begin(), m_Layers.end(), layer);
 	if (it != m_Layers.end())
 		m_Layers.erase(it);
+}
+
+Ref<World> Application::AddWorld()
+{
+	return m_Worlds.emplace_back(CreateRef<World>());
+}
+
+void Application::RemoveWorld(const Ref<World> &world)
+{
+	auto it = std::find(m_Worlds.begin(), m_Worlds.end(), world);
+	if (it != m_Worlds.end())
+		m_Worlds.erase(it);
+	else
+		PAPI_ERROR("Attempted to remove a world that has not been added!");
 }
 
 void Application::ShowError(const char *message, const char *title)
@@ -213,6 +231,14 @@ bool Application::InitRenderer()
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Renderer Initialisation Error", m_Error.c_str(), nullptr);
 		return false;
 	}
+
+	m_Renderer->DebugUIRenderCallback.BindLambda([] ()
+	{
+		for (const Ref<Layer>& layer : Get()->m_Layers)
+		{
+			layer->RenderImGUI(Get()->m_DeltaTime);
+		}
+	});
 
 	return true;
 }
@@ -350,4 +376,8 @@ void Application::ShutdownSDL()
 {
 	PAPI_TRACE("Shutting down SDL");
 	SDL_Quit();
+}
+
+void Layer::RenderImGUI(double delta)
+{
 }

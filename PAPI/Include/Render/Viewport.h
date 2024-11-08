@@ -14,21 +14,21 @@ public:
 
 	void Render();
 
-	NODISCARD FORCEINLINE Ref<Camera> GetCamera() const { return m_Camera; }
-	NODISCARD FORCEINLINE Ref<World>  GetWorld() const { return m_World; }
-	NODISCARD FORCEINLINE glm::ivec2  GetOffset() const { return m_Offset; }
-	NODISCARD FORCEINLINE glm::ivec2  GetSize() const { return m_Size; }
-	NODISCARD FORCEINLINE int         GetWidth() const { return m_Size.x; }
-	NODISCARD FORCEINLINE int         GetHeight() const { return m_Size.y; }
+	NODISCARD FORCEINLINE const Ref<Camera>& GetCamera() const { return m_Camera; }
+	NODISCARD FORCEINLINE const Ref<World>&  GetWorld() const { return m_World; }
+	NODISCARD FORCEINLINE glm::ivec2         GetOffset() const { return m_Offset; }
+	NODISCARD FORCEINLINE glm::ivec2         GetSize() const { return m_Size; }
+	NODISCARD FORCEINLINE int                GetWidth() const { return m_Size.x; }
+	NODISCARD FORCEINLINE int                GetHeight() const { return m_Size.y; }
 
 	FORCEINLINE void SetWorld(Ref<World> world) { m_World = world; }
-	FORCEINLINE void SetCamera(Ref<Camera> camera) { m_Camera = camera; }
+	void             SetCamera(const Ref<Camera> &camera);
 	FORCEINLINE void SetOffset(const glm::ivec2 &offset) { m_Offset = offset; }
-	FORCEINLINE void SetSize(const glm::ivec2 &size) { m_Size = size; }
+	void             SetSize(const glm::ivec2 &size);
 	FORCEINLINE void SetOffsetAndSize(const glm::ivec2 &offset, const glm::ivec2 &size)
 	{
 		m_Offset = offset;
-		m_Size   = size;
+		SetSize(size);
 	}
 
 	bool      ShouldClear = true;

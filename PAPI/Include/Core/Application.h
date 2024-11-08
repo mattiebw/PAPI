@@ -49,20 +49,24 @@ public:
 	void Run();
 	void Shutdown();
 
-	template<typename T>
+	template <typename T>
 	Ref<Layer> CreateLayer()
 	{
 		Ref<Layer> layer = m_Layers.emplace_back(CreateRef<T>());
 		layer->OnAttach();
 		return layer;
 	}
-	
+
 	void AddLayer(const Ref<Layer> &layer);
 	void RemoveLayer(const Ref<Layer> &layer);
 
+	Ref<World> AddWorld();
+	void       RemoveWorld(const Ref<World> &world);
+
 	void ShowError(const char *message, const char *title = "Error");
 
-	NODISCARD static FORCEINLINE Application* Get() { return s_Instance; }
+	NODISCARD static FORCEINLINE Application*         Get() { return s_Instance; }
+	NODISCARD static FORCEINLINE const Ref<Renderer>& GetRenderer() { return s_Instance->m_Renderer; }
 
 	NODISCARD FORCEINLINE bool             IsRunning() const { return m_Running; }
 	NODISCARD FORCEINLINE bool             IsInitialised() const { return m_Initialised; }

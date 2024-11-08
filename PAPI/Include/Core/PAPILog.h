@@ -93,6 +93,19 @@ public:
 };
 
 template <>
+class fmt::formatter<glm::vec4>
+{
+public:
+	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
+
+	template <typename Context>
+	constexpr auto format(const glm::vec4 &vec, Context &ctx) const
+	{
+		return fmt::format_to(ctx.out(), "({}, {}, {}, {})", vec.x, vec.y, vec.z, vec.w);
+	}
+};
+
+template <>
 class fmt::formatter<UUID>
 {
 public:

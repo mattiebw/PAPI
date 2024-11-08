@@ -24,8 +24,9 @@ public:
 	Window(const WindowSpecification &spec);
 	~Window();
 
-	NODISCARD SDL_GLContext           GetGLContext();
-	NODISCARD FORCEINLINE SDL_Window* GetHandle() const { return m_Window; }
+	NODISCARD SDL_GLContext                          GetGLContext();
+	NODISCARD FORCEINLINE SDL_Window*                GetHandle() const { return m_Window; }
+	NODISCARD FORCEINLINE const WindowSpecification& GetSpec() const { return m_Specification; }
 
 	void DestroyGLContext();
 

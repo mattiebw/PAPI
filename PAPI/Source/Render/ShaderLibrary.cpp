@@ -46,3 +46,8 @@ bool ShaderLibrary::RemoveShader(std::string_view name)
 	s_Shaders.erase(it);
 	return true;
 }
+
+void ShaderLibrary::Clear()
+{
+	s_Shaders.clear();
+}

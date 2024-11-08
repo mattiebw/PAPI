@@ -68,6 +68,11 @@ void Entity::ReceiveEntityEvent(uint16_t eventID, Buffer eventData)
 {
 }
 
+void Entity::Created()
+{
+	
+}
+
 void Entity::AddedToWorld(World *world)
 {
 	
@@ -75,7 +80,6 @@ void Entity::AddedToWorld(World *world)
 
 void Entity::Tick(double delta)
 {
-	PAPI_INFO("Entity ticking, delta: {}", delta);
 }
 
 void Entity::Render()

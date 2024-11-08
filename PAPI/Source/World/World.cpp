@@ -51,3 +51,8 @@ void World::Render()
 		entity->Render();
 	}
 }
+
+void World::Clean()
+{
+	m_Entities.clear();
+}

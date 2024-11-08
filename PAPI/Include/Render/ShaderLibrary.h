@@ -12,6 +12,7 @@ public:
 	static void                  AddShader(const Ref<Shader> &shader);
 	static void                  AddShader(const Ref<Shader> &shader, const std::string &name);
 	static bool                  RemoveShader(std::string_view name);
+	static void                  Clear();
 
 	NODISCARD FORCEINLINE static bool ShaderExists(std::string_view name)
 	{

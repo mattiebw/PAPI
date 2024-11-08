@@ -40,7 +40,8 @@ public:
 
 	virtual void SendEvent(uint16_t eventID, Buffer eventData);
 	virtual void ReceiveEntityEvent(uint16_t eventID, Buffer eventData);
-	
+
+	virtual void Created();
 	virtual void AddedToWorld(World *world);
 	virtual void Tick(double delta);
 	virtual void Render();
