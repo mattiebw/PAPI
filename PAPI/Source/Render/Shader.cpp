@@ -32,8 +32,22 @@ int32_t Shader::AddStageFromSource(GLenum stage, std::string_view source)
 		glEnableVertexAttribArray(i);
 
 	int32_t     shaderID = glCreateShader(stage);
-	const auto  length   = static_cast<int32_t>(source.length());
+	int32_t     length   = static_cast<int32_t>(source.length());
 	const char *data     = source.data();
+
+	// Check for version, and remove any BOM that can break the shader on Linux.
+	while (length > 0 && *data != '#')
+	{
+		data++;
+		length--;
+	}
+
+	if (length == 0)
+	{
+		PAPI_ERROR("Shader::AddStage of shader \"{0}\" called with invalid source: {1}. The source file did not begin with a #version.", m_Name, source);
+		return -1;
+	}
+
 	glShaderSource(shaderID, 1, &data, &length);
 	glCompileShader(shaderID);
 
