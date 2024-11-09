@@ -62,11 +62,13 @@ public:
 
 	Ref<World> AddWorld();
 	void       RemoveWorld(const Ref<World> &world);
+	Ref<World> GetWorldFromPointer(const World *world);
 
 	void ShowError(const char *message, const char *title = "Error");
 
 	NODISCARD static FORCEINLINE Application*         Get() { return s_Instance; }
 	NODISCARD static FORCEINLINE const Ref<Renderer>& GetRenderer() { return s_Instance->m_Renderer; }
+	NODISCARD static FORCEINLINE uint16_t             GetFPS() { return s_Instance->m_FPSCounter.GetFPS(); };
 
 	NODISCARD FORCEINLINE bool             IsRunning() const { return m_Running; }
 	NODISCARD FORCEINLINE bool             IsInitialised() const { return m_Initialised; }

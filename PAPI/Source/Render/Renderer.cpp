@@ -36,6 +36,11 @@ QuadBatch::QuadBatch(RendererData *data, uint32_t MaxQuads)
 	m_QuadPositions[2] = {0.5f, 0.5f, 0.0f, 1.0f};
 	m_QuadPositions[3] = {-0.5f, 0.5f, 0.0f, 1.0f};
 
+	m_QuadPositions3[0] = {-0.5f, -0.5f, 0.0f};
+	m_QuadPositions3[1] = {0.5f, -0.5f, 0.0f};
+	m_QuadPositions3[2] = {0.5f, 0.5f, 0.0f};
+	m_QuadPositions3[3] = {-0.5f, 0.5f, 0.0f};
+
 	m_VertexArray = CreateRef<VertexArray>();
 
 	m_VertexBuffer = CreateRef<VertexBuffer>(static_cast<uint32_t>(m_MaxVertices * sizeof(QuadVertex)),
@@ -73,6 +78,15 @@ QuadBatch::~QuadBatch()
 	delete[] m_VertexBufferBase;
 }
 
+
+// ----------------
+// MW @todo @perf: Most quad drawing operations do not need a mat4 transform.
+// Most of the time, we're just drawing a quad at a position with a size.
+// This can be done with just a few vec multiplies, not multiple mat4 multiplies.
+// In debug mode, over 80% of the time is spent in the mat4 multiplies.
+// In release mode, it's still most of the frame - but we go up from ~15fps to ~400fps.
+// ----------------
+
 void QuadBatch::DrawQuad(const glm::mat4 &transform, const glm::vec4 &     tintColor, const glm::vec2 &texCoordMin,
                          const glm::vec2 &texCoordMax, const Ref<Texture> &texture)
 {
@@ -80,38 +94,8 @@ void QuadBatch::DrawQuad(const glm::mat4 &transform, const glm::vec4 &     tintC
 		Flush();
 
 	// Find texture
-	int32_t textureIndex = -1;
-	if (texture)
-	{
-		for (int i = 0; i < m_TextureSlotIndex; i++)
-		{
-			if (m_TextureSlots[i] == texture)
-			{
-				textureIndex = i;
-				break;
-			}
-		}
-
-		if (textureIndex == -1)
-		{
-			if (m_TextureSlotIndex >= m_Data->MaxTextureSlots)
-			{
-				Flush();
-				m_TextureSlotIndex = 0;
-				m_TextureSlots[0]  = texture;
-
-				textureIndex = static_cast<int32_t>(m_TextureSlotIndex);
-			}
-			else
-			{
-				textureIndex = static_cast<int32_t>(m_TextureSlotIndex);
-
-				m_TextureSlots[m_TextureSlotIndex] = texture;
-				m_TextureSlotIndex++;
-			}
-		}
-	}
-
+	int32_t textureIndex = FindTexture(texture);
+	
 	for (size_t i = 0; i < 4; i++)
 	{
 		m_VertexBufferPtr->Position = transform * m_QuadPositions[i];
@@ -135,8 +119,25 @@ void QuadBatch::DrawQuad(const glm::mat4 &transform, const glm::vec4 &tintColor)
 void QuadBatch::DrawQuad(const glm::vec3 &centerPosition, const glm::vec2 &size, const glm::vec2 &        texCoordMin,
                          const glm::vec2 &texCoordMax, const glm::vec4 &   tintColor, const Ref<Texture> &texture)
 {
-	glm::mat4 transform = translate(glm::mat4(1.0f), centerPosition) * scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
-	DrawQuad(transform, tintColor, texCoordMin, texCoordMax, texture);
+	if (m_IndicesCount >= m_MaxIndices)
+		Flush();
+
+	int32_t textureIndex = FindTexture(texture);
+
+	glm::vec3 size3 = glm::vec3(size, 1.0f);
+	for (size_t i = 0; i < 4; i++)
+	{
+		m_VertexBufferPtr->Position = centerPosition + m_QuadPositions3[i] * size3;
+		m_VertexBufferPtr->Color    = tintColor;
+		m_VertexBufferPtr->TexCoord = {
+			i == 0 || i == 3 ? texCoordMin.x : texCoordMax.x, i == 0 || i == 1 ? texCoordMin.y : texCoordMax.y
+		};
+		m_VertexBufferPtr->TexIndex = static_cast<float>(textureIndex);
+		m_VertexBufferPtr++;
+	}
+
+	m_IndicesCount += 6;
+	m_Data->Stats.QuadCount++;
 }
 
 void QuadBatch::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4 &tintColor)
@@ -150,7 +151,9 @@ void QuadBatch::Flush()
 		return; // Nothing to draw.
 
 	// First, lets update our vertex buffer with our new data.
-	m_VertexBuffer->SetData(m_VertexBufferBase, static_cast<uint32_t>(reinterpret_cast<uint8_t*>(m_VertexBufferPtr) - reinterpret_cast<uint8_t*>(m_VertexBufferBase)));
+	m_VertexBuffer->SetData(m_VertexBufferBase,
+	                        static_cast<uint32_t>(reinterpret_cast<uint8_t*>(m_VertexBufferPtr) - reinterpret_cast<
+		                        uint8_t*>(m_VertexBufferBase)));
 
 	// Bind our shader and its uniforms.
 	m_Shader->Bind();
@@ -187,6 +190,33 @@ void QuadBatch::Reset()
 	m_IndicesCount     = 0;
 }
 
+int QuadBatch::FindTexture(const Ref<Texture> &texture)
+{
+	if (!texture) return -1;
+
+	for (int i = 0; i < m_TextureSlotIndex; i++)
+	{
+		if (m_TextureSlots[i] == texture)
+		{
+			return i;
+		}
+	}
+
+	if (m_TextureSlotIndex >= m_Data->MaxTextureSlots)
+	{
+		Flush();
+		m_TextureSlotIndex = 0;
+		m_TextureSlots[0]  = texture;
+
+		return static_cast<int32_t>(m_TextureSlotIndex);
+	}
+
+	int index                          = static_cast<int32_t>(m_TextureSlotIndex);
+	m_TextureSlots[m_TextureSlotIndex] = texture;
+	m_TextureSlotIndex++;
+	return index;
+}
+
 void RenderStats::Reset()
 {
 	memset(this, 0, sizeof(RenderStats));
@@ -217,7 +247,7 @@ bool Renderer::Init(Ref<Window> window)
 
 	m_Window->OnResize.BindMethod(this, &Renderer::OnWindowResize);
 
-	m_QuadBatch = CreateRef<QuadBatch>(m_Data);
+	m_QuadBatch = CreateRef<QuadBatch>(m_Data, 50000);
 
 	return true;
 }
@@ -406,6 +436,17 @@ void Renderer::RenderImGUI()
 	ImGui::NewFrame();
 
 	DebugUIRenderCallback.Execute();
+
+	if (Input::IsKeyDownThisFrame(PAPI_KEY_F3))
+		m_DebugUIVisible = !m_DebugUIVisible;
+	if (m_DebugUIVisible)
+	{
+		ImGui::Begin("Renderer Info", &m_DebugUIVisible);
+		ImGui::Text("FPS: %d", Application::GetFPS());
+		ImGui::Text("Draw Calls: %d", m_Data->Stats.DrawCalls);
+		ImGui::Text("Quad Count: %d", m_Data->Stats.QuadCount);
+		ImGui::End();
+	}
 
 	ImGui::Render();
 	glViewport(0, 0, static_cast<int>(io.DisplaySize.x), static_cast<int>(io.DisplaySize.y));

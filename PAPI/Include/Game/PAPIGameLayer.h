@@ -12,8 +12,4 @@ public:
     void Update(double delta) override;
     void Render(double delta) override;
     void RenderImGUI(double delta) override;
-
-private:
-    World* m_World;
-    Camera* m_Camera;
 };

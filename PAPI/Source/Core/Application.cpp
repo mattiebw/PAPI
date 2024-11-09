@@ -152,7 +152,7 @@ void Application::Shutdown()
 	if (!m_Initialised)
 		return;
 
-	for (const Ref<World>& world : m_Worlds)
+	for (const Ref<World> &world : m_Worlds)
 		world->Clean();
 	m_Worlds.clear();
 
@@ -200,6 +200,13 @@ void Application::RemoveWorld(const Ref<World> &world)
 		PAPI_ERROR("Attempted to remove a world that has not been added!");
 }
 
+Ref<World> Application::GetWorldFromPointer(const World *worldPtr)
+{
+	for (Ref<World> &world : m_Worlds)
+		if (world.get() == worldPtr) return world;
+	return nullptr;
+}
+
 void Application::ShowError(const char *message, const char *title)
 {
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title, message, nullptr);
@@ -232,9 +239,9 @@ bool Application::InitRenderer()
 		return false;
 	}
 
-	m_Renderer->DebugUIRenderCallback.BindLambda([] ()
+	m_Renderer->DebugUIRenderCallback.BindLambda([]()
 	{
-		for (const Ref<Layer>& layer : Get()->m_Layers)
+		for (const Ref<Layer> &layer : Get()->m_Layers)
 		{
 			layer->RenderImGUI(Get()->m_DeltaTime);
 		}
@@ -352,7 +359,7 @@ void Application::Update()
 	// Update our layers
 	for (Ref<Layer> &layer : m_Layers)
 		layer->Update(m_DeltaTime);
-	
+
 	// Tick all the worlds.
 	for (Ref<World> &world : m_Worlds)
 		world->Tick(m_DeltaTime);
@@ -363,7 +370,7 @@ void Application::Render()
 	// Render our layers
 	for (Ref<Layer> &layer : m_Layers)
 		layer->Render(m_DeltaTime);
-	
+
 	if (!m_Renderer || !m_MainWindow || !m_MainWindow->IsValid())
 		return;
 

@@ -64,9 +64,12 @@ public:
 	void Reset();
 
 private:
+	int FindTexture(const Ref<Texture> &texture);
+	
 	RendererData *m_Data;
 	uint32_t      m_MaxQuads, m_MaxVertices, m_MaxIndices;
 	glm::vec4     m_QuadPositions[4];
+	glm::vec3     m_QuadPositions3[4];
 
 	uint32_t                  m_IndicesCount = 0;
 	Ref<Shader>               m_Shader;
@@ -146,6 +149,9 @@ private:
 	Ref<Window>                m_Window           = nullptr;
 	std::vector<Ref<Viewport>> m_Viewports;
 	SDL_GLContext              m_Context = nullptr;
+
+	// Debug UI stuff
+	bool m_DebugUIVisible = false;
 
 	static Viewport *s_CurrentViewport;
 };

@@ -2,6 +2,7 @@
 #include "World/Entity.h"
 
 #include "Game/Player.h"
+#include "Game/PulsatingRectangle.h"
 #include "World/World.h"
 
 #define ENTITY_TYPE_CASE(typeName) case typeName::s_EntityTypeID: return CreateRef<typeName>(name, tf, uuid); 
@@ -36,6 +37,7 @@ Ref<Entity> Entity::CreateEntity(uint16_t type, std::string name, const Transfor
 	{
 		ENTITY_TYPE_CASE(Entity)
 		ENTITY_TYPE_CASE(Player)
+		ENTITY_TYPE_CASE(PulsatingRectangle)
 		default: break;
 	}
 

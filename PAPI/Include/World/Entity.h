@@ -48,13 +48,13 @@ public:
 	virtual void Destroyed();
 
 	void Destroy();
-	
+
 	Transform EntityTransform;
 
-	static constexpr uint16_t s_EntityTypeID = crc16("Entity");
+	static constexpr uint16_t  s_EntityTypeID = crc16("Entity");
 	NODISCARD virtual uint16_t GetTypeID() const { return s_EntityTypeID; };
-	
-private:
+
+protected:
 	UUID        m_UUID;
 	std::string m_Name  = "Entity";
 	World *     m_World = nullptr;

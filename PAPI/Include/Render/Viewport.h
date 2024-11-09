@@ -21,7 +21,7 @@ public:
 	NODISCARD FORCEINLINE int                GetWidth() const { return m_Size.x; }
 	NODISCARD FORCEINLINE int                GetHeight() const { return m_Size.y; }
 
-	FORCEINLINE void SetWorld(Ref<World> world) { m_World = world; }
+	FORCEINLINE void SetWorld(const Ref<World> &world) { m_World = world; }
 	void             SetCamera(const Ref<Camera> &camera);
 	FORCEINLINE void SetOffset(const glm::ivec2 &offset) { m_Offset = offset; }
 	void             SetSize(const glm::ivec2 &size);
