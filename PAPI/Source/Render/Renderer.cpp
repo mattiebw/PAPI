@@ -247,7 +247,7 @@ bool Renderer::Init(Ref<Window> window)
 
 	m_Window->OnResize.BindMethod(this, &Renderer::OnWindowResize);
 
-	m_QuadBatch = CreateRef<QuadBatch>(m_Data, 50000);
+	m_QuadBatch = CreateRef<QuadBatch>(m_Data, 20000);
 
 	return true;
 }

@@ -42,8 +42,8 @@ void Player::Tick(double delta)
 		input = normalize(input);
 	EntityTransform.Position += glm::vec3(input * 5.0f * static_cast<float>(delta), 0.0f);
 
-	m_Camera->Transformation.Position.x = EntityTransform.Position.x;
-	m_Camera->Transformation.Position.y = EntityTransform.Position.y;
+	m_Camera->Transformation.Position.x = MathUtil::LerpSmooth(m_Camera->Transformation.Position.x, EntityTransform.Position.x, 0.001f, static_cast<float>(delta));
+	m_Camera->Transformation.Position.y = MathUtil::LerpSmooth(m_Camera->Transformation.Position.y, EntityTransform.Position.y, 0.001f, static_cast<float>(delta));
 }
 
 void Player::Render()

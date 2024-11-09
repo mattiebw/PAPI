@@ -11,10 +11,11 @@
 	- [x] Framebuffer class
 	- [ ] Tilemap/Spritesheet. Generation of atlas from individual texture files?
 		- https://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
-    - [ ] Rendering functions
-      - [ ] Draw Quad
-        - [ ] Instancing
-      - [ ] Draw Sprite
+    - [x] Rendering functions
+      - [x] Draw Quad
+        - [x] Batching
+      - [ ] Draw Animated Sprite
+        - [ ] Animated sprite class/struct
       - [ ] Draw Circle
       - [ ] Draw Text
       - [ ] Draw Tilemap
