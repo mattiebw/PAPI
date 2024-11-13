@@ -47,8 +47,6 @@ void VertexArray::AddVertexBuffer(const Ref<VertexBuffer> &vertexBuffer)
 		case ShaderDataType::Mat3:
 		case ShaderDataType::Mat4:
 			{
-				// MW @todo: Understand this (specifically glVertexAttribDivisor)
-				// I need to learn more about how instanced rendering works!
 				uint8_t count = element.GetComponentCount();
 				for (uint8_t i = 0; i < count; i++)
 				{
@@ -56,7 +54,6 @@ void VertexArray::AddVertexBuffer(const Ref<VertexBuffer> &vertexBuffer)
 					glVertexAttribPointer(m_VertexBufferIndex, count, ShaderDataTypeToGLBaseType(element.Type),
 					                      element.Normalized ? GL_TRUE : GL_FALSE, layout.GetStride(),
 					                      reinterpret_cast<const void*>(element.Offset + (sizeof(float) * count * i)));
-					glVertexAttribDivisor(m_VertexBufferIndex, 1);
 					m_VertexBufferIndex++;
 				}
 			}
@@ -75,6 +72,9 @@ void VertexArray::AddVertexBuffer(const Ref<VertexBuffer> &vertexBuffer)
 			}
 			break;
 		}
+
+		if (element.InstancingDivisor != 0)
+			glVertexAttribDivisor(m_VertexBufferIndex, element.InstancingDivisor);
 	}
 
 	m_VertexBuffers.push_back(vertexBuffer);

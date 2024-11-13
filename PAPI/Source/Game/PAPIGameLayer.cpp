@@ -2,6 +2,8 @@
 #include "Game/PAPIGameLayer.h"
 
 #include "Core/Application.h"
+#include "Core/Input/Input.h"
+#include "Core/Input/Scancode.h"
 #include "Game/Player.h"
 #include "Render/Renderer.h"
 #include "Render/Viewport.h"

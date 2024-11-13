@@ -2,11 +2,14 @@
 
 #include "Entity.h"
 
+class TileMap;
 class Entity;
 
 class World
 {
 public:
+	World();
+	
 	void AddEntity(Ref<Entity> entity)
 	{
 		m_Entities[entity->GetUUID()] = entity;
@@ -48,6 +51,7 @@ public:
 	}
 
 private:
+	Ref<TileMap> m_TileMap;
 	double                                m_TimeScale     = 1.0f;
 	double                                m_Delta         = 0;
 	double                                m_UnscaledDelta = 0;

@@ -11,7 +11,7 @@
 
 void Player::Created()
 {
-	m_Texture = CreateRef<Texture>("Content/jeremy.jpeg");
+	m_Texture = CreateRef<Texture>("Content/Textures/jeremy.jpeg");
 
 	m_Camera                            = CreateRef<Camera>();
 	m_Camera->Transformation.Position.z = 3;
@@ -24,7 +24,7 @@ void Player::AddedToWorld(World *world)
 {
 	m_Viewport->SetWorld(Application::Get()->GetWorldFromPointer(m_World));
 
-	for (int i = 0; i < 30000; i++)
+	for (int i = 0; i < 0; i++)
 		world->AddEntity<PulsatingRectangle>();
 }
 
@@ -44,6 +44,11 @@ void Player::Tick(double delta)
 
 	m_Camera->Transformation.Position.x = MathUtil::LerpSmooth(m_Camera->Transformation.Position.x, EntityTransform.Position.x, 0.001f, static_cast<float>(delta));
 	m_Camera->Transformation.Position.y = MathUtil::LerpSmooth(m_Camera->Transformation.Position.y, EntityTransform.Position.y, 0.001f, static_cast<float>(delta));
+
+	// if (Input::IsKeyDown(PAPI_KEY_Q))
+	// 	m_Camera->Transformation.Rotation.y += delta * 5;
+	// if (Input::IsKeyDown(PAPI_KEY_E))
+	// 	m_Camera->Transformation.Rotation.y -= delta * 5;
 }
 
 void Player::Render()

@@ -162,12 +162,13 @@ struct BufferElement
 	ShaderDataType Type;
 	size_t         Offset;
 	uint32_t       Size;
+	uint32_t       InstancingDivisor;
 	bool           Normalized;
 
 	BufferElement() = default;
 
-	BufferElement(std::string name, ShaderDataType type, size_t offset = 0, bool normalized = false)
-		: Name(std::move(name)), Type(type), Offset(offset), Size(GetShaderDataTypeSize(type)), Normalized(normalized)
+	BufferElement(std::string name, ShaderDataType type, size_t offset = 0, uint32_t instancingDivisor = 0, bool normalized = false)
+		: Name(std::move(name)), Type(type), Offset(offset), Size(GetShaderDataTypeSize(type)), InstancingDivisor(instancingDivisor), Normalized(normalized)
 	{
 	}
 

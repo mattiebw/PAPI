@@ -7,6 +7,7 @@
 #include "Shader.h"
 #include "VertexArray.h"
 
+class TileMapChunk;
 class Texture;
 class BufferLayout;
 class Viewport;
@@ -86,6 +87,17 @@ private:
 	size_t                    m_TextureSlotIndex = 0;
 };
 
+class TilemapRenderer
+{
+public:
+	void Init();
+	
+	void DrawTileMapChunk(const glm::vec3 topLeftPosition, TileMapChunk* chunk);
+
+private:
+	Ref<Shader> m_TilemapShader;
+};
+
 struct RenderStats
 {
 	uint32_t DrawCalls = 0;
@@ -123,7 +135,11 @@ public:
 	Ref<Viewport> CreateViewport();
 	void          RemoveViewport(const Ref<Viewport> &viewport);
 
+	NODISCARD FORCEINLINE const Ref<VertexBuffer>& GetQuadVertexBuffer() { return m_QuadVertexBuffer; }
+	NODISCARD FORCEINLINE const Ref<IndexBuffer>&  GetQuadIndexBuffer() { return m_QuadIndexBuffer; }
+
 	NODISCARD FORCEINLINE const Ref<QuadBatch>& GetQuadRenderer() const { return m_QuadBatch; }
+	NODISCARD FORCEINLINE TilemapRenderer& GetTilemapRenderer() { return m_TilemapRenderer; }
 
 	void SetVSync(bool enabled);
 
@@ -149,11 +165,15 @@ private:
 	RendererSpecification      m_Specification;
 	RendererData *             m_Data;
 	Ref<QuadBatch>             m_QuadBatch;
+	TilemapRenderer            m_TilemapRenderer;
 	bool                       m_Initialised      = false;
 	bool                       m_ImGUIInitialised = false;
 	Ref<Window>                m_Window           = nullptr;
 	std::vector<Ref<Viewport>> m_Viewports;
 	SDL_GLContext              m_Context = nullptr;
+
+	Ref<VertexBuffer> m_QuadVertexBuffer = nullptr;
+	Ref<IndexBuffer> m_QuadIndexBuffer = nullptr;
 
 	// Debug UI stuff
 	bool m_DebugUIVisible = false;

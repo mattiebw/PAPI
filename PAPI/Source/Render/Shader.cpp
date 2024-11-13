@@ -253,9 +253,19 @@ void Shader::SetUniform2f(std::string_view uniformName, float x, float y) const
 	glUniform2f(GetUniformLocation(uniformName), x, y);
 }
 
+void Shader::SetUniform2i(std::string_view uniformName, int x, int y) const
+{
+	glUniform2i(GetUniformLocation(uniformName), x, y);
+}
+
 void Shader::SetUniformVec2(std::string_view uniformName, const glm::vec2 &vec) const
 {
 	glUniform2f(GetUniformLocation(uniformName), vec.x, vec.y);
+}
+
+void Shader::SetUniformIVec2(std::string_view uniformName, const glm::ivec2 &vec) const
+{
+	glUniform2i(GetUniformLocation(uniformName), vec.x, vec.y);
 }
 
 void Shader::SetUniform3f(std::string_view uniformName, float x, float y, float z) const
@@ -263,9 +273,19 @@ void Shader::SetUniform3f(std::string_view uniformName, float x, float y, float 
 	glUniform3f(GetUniformLocation(uniformName), x, y, z);
 }
 
+void Shader::SetUniform3i(std::string_view uniformName, int x, int y, int z) const
+{
+	glUniform3i(GetUniformLocation(uniformName), x, y, z);
+}
+
 void Shader::SetUniformVec3(std::string_view uniformName, const glm::vec3 &vec) const
 {
 	glUniform3f(GetUniformLocation(uniformName), vec.x, vec.y, vec.z);
+}
+
+void Shader::SetUniformIVec3(std::string_view uniformName, const glm::ivec3 &vec) const
+{
+	glUniform3i(GetUniformLocation(uniformName), vec.x, vec.y, vec.z);
 }
 
 void Shader::SetUniform4f(std::string_view uniformName, float x, float y, float z, float w) const

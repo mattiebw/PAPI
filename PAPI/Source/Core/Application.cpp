@@ -377,6 +377,22 @@ void Application::ShutdownSDL()
 	SDL_Quit();
 }
 
+void Layer::OnAttach()
+{
+}
+
+void Layer::OnDetach()
+{
+}
+
+void Layer::Update(double delta)
+{
+}
+
+void Layer::Render(double delta)
+{
+}
+
 void Layer::RenderImGUI(double delta)
 {
 }
