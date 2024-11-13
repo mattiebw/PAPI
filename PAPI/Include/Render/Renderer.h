@@ -35,6 +35,11 @@ struct QuadVertex
 	}
 };
 
+struct TileVertex
+{
+	glm::vec2 Position;
+};
+
 class QuadBatch
 {
 public:

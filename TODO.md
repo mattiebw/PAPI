@@ -11,6 +11,10 @@
 	- [x] Framebuffer class
 	- [ ] Tilemap/Spritesheet. Generation of atlas from individual texture files?
 		- https://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
+        - https://www.reddit.com/r/rust_gamedev/comments/weid4a/how_to_implement_this_2d_tilemaps_rending/
+        - https://www.reddit.com/r/opengl/comments/k86p2s/whats_the_current_state_of_geometry_shaders/
+        - https://github.com/davudk/OpenGL-TileMap-Demos
+        - https://learnopengl.com/Advanced-OpenGL/Instancing
     - [x] Rendering functions
       - [x] Draw Quad
         - [x] Batching

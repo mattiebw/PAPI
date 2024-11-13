@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Layer.h"
+#include "Render/Renderer.h"
 
+class QuadBatch;
 class Layer;
 class World;
 class Renderer;
@@ -66,9 +68,14 @@ public:
 
 	void ShowError(const char *message, const char *title = "Error");
 
-	NODISCARD static FORCEINLINE Application*         Get() { return s_Instance; }
-	NODISCARD static FORCEINLINE const Ref<Renderer>& GetRenderer() { return s_Instance->m_Renderer; }
-	NODISCARD static FORCEINLINE uint16_t             GetFPS() { return s_Instance->m_FPSCounter.GetFPS(); };
+	NODISCARD static FORCEINLINE Application*          Get() { return s_Instance; }
+	NODISCARD static FORCEINLINE const Ref<Renderer>&  GetRenderer() { return s_Instance->m_Renderer; }
+	NODISCARD static FORCEINLINE const Ref<QuadBatch>& GetQuadRenderer()
+	{
+		return s_Instance->m_Renderer->GetQuadRenderer();
+	}
+
+	NODISCARD static FORCEINLINE uint16_t GetFPS() { return s_Instance->m_FPSCounter.GetFPS(); };
 
 	NODISCARD FORCEINLINE bool             IsRunning() const { return m_Running; }
 	NODISCARD FORCEINLINE bool             IsInitialised() const { return m_Initialised; }

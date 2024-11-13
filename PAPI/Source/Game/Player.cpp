@@ -49,6 +49,6 @@ void Player::Tick(double delta)
 void Player::Render()
 {
 	float sine = (glm::sin(m_Time) + 1) / 2;
-	Application::GetRenderer()->GetQuadRenderer()->DrawQuad(EntityTransform.Position, glm::vec2(1.0f),
+	Application::GetQuadRenderer()->DrawQuad(EntityTransform.Position, glm::vec2(1.0f),
 	                                                        glm::vec4(sine, sine, sine, 1.0f), m_Texture);
 }

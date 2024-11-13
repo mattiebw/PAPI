@@ -57,6 +57,7 @@ VertexBuffer::VertexBuffer(const Buffer &buffer, BufferUsageType type)
 
 VertexBuffer::~VertexBuffer()
 {
+	PAPI_INFO("Deleting vertex buffer!");
 	glDeleteBuffers(1, &m_RendererID);
 }
 
@@ -98,6 +99,7 @@ IndexBuffer::IndexBuffer(const Buffer &buffer, BufferUsageType type)
 
 IndexBuffer::~IndexBuffer()
 {
+	PAPI_INFO("Deleting index buffer!");
 	glDeleteBuffers(1, &m_RendererID);
 }
 
