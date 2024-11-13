@@ -90,11 +90,12 @@ private:
 class TilemapRenderer
 {
 public:
-	void Init();
+	void Init(RendererData* data);
 	
-	void DrawTileMapChunk(const glm::vec3 topLeftPosition, TileMapChunk* chunk);
+	void DrawTileMapChunk(const glm::vec3 bottomLeftPosition, TileMapChunk* chunk) const;
 
 private:
+	RendererData* m_Data = nullptr;
 	Ref<Shader> m_TilemapShader;
 };
 
@@ -102,6 +103,7 @@ struct RenderStats
 {
 	uint32_t DrawCalls = 0;
 	uint32_t QuadCount = 0;
+	uint32_t TileCount = 0;
 
 	void Reset();
 };

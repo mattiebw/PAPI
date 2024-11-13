@@ -163,7 +163,7 @@ void QuadBatch::Flush()
 	m_Shader->Bind();
 	if (Viewport *viewport = Renderer::GetCurrentViewport())
 	{
-		m_Shader->SetUniformMatrix4f("u_ViewProjection", viewport->GetCamera()->GetViewProjectionMatrix());
+		m_Shader->SetUniformMatrix4f("u_ViewProjection", viewport->GetCamera()->GetOrthographicViewProjMatrix());
 	}
 	else
 	{
@@ -221,23 +221,24 @@ int QuadBatch::FindTexture(const Ref<Texture> &texture)
 	return index;
 }
 
-void TilemapRenderer::Init()
+void TilemapRenderer::Init(RendererData* data)
 {
+	m_Data = data;
 	m_TilemapShader = ShaderLibrary::CreateShader("Tilemap");
 	m_TilemapShader->AddStageFromFile(GL_VERTEX_SHADER, "Content/Shaders/Tilemap.vert");
 	m_TilemapShader->AddStageFromFile(GL_FRAGMENT_SHADER, "Content/Shaders/Tilemap.frag");
 	m_TilemapShader->LinkProgram();
 }
 
-void TilemapRenderer::DrawTileMapChunk(const glm::vec3 topLeftPosition, TileMapChunk *chunk)
+void TilemapRenderer::DrawTileMapChunk(const glm::vec3 bottomLeftPosition, TileMapChunk *chunk) const
 {
 	// Set up our shader uniforms
 	m_TilemapShader->Bind();
 	if (Viewport *viewport = Renderer::GetCurrentViewport())
-		m_TilemapShader->SetUniformMatrix4f("uViewProjection", viewport->GetCamera()->GetViewProjectionMatrix());
+		m_TilemapShader->SetUniformMatrix4f("uViewProjection", viewport->GetCamera()->GetOrthographicViewProjMatrix());
 	else
 		m_TilemapShader->SetUniformMatrix4f("uViewProjection", glm::mat4(1.0f));
-	m_TilemapShader->SetUniformVec3("uPos", topLeftPosition);
+	m_TilemapShader->SetUniformVec3("uPos", bottomLeftPosition);
 	m_TilemapShader->SetUniformIVec2("uChunkSize", chunk->GetSize());
 	chunk->GetTileMap()->GetTileSet()->GetTexture()->Activate(0); // MW @todo: This is way too long!
 	m_TilemapShader->SetUniform1i("uTexture", 0);
@@ -245,7 +246,9 @@ void TilemapRenderer::DrawTileMapChunk(const glm::vec3 topLeftPosition, TileMapC
 	chunk->UpdateTileData();
 	chunk->GetVertexArray()->Bind();
 	glDrawElementsInstanced(GL_TRIANGLES, chunk->GetVertexArray()->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT,
-	                        nullptr, static_cast<GLsizei>(chunk->GetSize().x * chunk->GetSize().y));
+	                        nullptr, chunk->GetSize().x * chunk->GetSize().y);
+	m_Data->Stats.DrawCalls++;
+	m_Data->Stats.TileCount += chunk->GetSize().x * chunk->GetSize().y;
 }
 
 void RenderStats::Reset()
@@ -293,7 +296,7 @@ bool Renderer::Init(Ref<Window> window)
 	uint32_t quadIndices[6] = { 0, 1, 2, 2, 3, 0 };
 	m_QuadIndexBuffer = CreateRef<IndexBuffer>(quadIndices, 6);
 
-	m_TilemapRenderer.Init();
+	m_TilemapRenderer.Init(m_Data);
 
 	return true;
 }
@@ -491,6 +494,8 @@ void Renderer::RenderImGUI()
 		ImGui::Text("FPS: %d", Application::GetFPS());
 		ImGui::Text("Draw Calls: %d", m_Data->Stats.DrawCalls);
 		ImGui::Text("Quad Count: %d", m_Data->Stats.QuadCount);
+		ImGui::Text("Tile Count: %d", m_Data->Stats.TileCount);
+		ImGui::Text("Total Quad Count: %d", m_Data->Stats.TileCount + m_Data->Stats.QuadCount);
 		ImGui::Checkbox("Should Restart", &g_ShouldRestart);
 		ImGui::End();
 	}

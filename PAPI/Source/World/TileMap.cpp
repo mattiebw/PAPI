@@ -20,6 +20,6 @@ void TileMap::Render()
     {
         // MW @todo: Simple bounds culling
         Application::GetRenderer()->GetTilemapRenderer().DrawTileMapChunk(
-            glm::vec3(chunk.second->GetPosition(), 0.0f), chunk.second.get());
+            glm::vec3(chunk.second->GetPosition(), Z), chunk.second.get());
     }
 }

@@ -24,6 +24,8 @@ public:
 	void UpdateChunkLoading(const std::vector<glm::ivec2>& playerPositions);
 	void Render();
 	
+	float Z = 0;
+	
 protected:
 	// The key in our chunk map is the chunk coordinate.
 	// For example, if the chunk size is 32x32 and the chunk coordinate is (1, 2),

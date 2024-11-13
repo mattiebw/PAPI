@@ -16,9 +16,9 @@ TileMapChunk::TileMapChunk(TileMap *tileMap, glm::ivec2 position, glm::ivec2 siz
 	: m_Position(position), m_Size(size), m_TileMap(tileMap)
 {
 	m_Tiles = new uint32_t[m_Size.x * m_Size.y];
-	m_TileData = new glm::vec2[m_Size.x * m_Size.y * 4];
+	m_TileTexCoords = new glm::vec2[m_Size.x * m_Size.y * 4];
 	memset(m_Tiles, 0, sizeof(uint32_t) * m_Size.x * m_Size.y);
-	memset(m_TileData, 0, sizeof(uint32_t) * m_Size.x * m_Size.y * 4);
+	memset(m_TileTexCoords, 0, sizeof(uint32_t) * m_Size.x * m_Size.y * 4);
 
 	// Our tile data buffer is just a contiguous buffer of vec2s, representing the texture coordinates of the tiles.
 	// 4 vec2s per tile.
@@ -36,7 +36,7 @@ TileMapChunk::TileMapChunk(TileMap *tileMap, glm::ivec2 position, glm::ivec2 siz
 TileMapChunk::~TileMapChunk()
 {
 	delete[] m_Tiles;
-	delete[] m_TileData;
+	delete[] m_TileTexCoords;
 }
 
 void TileMapChunk::SetTile(int x, int y, uint32_t tile)
@@ -53,13 +53,14 @@ void TileMapChunk::UpdateTileData()
 	
 	for (int i = 0; i < m_Size.x * m_Size.y; i++)
 	{
+		int rot = 0;
 		SpriteSheetSprite tile = m_TileMap->GetTileSet()->GetSprite(m_Tiles[i]);
-		m_TileData[i * 4 + 0] = tile.TexCoordsMin;
-		m_TileData[i * 4 + 1] = glm::vec2(tile.TexCoordsMax.x, tile.TexCoordsMin.y);
-		m_TileData[i * 4 + 2] = tile.TexCoordsMax;
-		m_TileData[i * 4 + 3] = glm::vec2(tile.TexCoordsMin.x, tile.TexCoordsMax.y);
+		m_TileTexCoords[i * 4 + ((3 + rot) % 4)] = tile.TexCoordsMin;
+		m_TileTexCoords[i * 4 + ((2 + rot) % 4)] = glm::vec2(tile.TexCoordsMax.x, tile.TexCoordsMin.y);
+		m_TileTexCoords[i * 4 + ((1 + rot) % 4)] = tile.TexCoordsMax;
+		m_TileTexCoords[i * 4 + ((0 + rot) % 4)] = glm::vec2(tile.TexCoordsMin.x, tile.TexCoordsMax.y);
 	}
 
-	m_TileDataBuffer->SetData(m_TileData, static_cast<uint32_t>(m_Size.x * m_Size.y * 4));
+	m_TileDataBuffer->SetData(m_TileTexCoords, static_cast<uint32_t>(m_Size.x * m_Size.y * 4));
 	m_DataDirty = false;
 }
