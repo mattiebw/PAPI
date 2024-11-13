@@ -118,3 +118,15 @@ void Window::SetTitle(std::string_view title)
 	SDL_SetWindowTitle(m_Window, title.data());
 	m_Specification.Title = title;
 }
+
+void Window::SetFullscreen(bool fullscreen)
+{
+	SDL_SetWindowFullscreen(m_Window, fullscreen);
+	m_Specification.Fullscreen = fullscreen;
+}
+
+bool Window::ToggleFullscreen()
+{
+	SetFullscreen(!m_Specification.Fullscreen);
+	return m_Specification.Fullscreen;
+}

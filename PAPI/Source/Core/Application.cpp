@@ -99,16 +99,8 @@ void Application::BindDelegates()
 	});
 	m_MainWindow->OnKeyPressed.BindLambda([](Window *window, Scancode scancode, bool repeat)
 	{
-		if (scancode == PAPI_KEY_ESCAPE)
-			Get()->m_MainWindow->Close();
-		else if (scancode == PAPI_KEY_R && !repeat)
-		{
-			g_ShouldRestart = !g_ShouldRestart;
-			if (g_ShouldRestart)
-				PAPI_INFO("PAPI will restart.");
-			else
-				PAPI_INFO("PAPI will close fully.");
-		}
+		if (scancode == PAPI_KEY_F11)
+			window->ToggleFullscreen();
 
 		return false;
 	});
