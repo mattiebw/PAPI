@@ -41,6 +41,8 @@ void VertexArray::AddVertexBuffer(const Ref<VertexBuffer> &vertexBuffer)
 				glVertexAttribPointer(m_VertexBufferIndex, element.GetComponentCount(),
 				                      ShaderDataTypeToGLBaseType(element.Type), element.Normalized ? GL_TRUE : GL_FALSE,
 				                      layout.GetStride(), reinterpret_cast<const void*>(element.Offset));
+				if (element.InstancingDivisor != 0)
+					glVertexAttribDivisor(m_VertexBufferIndex, element.InstancingDivisor);
 				m_VertexBufferIndex++;
 			}
 			break;
@@ -54,6 +56,8 @@ void VertexArray::AddVertexBuffer(const Ref<VertexBuffer> &vertexBuffer)
 					glVertexAttribPointer(m_VertexBufferIndex, count, ShaderDataTypeToGLBaseType(element.Type),
 					                      element.Normalized ? GL_TRUE : GL_FALSE, layout.GetStride(),
 					                      reinterpret_cast<const void*>(element.Offset + (sizeof(float) * count * i)));
+					if (element.InstancingDivisor != 0)
+						glVertexAttribDivisor(m_VertexBufferIndex, element.InstancingDivisor);
 					m_VertexBufferIndex++;
 				}
 			}
@@ -68,13 +72,12 @@ void VertexArray::AddVertexBuffer(const Ref<VertexBuffer> &vertexBuffer)
 				glVertexAttribIPointer(m_VertexBufferIndex, element.GetComponentCount(),
 				                       ShaderDataTypeToGLBaseType(element.Type), layout.GetStride(),
 				                       reinterpret_cast<const void*>(element.Offset));
+				if (element.InstancingDivisor != 0)
+					glVertexAttribDivisor(m_VertexBufferIndex, element.InstancingDivisor);
 				m_VertexBufferIndex++;
 			}
 			break;
 		}
-
-		if (element.InstancingDivisor != 0)
-			glVertexAttribDivisor(m_VertexBufferIndex, element.InstancingDivisor);
 	}
 
 	m_VertexBuffers.push_back(vertexBuffer);

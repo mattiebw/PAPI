@@ -1,15 +1,15 @@
 ﻿#pragma once
 #include "TileMapChunk.h"
 
-class SpriteSheet;
+#include "TileSet.h"
 
 class TileMap
 {
 public:
-	TileMap(const Ref<SpriteSheet> &tileSet, int chunkWidth = 32, int chunkHeight = 32);
+	TileMap(const Ref<TileSet> &tileSet, int chunkWidth = 32, int chunkHeight = 32);
 
-	void SetTile(int x, int y, uint32_t tile);
-	NODISCARD uint32_t GetTile(int x, int y) const;
+	void SetTile(int x, int y, uint32_t tile, bool canCreateChunk = false);
+	NODISCARD uint32_t GetTile(int x, int y, bool canCreateChunk = true) const;
 
 	NODISCARD FORCEINLINE uint32_t GetChunkWidth() const { return m_ChunkSize.x; };
 	NODISCARD FORCEINLINE uint32_t GetChunkHeight() const { return m_ChunkSize.y; };
@@ -19,7 +19,7 @@ public:
 	NODISCARD TileMapChunk* GetChunk(glm::vec2 index) { return m_Chunks[index].get(); }
 	NODISCARD const TileMapChunk* GetChunk(glm::vec2 index) const { return m_Chunks.at(index).get(); };
 
-	NODISCARD FORCEINLINE const Ref<SpriteSheet>& GetTileSet() const { return m_TileSet; };
+	NODISCARD FORCEINLINE const Ref<TileSet>& GetTileSet() const { return m_TileSet; };
 
 	void UpdateChunkLoading(const std::vector<glm::ivec2>& playerPositions);
 	void Render();
@@ -33,5 +33,5 @@ protected:
 	std::unordered_map<glm::ivec2, Ref<TileMapChunk>> m_Chunks;
 	glm::ivec2 m_ChunkSize;
 	
-	Ref<SpriteSheet> m_TileSet;
+	Ref<TileSet> m_TileSet;
 };

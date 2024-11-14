@@ -137,8 +137,8 @@ public:
 	Ref<Viewport> CreateViewport();
 	void          RemoveViewport(const Ref<Viewport> &viewport);
 
-	NODISCARD FORCEINLINE const Ref<VertexBuffer>& GetQuadVertexBuffer() { return m_QuadVertexBuffer; }
-	NODISCARD FORCEINLINE const Ref<IndexBuffer>&  GetQuadIndexBuffer() { return m_QuadIndexBuffer; }
+	NODISCARD FORCEINLINE const Ref<VertexBuffer>& GetTileQuadVertexBuffer() { return m_TileQuadVertexBuffer; }
+	NODISCARD FORCEINLINE const Ref<IndexBuffer>&  GetTileQuadIndexBuffer() { return m_TileQuadIndexBuffer; }
 
 	NODISCARD FORCEINLINE const Ref<QuadBatch>& GetQuadRenderer() const { return m_QuadBatch; }
 	NODISCARD FORCEINLINE TilemapRenderer& GetTilemapRenderer() { return m_TilemapRenderer; }
@@ -174,8 +174,8 @@ private:
 	std::vector<Ref<Viewport>> m_Viewports;
 	SDL_GLContext              m_Context = nullptr;
 
-	Ref<VertexBuffer> m_QuadVertexBuffer = nullptr;
-	Ref<IndexBuffer> m_QuadIndexBuffer = nullptr;
+	Ref<VertexBuffer> m_TileQuadVertexBuffer = nullptr;
+	Ref<IndexBuffer> m_TileQuadIndexBuffer = nullptr;
 
 	// Debug UI stuff
 	bool m_DebugUIVisible = false;

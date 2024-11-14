@@ -4,9 +4,10 @@ class VertexBuffer;
 class VertexArray;
 class TileMap;
 
-struct TileData
+struct TileShaderData
 {
-	uint16_t spriteIndex;
+	glm::vec2 TopLeftTexCoord;
+	float Rot = 0;
 };
 
 class TileMapChunk
@@ -25,6 +26,7 @@ public:
 	NODISCARD FORCEINLINE TileMap*                GetTileMap() const { return m_TileMap; }
 	NODISCARD FORCEINLINE const Ref<VertexArray>& GetVertexArray() const { return m_VertexArray; }
 
+	NODISCARD FORCEINLINE uint32_t GetTile(int x, int y) const { return m_Tiles[y * m_Size.x + x]; }
 	void SetTile(int x, int y, uint32_t tile);
 
 	void UpdateTileData();
@@ -37,7 +39,7 @@ protected:
 
 	Ref<VertexArray>  m_VertexArray;
 	Ref<VertexBuffer> m_TileDataBuffer;
-	glm::vec2 *       m_TileTexCoords = nullptr;
+	TileShaderData*       m_TileShaderData = nullptr;
 
 	TileMap *m_TileMap;
 };

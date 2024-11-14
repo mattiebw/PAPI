@@ -3,6 +3,7 @@
 
 #include <ranges>
 
+#include "Core/Random.h"
 #include "Game/Player.h"
 #include "Render/SpriteSheet.h"
 #include "Render/Texture.h"
@@ -20,8 +21,19 @@ World::World()
 
 	Ref<SpriteSheet> spritesheet = CreateRef<SpriteSheet>(spritesheetTexture);
 	spritesheet->CreateTilesFromTileSize(16, 16);
-	m_TileMap = CreateRef<TileMap>(spritesheet);
+	Ref<TileSet> tileset = CreateRef<TileSet>(spritesheet);
+	tileset->AddTile({ 0, false }); // Grass
+	tileset->AddTile({ 10, false }); // Flower Grass
+	tileset->AddTile({ 9, false }); // Stone Floor
+	tileset->AddTile({ 8, true }); // Stone
+	m_TileMap = CreateRef<TileMap>(tileset);
 	m_TileMap->Z = -10;
+
+	for (int y = 0; y < 32; y++)
+	{
+		for (int x = 0; x < 32; x++)
+			m_TileMap->SetTile(x, y, Random::Int(0, 4));
+	}
 }
 
 void World::UpdateEntityUUID(UUID oldID, UUID newID)
