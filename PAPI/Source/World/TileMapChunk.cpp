@@ -39,6 +39,11 @@ TileMapChunk::~TileMapChunk()
 	delete[] m_TileShaderData;
 }
 
+TileData & TileMapChunk::GetTileDataForTile(int x, int y) const
+{
+	return m_TileMap->GetTileSet()->GetTile(GetTile(x, y));
+}
+
 void TileMapChunk::SetTile(int x, int y, uint32_t tile)
 {
 	int index = y * m_Size.x + x;

@@ -17,6 +17,7 @@
         - https://learnopengl.com/Advanced-OpenGL/Instancing
         - https://www.youtube.com/watch?v=TOPvFvL_GRY
         - [ ] Generation of atlas from individual texture files?
+        - [ ] Random rotation based of a fast random function (hash world pos?)
     - [x] Rendering functions
       - [x] Draw Quad
         - [x] Batching
@@ -46,6 +47,7 @@
   - [x] Basic reflection - ability to create entity class from a static ID
     - https://stackoverflow.com/questions/347358/inheriting-constructors
     - https://stackoverflow.com/questions/4007382/how-to-create-class-objects-dynamically
+  - [ ] Better collision system
   - [ ] Event system
   - [ ] Provision for multiplayer sided-ness; relevancy.
 - [ ] Basic asset system?

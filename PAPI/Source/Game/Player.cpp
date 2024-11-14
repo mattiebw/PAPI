@@ -24,8 +24,10 @@ void Player::AddedToWorld(World *world)
 {
 	m_Viewport->SetWorld(Application::Get()->GetWorldFromPointer(m_World));
 
-	for (int i = 0; i < 0; i++)
+	for (int i = 0; i < 10; i++)
 		world->AddEntity<PulsatingRectangle>();
+
+	SetPosition(glm::vec3(-1, -1, 0));
 }
 
 void Player::Tick(double delta)
@@ -39,8 +41,17 @@ void Player::Tick(double delta)
 	input.y += Input::IsKeyDown(PAPI_KEY_W) ? 1.0f : 0.0f;
 
 	if (input.x != 0 || input.y != 0)
+	{
 		input = normalize(input);
-	EntityTransform.Position += glm::vec3(input * 5.0f * static_cast<float>(delta), 0.0f);
+		Rect collision(EntityTransform.Position.x - 0.45f, EntityTransform.Position.y - 0.45f, 0.9, 0.9);
+		collision.Position.x += input.x * delta * 5.0f;
+		if (m_World->RectOverlapsAnySolidTile(collision))
+			collision.Position.x = EntityTransform.Position.x - 0.45f;
+		collision.Position.y += input.y * delta * 5.0f;
+		if (m_World->RectOverlapsAnySolidTile(collision))
+			collision.Position.y = EntityTransform.Position.y - 0.45f;
+		EntityTransform.Position = glm::vec3(collision.Position.x + 0.45f, collision.Position.y + 0.45f, EntityTransform.Position.z);
+	}
 
 	m_Camera->Transformation.Position.x = MathUtil::LerpSmooth(m_Camera->Transformation.Position.x, EntityTransform.Position.x, 0.001f, static_cast<float>(delta));
 	m_Camera->Transformation.Position.y = MathUtil::LerpSmooth(m_Camera->Transformation.Position.y, EntityTransform.Position.y, 0.001f, static_cast<float>(delta));

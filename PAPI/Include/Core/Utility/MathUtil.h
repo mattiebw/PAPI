@@ -1,5 +1,33 @@
 ﻿#pragma once
 
+struct Rect
+{
+	glm::vec2 Position;
+	glm::vec2 Size;
+
+	Rect(glm::vec2 position, glm::vec2 size)
+		: Position(position), Size(size)
+	{}
+
+	Rect(float x, float y, float width, float height)
+		: Position(glm::vec2(x, y)), Size(glm::vec2(width, height))
+	{}
+	
+	NODISCARD FORCEINLINE bool OverlapsWith(const Rect& other)
+	{
+		return Position.x < other.Position.x + other.Size.x &&  // Not to the right of the other rectangle
+			   Position.x + Size.x > other.Position.x &&      // Not to the left of the other rectangle
+			   Position.y < other.Position.y + other.Size.y &&  // Not below the other rectangle
+			   Position.y + Size.y > other.Position.y;         // Not above the other rectangle
+	}
+
+	NODISCARD FORCEINLINE bool Contains(const glm::vec2& point)
+	{
+		return Position.x <= point.x && Position.x + Size.x >= point.x
+			&& Position.y <= point.y && Position.y + Size.y >= point.y;
+	}
+};
+
 class MathUtil
 {
 public:

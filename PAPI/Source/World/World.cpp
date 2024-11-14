@@ -93,6 +93,11 @@ void World::Render()
 	}
 }
 
+bool World::RectOverlapsAnySolidTile(const Rect &rect) const
+{
+	return m_TileMap->RectOverlapsSolidTile(rect);
+}
+
 void World::Clean()
 {
 	m_Entities.clear();

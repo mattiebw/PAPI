@@ -13,13 +13,15 @@ public:
 
 	NODISCARD FORCEINLINE uint32_t GetChunkWidth() const { return m_ChunkSize.x; };
 	NODISCARD FORCEINLINE uint32_t GetChunkHeight() const { return m_ChunkSize.y; };
-
+	NODISCARD FORCEINLINE const Ref<TileSet>& GetTileSet() const { return m_TileSet; };
+	
 	NODISCARD FORCEINLINE size_t GetLoadedChunkCount() const { return m_Chunks.size(); };
 
-	NODISCARD TileMapChunk* GetChunk(glm::vec2 index) { return m_Chunks[index].get(); }
-	NODISCARD const TileMapChunk* GetChunk(glm::vec2 index) const { return m_Chunks.at(index).get(); };
+	NODISCARD TileMapChunk* GetChunk(glm::ivec2 index) { return m_Chunks[index].get(); }
+	NODISCARD const TileMapChunk* GetChunk(glm::ivec2 index) const { return m_Chunks.at(index).get(); };
+	NODISCARD TileMapChunk* GetChunkFromTileCoordinate(int x, int y, bool canCreateChunk = true);
 
-	NODISCARD FORCEINLINE const Ref<TileSet>& GetTileSet() const { return m_TileSet; };
+	NODISCARD bool RectOverlapsSolidTile(const Rect& rect);
 
 	void UpdateChunkLoading(const std::vector<glm::ivec2>& playerPositions);
 	void Render();

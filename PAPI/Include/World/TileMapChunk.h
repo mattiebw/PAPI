@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+struct TileData;
 class VertexBuffer;
 class VertexArray;
 class TileMap;
@@ -27,6 +28,7 @@ public:
 	NODISCARD FORCEINLINE const Ref<VertexArray>& GetVertexArray() const { return m_VertexArray; }
 
 	NODISCARD FORCEINLINE uint32_t GetTile(int x, int y) const { return m_Tiles[y * m_Size.x + x]; }
+	NODISCARD TileData& GetTileDataForTile(int x, int y) const;
 	void SetTile(int x, int y, uint32_t tile);
 
 	void UpdateTileData();
@@ -39,7 +41,7 @@ protected:
 
 	Ref<VertexArray>  m_VertexArray;
 	Ref<VertexBuffer> m_TileDataBuffer;
-	TileShaderData*       m_TileShaderData = nullptr;
+	TileShaderData*   m_TileShaderData = nullptr;
 
 	TileMap *m_TileMap;
 };

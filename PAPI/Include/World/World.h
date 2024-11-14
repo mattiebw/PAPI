@@ -38,6 +38,8 @@ public:
 	void Tick(double delta);
 	void Render();
 
+	NODISCARD bool RectOverlapsAnySolidTile(const Rect& rect) const;
+
 	void Clean();
 
 	NODISCARD FORCEINLINE double  GetDelta() const { return m_Delta; }

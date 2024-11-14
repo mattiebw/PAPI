@@ -20,6 +20,7 @@ public:
     TileSet & operator=(TileSet &&other) noexcept = delete;
 
     uint16_t AddTile(const TileData& data);
+    NODISCARD FORCEINLINE TileData& GetTile(uint16_t tileIndex) { return m_Tiles[tileIndex]; }
 
     NODISCARD FORCEINLINE const Ref<SpriteSheet>& GetSpritesheet() const { return m_Spritesheet; }
 
