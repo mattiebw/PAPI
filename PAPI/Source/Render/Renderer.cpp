@@ -284,10 +284,11 @@ bool Renderer::Init(Ref<Window> window)
 	m_QuadBatch = CreateRef<QuadBatch>(m_Data, 20000);
 
 	glm::vec3 quadPositions[4];
+	// MW @hack: Bodged fix for tilemap seams - each quad is very slightly larger than 1x1, to avoid any seams.
 	quadPositions[0] = { 0.0f, 0.0f, 0.0f };
-	quadPositions[1] = { 1.0f, 0.0f, 0.0f };
-	quadPositions[2] = { 1.0f, 1.0f, 0.0f };
-	quadPositions[3] = { 0.0f, 1.0f, 0.0f };
+	quadPositions[1] = { 1.0001f, 0.0f, 0.0f };
+	quadPositions[2] = { 1.0001f, 1.0001f, 0.0f };
+	quadPositions[3] = { 0.0f, 1.0001f, 0.0f };
 	m_QuadVertexBuffer = CreateRef<VertexBuffer>(quadPositions, static_cast<uint32_t>(sizeof(glm::vec3) * 4));
 	m_QuadVertexBuffer->SetLayout(BufferLayout({
 			{"a_Position", ShaderDataType::Float3},
