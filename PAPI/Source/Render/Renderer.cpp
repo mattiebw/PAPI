@@ -48,7 +48,7 @@ QuadBatch::QuadBatch(RendererData *data, uint32_t MaxQuads)
 	m_VertexArray = CreateRef<VertexArray>();
 
 	m_VertexBuffer = CreateRef<VertexBuffer>(static_cast<uint32_t>(m_MaxVertices * sizeof(QuadVertex)),
-	                                         BufferUsageType::DynamicDraw);
+	                                         BufferUsageType::StreamDraw);
 	m_VertexBuffer->SetLayout(QuadVertex::GetLayout());
 	m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 
@@ -81,15 +81,6 @@ QuadBatch::~QuadBatch()
 {
 	delete[] m_VertexBufferBase;
 }
-
-
-// ----------------
-// MW @todo @perf: Most quad drawing operations do not need a mat4 transform.
-// Most of the time, we're just drawing a quad at a position with a size.
-// This can be done with just a few vec multiplies, not multiple mat4 multiplies.
-// In debug mode, over 80% of the time is spent in the mat4 multiplies.
-// In release mode, it's still most of the frame - but we go up from ~15fps to ~400fps.
-// ----------------
 
 void QuadBatch::DrawQuad(const glm::mat4 &transform, const glm::vec4 &     tintColor, const glm::vec2 &texCoordMin,
                          const glm::vec2 &texCoordMax, const Ref<Texture> &texture)

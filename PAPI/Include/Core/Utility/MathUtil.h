@@ -1,19 +1,21 @@
 ﻿#pragma once
 
-struct Rect
+template<typename T = float>
+requires std::is_arithmetic_v<T>
+struct TRect
 {
-	glm::vec2 Position;
-	glm::vec2 Size;
+	glm::vec<2, T> Position;
+	glm::vec<2, T> Size;
 
-	Rect(glm::vec2 position, glm::vec2 size)
+	TRect(glm::vec<2, T> position, glm::vec<2, T> size)
 		: Position(position), Size(size)
 	{}
 
-	Rect(float x, float y, float width, float height)
-		: Position(glm::vec2(x, y)), Size(glm::vec2(width, height))
+	TRect(T x, T y, T width, T height)
+		: Position(glm::vec<2, T>(x, y)), Size(glm::vec<2, T>(width, height))
 	{}
 	
-	NODISCARD FORCEINLINE bool OverlapsWith(const Rect& other)
+	NODISCARD FORCEINLINE bool OverlapsWith(const TRect& other)
 	{
 		return Position.x < other.Position.x + other.Size.x &&  // Not to the right of the other rectangle
 			   Position.x + Size.x > other.Position.x &&      // Not to the left of the other rectangle
@@ -27,6 +29,10 @@ struct Rect
 			&& Position.y <= point.y && Position.y + Size.y >= point.y;
 	}
 };
+
+using FRect = TRect<float>;
+using DRect = TRect<double>;
+using IRect = TRect<int>;
 
 class MathUtil
 {

@@ -38,7 +38,7 @@ public:
 	void Tick(double delta);
 	void Render();
 
-	NODISCARD bool RectOverlapsAnySolidTile(const Rect& rect) const;
+	NODISCARD bool RectOverlapsAnySolidTile(const FRect& rect) const;
 
 	void Clean();
 

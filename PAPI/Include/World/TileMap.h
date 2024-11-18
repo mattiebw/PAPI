@@ -21,7 +21,7 @@ public:
 	NODISCARD const TileMapChunk* GetChunk(glm::ivec2 index) const { return m_Chunks.at(index).get(); };
 	NODISCARD TileMapChunk* GetChunkFromTileCoordinate(int x, int y, bool canCreateChunk = true);
 
-	NODISCARD bool RectOverlapsSolidTile(const Rect& rect);
+	NODISCARD bool RectOverlapsSolidTile(const FRect& rect);
 
 	void UpdateChunkLoading(const std::vector<glm::ivec2>& playerPositions);
 	void Render();

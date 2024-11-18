@@ -24,8 +24,8 @@ World::World()
 	Ref<TileSet> tileset = CreateRef<TileSet>(spritesheet);
 	tileset->AddTile({ 0, false }); // Grass
 	tileset->AddTile({ 10, false }); // Flower Grass
-	tileset->AddTile({ 9, false }); // Stone Floor
-	tileset->AddTile({ 8, true }); // Stone
+	tileset->AddTile({ 9, true }); // Stone
+	tileset->AddTile({ 8, false }); // Stone Floor
 	m_TileMap = CreateRef<TileMap>(tileset);
 	m_TileMap->Z = -10;
 
@@ -93,7 +93,7 @@ void World::Render()
 	}
 }
 
-bool World::RectOverlapsAnySolidTile(const Rect &rect) const
+bool World::RectOverlapsAnySolidTile(const FRect &rect) const
 {
 	return m_TileMap->RectOverlapsSolidTile(rect);
 }

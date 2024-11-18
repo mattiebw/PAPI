@@ -2,6 +2,7 @@
 #include "World/TileMapChunk.h"
 
 #include "Core/Application.h"
+#include "Core/Random.h"
 #include "Render/Renderer.h"
 #include "Render/SpriteSheet.h"
 #include "Render/VertexArray.h"
@@ -21,7 +22,7 @@ TileMapChunk::TileMapChunk(TileMap *tileMap, glm::ivec2 position, glm::ivec2 siz
 	memset(m_TileShaderData, 0, sizeof(TileShaderData) * m_Size.x * m_Size.y);
 
 	// Our tile data buffer is just a contiguous buffer of vec2s, representing the top left texture coordinates of the tiles.
-	m_TileDataBuffer = CreateRef<VertexBuffer>(static_cast<uint32_t>(sizeof(TileShaderData) * m_Size.x * m_Size.y));
+	m_TileDataBuffer = CreateRef<VertexBuffer>(static_cast<uint32_t>(sizeof(TileShaderData) * m_Size.x * m_Size.y), BufferUsageType::DynamicDraw);
 	m_TileDataBuffer->SetLayout(BufferLayout({
 			{"a_TexCoordTopLeft", ShaderDataType::Float2, 0, 1 },
 			{"a_Rot", ShaderDataType::Float, 0, 1 },
@@ -46,9 +47,10 @@ TileData & TileMapChunk::GetTileDataForTile(int x, int y) const
 
 void TileMapChunk::SetTile(int x, int y, uint32_t tile)
 {
-	int index = y * m_Size.x + x;
-	m_Tiles[index] = tile;
-	m_DataDirty = true;
+	int index                   = y * m_Size.x + x;
+	m_Tiles[index]              = tile;
+	m_TileShaderData[index].Rot = static_cast<float>(Random::Int(0, 4));
+	m_DataDirty                 = true;
 }
 
 void TileMapChunk::UpdateTileData()
@@ -60,7 +62,6 @@ void TileMapChunk::UpdateTileData()
 	{
 		SpriteSheetSprite tile = m_TileMap->GetTileSet()->GetSpriteForTile(m_Tiles[i]);
 		m_TileShaderData[i].TopLeftTexCoord = tile.TexCoordsMin;
-		m_TileShaderData[i].Rot = 0;
 	}
 
 	m_TileDataBuffer->SetData(m_TileShaderData, static_cast<uint32_t>(m_Size.x * m_Size.y * sizeof(TileShaderData)));

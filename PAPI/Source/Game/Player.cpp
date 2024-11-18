@@ -43,11 +43,11 @@ void Player::Tick(double delta)
 	if (input.x != 0 || input.y != 0)
 	{
 		input = normalize(input);
-		Rect collision(EntityTransform.Position.x - 0.45f, EntityTransform.Position.y - 0.45f, 0.9, 0.9);
-		collision.Position.x += input.x * delta * 5.0f;
+		FRect collision(EntityTransform.Position.x - 0.45f, EntityTransform.Position.y - 0.45f, 0.9f, 0.9f);
+		collision.Position.x += input.x * static_cast<float>(delta) * 5.0f;
 		if (m_World->RectOverlapsAnySolidTile(collision))
 			collision.Position.x = EntityTransform.Position.x - 0.45f;
-		collision.Position.y += input.y * delta * 5.0f;
+		collision.Position.y += input.y * static_cast<float>(delta) * 5.0f;
 		if (m_World->RectOverlapsAnySolidTile(collision))
 			collision.Position.y = EntityTransform.Position.y - 0.45f;
 		EntityTransform.Position = glm::vec3(collision.Position.x + 0.45f, collision.Position.y + 0.45f, EntityTransform.Position.z);
@@ -55,7 +55,7 @@ void Player::Tick(double delta)
 
 	m_Camera->Transformation.Position.x = MathUtil::LerpSmooth(m_Camera->Transformation.Position.x, EntityTransform.Position.x, 0.001f, static_cast<float>(delta));
 	m_Camera->Transformation.Position.y = MathUtil::LerpSmooth(m_Camera->Transformation.Position.y, EntityTransform.Position.y, 0.001f, static_cast<float>(delta));
-
+	
 	// if (Input::IsKeyDown(PAPI_KEY_Q))
 	// 	m_Camera->Transformation.Rotation.y += delta * 5;
 	// if (Input::IsKeyDown(PAPI_KEY_E))

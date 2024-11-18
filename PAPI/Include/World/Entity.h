@@ -2,6 +2,8 @@
 
 class World;
 
+// This macro is used to define the TypeID of an entity class, and also to inherit constructors.
+// While "typeName::" is redundant, it will cause a compile error if the classname provided is not at least an Entity, so it can help if it was wrong.
 #define ENTITY_CLASS_BODY(typeName) public: using Entity::Entity;\
     static constexpr uint16_t s_EntityTypeID = crc16(#typeName);\
     NODISCARD virtual uint16_t GetTypeID() const override { return typeName::s_EntityTypeID; }

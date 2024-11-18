@@ -73,7 +73,7 @@ TileMapChunk * TileMap::GetChunkFromTileCoordinate(int x, int y, bool canCreateC
         return chunk->second.get();
 }
 
-bool TileMap::RectOverlapsSolidTile(const Rect &rect)
+bool TileMap::RectOverlapsSolidTile(const FRect &rect)
 {
     for (int y = static_cast<int>(std::floor(rect.Position.y)); y < static_cast<int>(std::ceil(rect.Position.y + rect.Size.y)); y++)
     {
