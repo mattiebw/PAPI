@@ -6,8 +6,8 @@ project "msdfgen"
 	cppdialect "C++17"
     staticruntime "On"
 
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+	targetdir ("Build/%{prj.name}/" .. outputdir)
+	objdir ("Build/%{prj.name}/Intermediates/" .. outputdir)
 
 	files
 	{
