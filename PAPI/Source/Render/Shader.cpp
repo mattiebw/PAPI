@@ -44,7 +44,9 @@ int32_t Shader::AddStageFromSource(GLenum stage, std::string_view source)
 
 	if (length == 0)
 	{
-		PAPI_ERROR("Shader::AddStage of shader \"{0}\" called with invalid source: {1}. The source file did not begin with a #version.", m_Name, source);
+		PAPI_ERROR(
+			"Shader::AddStage of shader \"{0}\" called with invalid source: {1}. The source file did not begin with a #version.",
+			m_Name, source);
 		return -1;
 	}
 

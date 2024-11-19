@@ -3,12 +3,12 @@
 class ChunkProvider
 {
 public:
-	ChunkProvider() = default;
-	virtual ~ChunkProvider() = default;
-	ChunkProvider(const ChunkProvider &other)                 = delete;
-	ChunkProvider(ChunkProvider &&other) noexcept             = delete;
-	ChunkProvider & operator=(const ChunkProvider &other)     = delete;
-	ChunkProvider & operator=(ChunkProvider &&other) noexcept = delete;
+	ChunkProvider()                                          = default;
+	virtual ~ChunkProvider()                                 = default;
+	ChunkProvider(const ChunkProvider &other)                = delete;
+	ChunkProvider(ChunkProvider &&other) noexcept            = delete;
+	ChunkProvider& operator=(const ChunkProvider &other)     = delete;
+	ChunkProvider& operator=(ChunkProvider &&other) noexcept = delete;
 
 	virtual uint16_t GetTileAt(int x, int y) const = 0;
 };

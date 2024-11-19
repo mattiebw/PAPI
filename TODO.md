@@ -1,16 +1,17 @@
 # PAPI TODO
+
 - [x] Basic project setup
-	- [x] Add initial libraries
-	- [x] Logging
-	- [x] Windowing
-	- [x] Events/delegates
+    - [x] Add initial libraries
+    - [x] Logging
+    - [x] Windowing
+    - [x] Events/delegates
 - [ ] Rendering Setup
-	- [x] Buffer classes
-	- [x] Shader class
-	- [x] Texture class
-	- [x] Framebuffer class
-	- [ ] Tilemap/Spritesheet.
-		- https://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
+    - [x] Buffer classes
+    - [x] Shader class
+    - [x] Texture class
+    - [x] Framebuffer class
+    - [ ] Tilemap/Spritesheet.
+        - https://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
         - https://www.reddit.com/r/rust_gamedev/comments/weid4a/how_to_implement_this_2d_tilemaps_rending/
         - https://www.reddit.com/r/opengl/comments/k86p2s/whats_the_current_state_of_geometry_shaders/
         - https://github.com/davudk/OpenGL-TileMap-Demos
@@ -19,48 +20,48 @@
         - [ ] Generation of atlas from individual texture files?
         - [ ] Random rotation based of a fast random function (hash world pos?)
     - [x] Rendering functions
-      - [x] Draw Quad
-        - [x] Batching
-      - [ ] Draw Animated Sprite
-        - [ ] Animated sprite class/struct
-      - [ ] Draw Circle
-      - [ ] Draw Text
-      - [ ] Draw Tilemap
+        - [x] Draw Quad
+            - [x] Batching
+        - [ ] Draw Animated Sprite
+            - [ ] Animated sprite class/struct
+        - [ ] Draw Circle
+        - [ ] Draw Text
+        - [ ] Draw Tilemap
 - [x] Layer system - or something so applications can start to do stuff with the "core".
 - [ ] ImGUI for debug UI
-	- [x] Add to project
-	- [x] Initialise context, etc. 
-	- [x] Hook up to rendering
+    - [x] Add to project
+    - [x] Initialise context, etc.
+    - [x] Hook up to rendering
     - [x] Add custom font.
-	- [ ] Add a nice way for entities and other places to add debugging windows or values.
+    - [ ] Add a nice way for entities and other places to add debugging windows or values.
 - [x] The "world" (or worlds).
 - [ ] Networking
-  - [ ] Integrate GNS
-  - [ ] Stream readers and writers for reading messages
-  - [ ] Handshake, check versions?
+    - [ ] Integrate GNS
+    - [ ] Stream readers and writers for reading messages
+    - [ ] Handshake, check versions?
 - [ ] Steamworks
-  - [ ] Integrate Steamworks into the project
-  - [ ] Initialise the API, start reading data from the client
-  - [ ] Lobbying
-  - [ ] Send data over steam
+    - [ ] Integrate Steamworks into the project
+    - [ ] Initialise the API, start reading data from the client
+    - [ ] Lobbying
+    - [ ] Send data over steam
 - [ ] Entities (ecs? or something more traditional but slower).
-  - [x] Basic reflection - ability to create entity class from a static ID
-    - https://stackoverflow.com/questions/347358/inheriting-constructors
-    - https://stackoverflow.com/questions/4007382/how-to-create-class-objects-dynamically
-  - [ ] Better collision system
-  - [ ] Event system
-  - [ ] Provision for multiplayer sided-ness; relevancy.
+    - [x] Basic reflection - ability to create entity class from a static ID
+        - https://stackoverflow.com/questions/347358/inheriting-constructors
+        - https://stackoverflow.com/questions/4007382/how-to-create-class-objects-dynamically
+    - [ ] Better collision system
+    - [ ] Event system
+    - [ ] Provision for multiplayer sided-ness; relevancy.
 - [ ] Basic asset system?
 - [ ] Text rendering
-	- [ ] Add freetype, msdfgen
-	- [ ] MSDF atlas generation
-	- [ ] Cache atlases 
-	- [ ] Shader
-	- [ ] Rendering functions
+    - [ ] Add freetype, msdfgen
+    - [ ] MSDF atlas generation
+    - [ ] Cache atlases
+    - [ ] Shader
+    - [ ] Rendering functions
 - [ ] Audio system
-	- [ ] Add FMOD
-	- [ ] Work out how to use it
+    - [ ] Add FMOD
+    - [ ] Work out how to use it
 - [ ] Level generation
-	- [ ] Add FastNoiseLite
+    - [ ] Add FastNoiseLite
 - [ ] Do we want to do physics? Physics itself isn't insanely hard, but it would be hard to integrate with multiplayer.
-	- https://gamedev.stackexchange.com/questions/6645/lag-compensation-with-networked-2d-games 
+    - https://gamedev.stackexchange.com/questions/6645/lag-compensation-with-networked-2d-games 

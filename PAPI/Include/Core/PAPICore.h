@@ -126,8 +126,15 @@ struct SemVer
 
 // Generate CRC lookup table
 template <unsigned c, int k = 8>
-struct crcf : crcf<((c & 1) ? 0xedb88320 : 0) ^ (c >> 1), k - 1> {};
-template <unsigned c> struct crcf<c, 0>{enum {value = c};};
+struct crcf : crcf<((c & 1) ? 0xedb88320 : 0) ^ (c >> 1), k - 1>
+{
+};
+
+template <unsigned c>
+struct crcf<c, 0>
+{
+	enum { value = c };
+};
 
 #define CRCA(x) CRCB(x) CRCB(x + 128)
 #define CRCB(x) CRCc(x) CRCc(x +  64)
@@ -139,7 +146,7 @@ template <unsigned c> struct crcf<c, 0>{enum {value = c};};
 #define CRCH(x) CRCI(x) CRCI(x +   1)
 #define CRCI(x) crcf<x>::value ,
 
-constexpr unsigned crc_table[] = { CRCA(0) }; // Rider doesn't like this, but it compiles fine!
+constexpr unsigned crc_table[] = {CRCA(0)}; // Rider doesn't like this, but it compiles fine!
 
 constexpr uint32_t crc32(std::string_view str)
 {
@@ -157,15 +164,18 @@ constexpr uint16_t crc16(std::string_view str)
 	return crc ^ 0xffff;
 }
 
-namespace std {
+namespace std
+{
 	template <>
-	struct hash<glm::ivec2> {
-		std::size_t operator()(const glm::ivec2& v) const {
+	struct hash<glm::ivec2>
+	{
+		std::size_t operator()(const glm::ivec2 &v) const
+		{
 			// Combine the two integers (x, y) into a single hash value.
 			// Use a prime number multiplier for better distribution.
 			size_t h1 = std::hash<int>{}(v.x);
 			size_t h2 = std::hash<int>{}(v.y);
-			return h1 ^ (h2 << 1);  // Combine the two hash values
+			return h1 ^ (h2 << 1); // Combine the two hash values
 		}
 	};
 }

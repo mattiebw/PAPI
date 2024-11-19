@@ -6,7 +6,7 @@ struct UUID
 {
 	UUID();
 	UUID(uint64_t uuid);
-	UUID(const UUID& other) = default;
+	UUID(const UUID &other) = default;
 
 	operator uint64_t() const { return m_UUID; }
 
@@ -14,15 +14,17 @@ private:
 	uint64_t m_UUID;
 };
 
-namespace std {
-	template <typename T> struct hash;
+namespace std
+{
+	template <typename T>
+	struct hash;
 
-	template<>
+	template <>
 	struct hash<UUID>
 	{
-		std::size_t operator()(const UUID& uuid) const noexcept
+		std::size_t operator()(const UUID &uuid) const noexcept
 		{
-			return (uint64_t)uuid;
+			return uuid;
 		}
 	};
 }

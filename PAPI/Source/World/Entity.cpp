@@ -5,7 +5,7 @@
 #include "Game/PulsatingRectangle.h"
 #include "World/World.h"
 
-#define ENTITY_TYPE_CASE(typeName) case typeName::s_EntityTypeID: return CreateRef<typeName>(name, tf, uuid); 
+#define ENTITY_TYPE_CASE(typeName) case typeName::s_EntityTypeID: return CreateRef<typeName>(name, tf, uuid);
 
 Entity::Entity()
 {
@@ -35,10 +35,10 @@ Ref<Entity> Entity::CreateEntity(uint16_t type, std::string name, const Transfor
 	// MW @copypaste: Every entity that can be created dynamically needs an entry here.
 	switch (type)
 	{
-		ENTITY_TYPE_CASE(Entity)
-		ENTITY_TYPE_CASE(Player)
-		ENTITY_TYPE_CASE(PulsatingRectangle)
-		default: break;
+	ENTITY_TYPE_CASE(Entity)
+	ENTITY_TYPE_CASE(Player)
+	ENTITY_TYPE_CASE(PulsatingRectangle)
+	default: break;
 	}
 
 	PAPI_ERROR("Tried to create entity with missing type ID {}", type);
@@ -72,12 +72,10 @@ void Entity::ReceiveEntityEvent(uint16_t eventID, Buffer eventData)
 
 void Entity::Created()
 {
-	
 }
 
 void Entity::AddedToWorld(World *world)
 {
-	
 }
 
 void Entity::Tick(double delta)
@@ -86,12 +84,10 @@ void Entity::Tick(double delta)
 
 void Entity::Render()
 {
-	
 }
 
 void Entity::Destroyed()
 {
-	
 }
 
 void Entity::Destroy()

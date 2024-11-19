@@ -12,17 +12,16 @@
 
 void PAPIGameLayer::OnAttach()
 {
-    PAPI_INFO("Initialising PAPI game!");
+	PAPI_INFO("Initialising PAPI game!");
 
-    // Bodging some stuff!
-    Application *app = Application::Get();
-    Ref<World> world = app->AddWorld();
-    world->AddEntity<Player>("Player");
+	// Bodging some stuff!
+	Application *app   = Application::Get();
+	Ref<World>   world = app->AddWorld();
+	world->AddEntity<Player>("Player");
 }
 
 void PAPIGameLayer::OnDetach()
 {
-    
 }
 
 void PAPIGameLayer::Update(double delta)

@@ -12,17 +12,17 @@ NODISCARD FORCEINLINE const char* BufferUsageTypeToString(BufferUsageType e)
 {
 	switch (e)
 	{
-		case BufferUsageType::None: return "None";
-		case BufferUsageType::StreamDraw: return "Stream Draw";
-		case BufferUsageType::StreamRead: return "Stream Read";
-		case BufferUsageType::StreamCopy: return "Stream Copy";
-		case BufferUsageType::StaticDraw: return "Static Draw";
-		case BufferUsageType::StaticRead: return "Static Read";
-		case BufferUsageType::StaticCopy: return "Static Copy";
-		case BufferUsageType::DynamicDraw: return "Dynamic Draw";
-		case BufferUsageType::DynamicRead: return "Dynamic Read";
-		case BufferUsageType::DynamicCopy: return "Dynamic Copy";
-		default: return "Unknown";
+	case BufferUsageType::None: return "None";
+	case BufferUsageType::StreamDraw: return "Stream Draw";
+	case BufferUsageType::StreamRead: return "Stream Read";
+	case BufferUsageType::StreamCopy: return "Stream Copy";
+	case BufferUsageType::StaticDraw: return "Static Draw";
+	case BufferUsageType::StaticRead: return "Static Read";
+	case BufferUsageType::StaticCopy: return "Static Copy";
+	case BufferUsageType::DynamicDraw: return "Dynamic Draw";
+	case BufferUsageType::DynamicRead: return "Dynamic Read";
+	case BufferUsageType::DynamicCopy: return "Dynamic Copy";
+	default: return "Unknown";
 	}
 }
 
@@ -59,19 +59,19 @@ NODISCARD FORCEINLINE const char* ShaderDataTypeToString(ShaderDataType e)
 {
 	switch (e)
 	{
-		case ShaderDataType::None: return "None";
-		case ShaderDataType::Float: return "Float";
-		case ShaderDataType::Float2: return "Float2";
-		case ShaderDataType::Float3: return "Float3";
-		case ShaderDataType::Float4: return "Float4";
-		case ShaderDataType::Mat3: return "Mat3";
-		case ShaderDataType::Mat4: return "Mat4";
-		case ShaderDataType::Int: return "Int";
-		case ShaderDataType::Int2: return "Int2";
-		case ShaderDataType::Int3: return "Int3";
-		case ShaderDataType::Int4: return "Int4";
-		case ShaderDataType::Bool: return "Bool";
-		default: return "Unknown";
+	case ShaderDataType::None: return "None";
+	case ShaderDataType::Float: return "Float";
+	case ShaderDataType::Float2: return "Float2";
+	case ShaderDataType::Float3: return "Float3";
+	case ShaderDataType::Float4: return "Float4";
+	case ShaderDataType::Mat3: return "Mat3";
+	case ShaderDataType::Mat4: return "Mat4";
+	case ShaderDataType::Int: return "Int";
+	case ShaderDataType::Int2: return "Int2";
+	case ShaderDataType::Int3: return "Int3";
+	case ShaderDataType::Int4: return "Int4";
+	case ShaderDataType::Bool: return "Bool";
+	default: return "Unknown";
 	}
 }
 
@@ -167,8 +167,10 @@ struct BufferElement
 
 	BufferElement() = default;
 
-	BufferElement(std::string name, ShaderDataType type, size_t offset = 0, uint32_t instancingDivisor = 0, bool normalized = false)
-		: Name(std::move(name)), Type(type), Offset(offset), Size(GetShaderDataTypeSize(type)), InstancingDivisor(instancingDivisor), Normalized(normalized)
+	BufferElement(std::string name, ShaderDataType type, size_t offset = 0, uint32_t instancingDivisor = 0,
+	              bool        normalized                               = false)
+		: Name(std::move(name)), Type(type), Offset(offset), Size(GetShaderDataTypeSize(type)),
+		  InstancingDivisor(instancingDivisor), Normalized(normalized)
 	{
 	}
 

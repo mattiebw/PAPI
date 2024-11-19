@@ -6,18 +6,18 @@ struct VertexOutput
     vec2 TexCoord;
 };
 
-layout(location = 0) in VertexOutput Input;
-layout(location = 2) in flat int v_TexIndex;
+layout (location = 0) in VertexOutput Input;
+layout (location = 2) in flat int v_TexIndex;
 
 layout (binding = 0) uniform sampler2D u_Textures[32];
 
-layout(location = 0) out vec4 o_Color;
+layout (location = 0) out vec4 o_Color;
 
 void main()
 {
     vec4 texColor = Input.Color;
 
-    switch(int(v_TexIndex))
+    switch (int(v_TexIndex))
     {
         case  0: texColor *= texture(u_Textures[ 0], Input.TexCoord); break;
         case  1: texColor *= texture(u_Textures[ 1], Input.TexCoord); break;
@@ -52,9 +52,8 @@ void main()
         case 30: texColor *= texture(u_Textures[30], Input.TexCoord); break;
         case 31: texColor *= texture(u_Textures[31], Input.TexCoord); break;
     }
-    
-    if (texColor.a == 0.0)
-        discard;
-    
+
+    if (texColor.a == 0.0) discard;
+
     o_Color = texColor;
 }

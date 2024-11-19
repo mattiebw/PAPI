@@ -9,7 +9,7 @@ class World
 {
 public:
 	World();
-	
+
 	void AddEntity(Ref<Entity> entity)
 	{
 		m_Entities[entity->GetUUID()] = entity;
@@ -38,7 +38,7 @@ public:
 	void Tick(double delta);
 	void Render();
 
-	NODISCARD bool RectOverlapsAnySolidTile(const FRect& rect) const;
+	NODISCARD bool RectOverlapsAnySolidTile(const FRect &rect) const;
 
 	void Clean();
 
@@ -53,7 +53,7 @@ public:
 	}
 
 private:
-	Ref<TileMap> m_TileMap;
+	Ref<TileMap>                          m_TileMap;
 	double                                m_TimeScale     = 1.0f;
 	double                                m_Delta         = 0;
 	double                                m_UnscaledDelta = 0;

@@ -12,5 +12,5 @@ public:
 
 private:
 	glm::vec3 m_Color;
-	float m_Time = 0;
+	float     m_Time = 0;
 };

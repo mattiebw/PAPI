@@ -90,7 +90,7 @@ void QuadBatch::DrawQuad(const glm::mat4 &transform, const glm::vec4 &     tintC
 
 	// Find texture
 	int32_t textureIndex = FindTexture(texture);
-	
+
 	for (size_t i = 0; i < 4; i++)
 	{
 		m_VertexBufferPtr->Position = transform * m_QuadPositions[i];
@@ -212,9 +212,9 @@ int QuadBatch::FindTexture(const Ref<Texture> &texture)
 	return index;
 }
 
-void TilemapRenderer::Init(RendererData* data)
+void TilemapRenderer::Init(RendererData *data)
 {
-	m_Data = data;
+	m_Data          = data;
 	m_TilemapShader = ShaderLibrary::CreateShader("Tilemap");
 	m_TilemapShader->AddStageFromFile(GL_VERTEX_SHADER, "Content/Shaders/Tilemap.vert");
 	m_TilemapShader->AddStageFromFile(GL_FRAGMENT_SHADER, "Content/Shaders/Tilemap.frag");
@@ -235,7 +235,8 @@ void TilemapRenderer::DrawTileMapChunk(const glm::vec3 bottomLeftPosition, TileM
 	m_TilemapShader->SetUniform1i("uTexture", 0);
 	m_TilemapShader->SetUniform2f("uTileSize",
 	                              16.0f / chunk->GetTileMap()->GetTileSet()->GetSpritesheet()->GetTexture()->GetWidth(),
-	                              16.0f / chunk->GetTileMap()->GetTileSet()->GetSpritesheet()->GetTexture()->GetHeight());
+	                              16.0f / chunk->GetTileMap()->GetTileSet()->GetSpritesheet()->GetTexture()->
+	                                             GetHeight());
 	// MW @todo @hack: This is hardcoded!	
 
 	chunk->UpdateTileData();
@@ -280,17 +281,17 @@ bool Renderer::Init(Ref<Window> window)
 
 	glm::vec3 quadPositions[4];
 	// MW @hack: Bodged fix for tilemap seams - each quad is very slightly larger than 1x1, to avoid any seams.
-	quadPositions[0] = { 0.0f, 0.0f, 0.0f };
-	quadPositions[1] = { 1.0001f, 0.0f, 0.0f };
-	quadPositions[2] = { 1.0001f, 1.0001f, 0.0f };
-	quadPositions[3] = { 0.0f, 1.0001f, 0.0f };
+	quadPositions[0]       = {0.0f, 0.0f, 0.0f};
+	quadPositions[1]       = {1.0001f, 0.0f, 0.0f};
+	quadPositions[2]       = {1.0001f, 1.0001f, 0.0f};
+	quadPositions[3]       = {0.0f, 1.0001f, 0.0f};
 	m_TileQuadVertexBuffer = CreateRef<VertexBuffer>(quadPositions, static_cast<uint32_t>(sizeof(glm::vec3) * 4));
 	m_TileQuadVertexBuffer->SetLayout(BufferLayout({
-			{"a_Position", ShaderDataType::Float3},
+		{"a_Position", ShaderDataType::Float3},
 	}));
 
-	uint32_t quadIndices[6] = { 0, 1, 2, 2, 3, 0 };
-	m_TileQuadIndexBuffer = CreateRef<IndexBuffer>(quadIndices, 6);
+	uint32_t quadIndices[6] = {0, 1, 2, 2, 3, 0};
+	m_TileQuadIndexBuffer   = CreateRef<IndexBuffer>(quadIndices, 6);
 
 	m_TilemapRenderer.Init(m_Data);
 

@@ -50,12 +50,17 @@ void Player::Tick(double delta)
 		collision.Position.y += input.y * static_cast<float>(delta) * 5.0f;
 		if (m_World->RectOverlapsAnySolidTile(collision))
 			collision.Position.y = EntityTransform.Position.y - 0.45f;
-		EntityTransform.Position = glm::vec3(collision.Position.x + 0.45f, collision.Position.y + 0.45f, EntityTransform.Position.z);
+		EntityTransform.Position = glm::vec3(collision.Position.x + 0.45f, collision.Position.y + 0.45f,
+		                                     EntityTransform.Position.z);
 	}
 
-	m_Camera->Transformation.Position.x = MathUtil::LerpSmooth(m_Camera->Transformation.Position.x, EntityTransform.Position.x, 0.001f, static_cast<float>(delta));
-	m_Camera->Transformation.Position.y = MathUtil::LerpSmooth(m_Camera->Transformation.Position.y, EntityTransform.Position.y, 0.001f, static_cast<float>(delta));
-	
+	m_Camera->Transformation.Position.x = MathUtil::LerpSmooth(m_Camera->Transformation.Position.x,
+	                                                           EntityTransform.Position.x, 0.001f,
+	                                                           static_cast<float>(delta));
+	m_Camera->Transformation.Position.y = MathUtil::LerpSmooth(m_Camera->Transformation.Position.y,
+	                                                           EntityTransform.Position.y, 0.001f,
+	                                                           static_cast<float>(delta));
+
 	// if (Input::IsKeyDown(PAPI_KEY_Q))
 	// 	m_Camera->Transformation.Rotation.y += delta * 5;
 	// if (Input::IsKeyDown(PAPI_KEY_E))
@@ -66,5 +71,5 @@ void Player::Render()
 {
 	float sine = (glm::sin(m_Time) + 1) / 2;
 	Application::GetQuadRenderer()->DrawQuad(EntityTransform.Position, glm::vec2(1.0f),
-	                                                        glm::vec4(sine, sine, sine, 1.0f), m_Texture);
+	                                         glm::vec4(sine, sine, sine, 1.0f), m_Texture);
 }

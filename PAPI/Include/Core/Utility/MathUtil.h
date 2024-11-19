@@ -24,7 +24,7 @@ struct TRect
 			Position.y < other.Position.y + other.Size.y &&    // Not below the other rectangle
 			Position.y + Size.y > other.Position.y;            // Not above the other rectangle
 	}
-	
+
 	NODISCARD FORCEINLINE bool OverlapsWith(T x, T y, T width, T height)
 	{
 		return Position.x < x + width && // Not to the right of the other rectangle

@@ -11,7 +11,7 @@ public:
 	float     Aspect         = 0;
 
 	// MW @todo: Cache these matrices?
-	
+
 	NODISCARD FORCEINLINE glm::mat4 GetViewMatrix() const
 	{
 		return inverse(

@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 	{
 		PAPI_INFO("Welcome to PAPI, papi");
 
-		Application application({ .AppName = "PAPI", .Version = SemVer(1, 0, 0) });
+		Application application({.AppName = "PAPI", .Version = SemVer(1, 0, 0)});
 		if (application.Init())
 		{
 			application.CreateLayer<PAPIGameLayer>();

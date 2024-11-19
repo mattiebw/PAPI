@@ -22,11 +22,11 @@ World::World()
 	Ref<SpriteSheet> spritesheet = CreateRef<SpriteSheet>(spritesheetTexture);
 	spritesheet->CreateTilesFromTileSize(16, 16);
 	Ref<TileSet> tileset = CreateRef<TileSet>(spritesheet);
-	tileset->AddTile({ 0, false }); // Grass
-	tileset->AddTile({ 10, false }); // Flower Grass
-	tileset->AddTile({ 9, true }); // Stone
-	tileset->AddTile({ 8, false }); // Stone Floor
-	m_TileMap = CreateRef<TileMap>(tileset);
+	tileset->AddTile({0, false});  // Grass
+	tileset->AddTile({10, false}); // Flower Grass
+	tileset->AddTile({9, true});   // Stone
+	tileset->AddTile({8, false});  // Stone Floor
+	m_TileMap    = CreateRef<TileMap>(tileset);
 	m_TileMap->Z = -10;
 
 	for (int y = 0; y < 32; y++)

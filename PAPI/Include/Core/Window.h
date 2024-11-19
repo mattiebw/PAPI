@@ -14,7 +14,7 @@ struct WindowSpecification
 	glm::ivec2 Size         = {800, 600}, MinSize = {0, 0}, MaxSize = {0, 0};
 	glm::ivec2 OriginalSize = Size;
 	bool       Centered     = true;
-	bool Fullscreen = false;
+	bool       Fullscreen   = false;
 
 	bool Resizable = true;
 };
@@ -43,8 +43,8 @@ public:
 	void                              SetTitle(std::string_view title);
 	NODISCARD FORCEINLINE std::string GetTitle() const { return m_Specification.Title; }
 
-	void SetFullscreen(bool fullscreen);
-	bool ToggleFullscreen();
+	void                       SetFullscreen(bool fullscreen);
+	bool                       ToggleFullscreen();
 	NODISCARD FORCEINLINE bool IsFullscreen() { return m_Specification.Fullscreen; };
 
 	CascadingMulticastDelegate<false, Window*, const glm::ivec2&>                  OnResize;

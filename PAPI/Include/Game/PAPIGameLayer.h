@@ -7,9 +7,9 @@ class Camera;
 class PAPIGameLayer : public Layer
 {
 public:
-    void OnAttach() override;
-    void OnDetach() override;
-    void Update(double delta) override;
-    void Render(double delta) override;
-    void RenderImGUI(double delta) override;
+	void OnAttach() override;
+	void OnDetach() override;
+	void Update(double delta) override;
+	void Render(double delta) override;
+	void RenderImGUI(double delta) override;
 };

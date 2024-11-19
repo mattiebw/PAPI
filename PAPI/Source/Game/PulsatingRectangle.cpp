@@ -20,5 +20,6 @@ void PulsatingRectangle::Tick(double delta)
 void PulsatingRectangle::Render()
 {
 	float sine = glm::sin(m_Time * 5);
-	Application::GetRenderer()->GetQuadRenderer()->DrawQuad(GetPosition(), glm::vec2(1.0f + sine, 1.0f), glm::vec4(m_Color, 1.0f));
+	Application::GetRenderer()->GetQuadRenderer()->DrawQuad(GetPosition(), glm::vec2(1.0f + sine, 1.0f),
+	                                                        glm::vec4(m_Color, 1.0f));
 }

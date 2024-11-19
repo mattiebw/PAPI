@@ -71,7 +71,7 @@ public:
 
 private:
 	int FindTexture(const Ref<Texture> &texture);
-	
+
 	RendererData *m_Data;
 	uint32_t      m_MaxQuads, m_MaxVertices, m_MaxIndices;
 	glm::vec4     m_QuadPositions[4];
@@ -90,13 +90,13 @@ private:
 class TilemapRenderer
 {
 public:
-	void Init(RendererData* data);
-	
-	void DrawTileMapChunk(const glm::vec3 bottomLeftPosition, TileMapChunk* chunk) const;
+	void Init(RendererData *data);
+
+	void DrawTileMapChunk(glm::vec3 bottomLeftPosition, TileMapChunk *chunk) const;
 
 private:
-	RendererData* m_Data = nullptr;
-	Ref<Shader> m_TilemapShader;
+	RendererData *m_Data = nullptr;
+	Ref<Shader>   m_TilemapShader;
 };
 
 struct RenderStats
@@ -141,7 +141,7 @@ public:
 	NODISCARD FORCEINLINE const Ref<IndexBuffer>&  GetTileQuadIndexBuffer() { return m_TileQuadIndexBuffer; }
 
 	NODISCARD FORCEINLINE const Ref<QuadBatch>& GetQuadRenderer() const { return m_QuadBatch; }
-	NODISCARD FORCEINLINE TilemapRenderer& GetTilemapRenderer() { return m_TilemapRenderer; }
+	NODISCARD FORCEINLINE TilemapRenderer&      GetTilemapRenderer() { return m_TilemapRenderer; }
 
 	void SetVSync(bool enabled);
 
@@ -175,7 +175,7 @@ private:
 	SDL_GLContext              m_Context = nullptr;
 
 	Ref<VertexBuffer> m_TileQuadVertexBuffer = nullptr;
-	Ref<IndexBuffer> m_TileQuadIndexBuffer = nullptr;
+	Ref<IndexBuffer>  m_TileQuadIndexBuffer  = nullptr;
 
 	// Debug UI stuff
 	bool m_DebugUIVisible = false;

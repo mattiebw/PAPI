@@ -31,7 +31,7 @@ public:
 	}
 
 private:
-	static std::mt19937 s_RandomEngine;
+	static std::mt19937                          s_RandomEngine;
 	static std::uniform_real_distribution<float> s_Distribution;
-	static std::uniform_int_distribution<int> s_IntDistribution;
+	static std::uniform_int_distribution<int>    s_IntDistribution;
 };
