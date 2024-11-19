@@ -7,3 +7,9 @@
 [submodule "PAPI/Vendor/stb"]
 	path = PAPI/Vendor/stb
 	url = https://github.com/nothings/stb.git
+[submodule "PAPI/Vendor/msdf-atlas-gen"]
+	path = PAPI/Vendor/msdf-atlas-gen
+	url = https://github.com/Chlumsky/msdf-atlas-gen.git
+[submodule "PAPI/Vendor/freetype"]
+	path = PAPI/Vendor/freetype
+	url = https://github.com/freetype/freetype.git
