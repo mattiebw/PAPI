@@ -8,6 +8,7 @@
 #include "Render/Renderer.h"
 #include "Render/Viewport.h"
 #include "Render/Camera.h"
+#include "World/TileSets.h"
 #include "World/World.h"
 
 void PAPIGameLayer::OnAttach()
@@ -15,6 +16,7 @@ void PAPIGameLayer::OnAttach()
 	PAPI_INFO("Initialising PAPI game!");
 
 	// Bodging some stuff!
+	TileSets::Init();
 	Application *app   = Application::Get();
 	Ref<World>   world = app->AddWorld();
 	world->AddEntity<Player>("Player");

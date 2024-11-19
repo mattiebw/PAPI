@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include "TileSets.h"
+#include "Core/Random.h"
 
 class ChunkProvider
 {
@@ -19,4 +21,9 @@ class NullChunkProvider : public ChunkProvider
 	{
 		return 0;
 	}
+};
+
+class DefaultChunkProvider : public ChunkProvider
+{
+	uint16_t GetTileAt(int x, int y) const override;
 };

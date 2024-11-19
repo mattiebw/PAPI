@@ -8,6 +8,7 @@
 
 #include "PAPI.h"
 #include "Core/Layer.h"
+#include "Core/Random.h"
 #include "Core/Input/Input.h"
 #include "Core/Window.h"
 #include "World/World.h"
@@ -87,6 +88,8 @@ bool Application::Init()
 	}
 
 	Input::Init();
+
+	Random::Init();
 
 	return true;
 }
