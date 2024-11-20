@@ -136,5 +136,6 @@ filter "platforms:Win64"
 	architecture "x64"
 
 filter "platforms:Linux"
+	buildoptions { "-static-libstdc++" }
 	system "linux"
 	architecture "x64"
