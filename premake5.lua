@@ -19,6 +19,10 @@ include "PAPI/Vendor/imgui.lua"
 include "PAPI/Vendor/msdf-atlas-gen.lua"
 group ""
 
+group "Tools"
+include "Tools"
+group ""
+
 project "PAPI"
 	cppdialect "C++20"
 	kind "ConsoleApp"
