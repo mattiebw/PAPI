@@ -1,12 +1,12 @@
 ﻿using System.Text.Json;
 using CppAst;
-using Microsoft.Win32.SafeHandles;
 
 namespace PAPIPreprocessor;
 
 static class Program
 {
     private static Dictionary<string, DateTime> _cachedLastWriteTimes = new();
+    private static CppParserOptions _options = new();
     
     static void Main(string[] args)
     {
@@ -23,12 +23,28 @@ static class Program
         var dir = args[0];
         Console.WriteLine(dir);
         dir = Path.GetFullPath(dir);
-        Console.WriteLine($"Looking for header files in {dir}");
-        var files = Directory.GetFiles(dir, "*.h", SearchOption.AllDirectories);
+        
+        _options.IncludeFolders.AddRange(new []
+        {
+            $"{dir}/PAPI/Include/",
+            $"{dir}/PAPI/Vendor/spdlog/include/",
+            $"{dir}/PAPI/Vendor/SDL/include/",
+            $"{dir}/PAPI/Vendor/imgui/",
+            $"{dir}/PAPI/Vendor/msdf-atlas-gen/msdf-atlas-gen/",
+            $"{dir}/PAPI/Vendor/msdf-atlas-gen/msdfgen/",
+            $"{dir}/PAPI/Vendor/glm/Include/",
+            $"{dir}/PAPI/Vendor/stb/",
+        });
+        
+        _options.Defines.AddRange(args[1].Split(';'));
+
+        _options.AdditionalArguments.Add("-std=c++20");
+        
+        Console.WriteLine($"Looking for header files in {dir}/PAPI/Include/");
+        var files = Directory.GetFiles($"{dir}/PAPI/Include/", "*.h", SearchOption.AllDirectories);
         foreach (var file in files)
         {
-            Console.WriteLine($"Processing {file}");
-            
+            ProcessHeader(file);
             var lastWriteTime = File.GetLastWriteTime(file);
             if (_cachedLastWriteTimes.TryGetValue(file, out var cachedLastWriteTime))
             {
@@ -36,7 +52,6 @@ static class Program
                     continue;
             }
             
-            ProcessHeader(file);
         }
         
         SaveLastWriteTimes();
@@ -74,7 +89,24 @@ static class Program
         if (path.ToLower().Contains("vendor")) // Lets not process vendor headers!
             return;
         
-        var headerData = CppParser.ParseFile(path);
-        Console.WriteLine($"We have some header data: {headerData}");
+        Console.WriteLine($"Processing {path}");
+        
+        var headerData = CppParser.Parse(File.ReadAllText(path), _options);
+        if (headerData.HasErrors)
+        {
+            Console.WriteLine("Error!");
+            foreach (var error in headerData.Diagnostics.Messages)
+            {
+                Console.WriteLine(error);
+            }
+        }
+        foreach (var cppClass in headerData.Classes)
+        {
+            Console.WriteLine($"Found class: {cppClass.Name}");
+            if (cppClass.BaseTypes.Any(type => type.Type.FullName == "Entity"))
+            {
+                Console.WriteLine($"Found entity class {cppClass.Name}");
+            }
+        }
     }
 }
