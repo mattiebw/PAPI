@@ -43,6 +43,10 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: recursive
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '4.8.x'
     - name: Create Project Files
       run: |
        cd Scripts
