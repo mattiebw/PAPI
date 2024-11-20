@@ -430,3 +430,4 @@ PAPI/imgui.ini
 *.vcxproj
 *.vcxproj.filters
 Makefile
+*.csproj

@@ -2,7 +2,7 @@ project "PAPIPreprocessor"
     kind "ConsoleApp"
     language "C#"
     dotnetframework "4.8"
-    csversion "latest"
+    csversion "12"
 
     location "PAPIPreprocessor"
     
