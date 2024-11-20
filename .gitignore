@@ -427,7 +427,7 @@ Build
 PAPI/imgui.ini
 !Scripts/Bin/luasocket.dll
 *.sln
+!Tools/PAPIPreprocessor/*.sln
 *.vcxproj
 *.vcxproj.filters
 Makefile
-*.csproj

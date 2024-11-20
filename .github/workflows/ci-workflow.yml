@@ -19,10 +19,7 @@ jobs:
       with:
         submodules: recursive
     - name: Create Project Files
-      run: |
-       cd Scripts
-       Invoke-Expression ".\GenerateProjectsWindows.bat"
-       cd ..
+      run: Invoke-Expression ".\Setup.bat"
     - name: Set up msbuild
       uses: microsoft/setup-msbuild@v2
     - name: Build
@@ -43,17 +40,8 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: recursive
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.x'
-    - name: Check .NET Version
-      run: dotnet --version
     - name: Create Project Files
-      run: |
-       cd Scripts
-       bash GenerateProjectsLinux.sh
-       cd ..
+      run: bash Setup.sh
     - name: String Case
       id: string
       uses: ASzc/change-string-case-action@v6
@@ -64,7 +52,7 @@ jobs:
       with:
         +: gcc
     - name: Build
-      run: make SHELL='sh -x' config=${{ steps.string.outputs.lowercase }}_linux -j8 # 8 jobs is hopefully a good middle-ground when we don't know how many cores the machine has.
+      run: make config=${{ steps.string.outputs.lowercase }}_linux -j8 # 8 jobs is hopefully a good middle-ground when we don't know how many cores the machine has.
     - name: Upload Artifact
       uses: actions/upload-artifact@v4.4.3
       with:
