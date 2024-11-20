@@ -47,6 +47,8 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.x'
+    - name: Check .NET Version
+      run: dotnet --version
     - name: Create Project Files
       run: |
        cd Scripts
