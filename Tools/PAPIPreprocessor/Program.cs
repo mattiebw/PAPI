@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using CppAst;
 using Microsoft.Win32.SafeHandles;
 
 namespace PAPIPreprocessor;
@@ -12,14 +13,21 @@ static class Program
         Console.WriteLine("We're running the PAPI preprocessor!");
         
         LoadLastWriteTimes();
+
+        if (args.Length < 1)
+        {
+            Console.WriteLine("Please provide a directory to search for header files.");
+            return;    
+        }
         
-        var dir = $"{Environment.CurrentDirectory}/Include/";
+        var dir = args[0];
+        Console.WriteLine(dir);
+        dir = Path.GetFullPath(dir);
         Console.WriteLine($"Looking for header files in {dir}");
         var files = Directory.GetFiles(dir, "*.h", SearchOption.AllDirectories);
         foreach (var file in files)
         {
             Console.WriteLine($"Processing {file}");
-            var handle = File.OpenHandle(file);
             
             var lastWriteTime = File.GetLastWriteTime(file);
             if (_cachedLastWriteTimes.TryGetValue(file, out var cachedLastWriteTime))
@@ -28,7 +36,7 @@ static class Program
                     continue;
             }
             
-            ProcessHeader(handle, file);
+            ProcessHeader(file);
         }
         
         SaveLastWriteTimes();
@@ -56,11 +64,17 @@ static class Program
         File.WriteAllText("lastWriteTimes.json", json);
     }
     
-    static void ProcessHeader(SafeFileHandle file, string path)
+    static void ProcessHeader(string path)
     {
         if (_cachedLastWriteTimes.ContainsKey(path))
             _cachedLastWriteTimes[path] = File.GetLastWriteTime(path);
         else
             _cachedLastWriteTimes.Add(path, File.GetLastWriteTime(path));
+
+        if (path.ToLower().Contains("vendor")) // Lets not process vendor headers!
+            return;
+        
+        var headerData = CppParser.ParseFile(path);
+        Console.WriteLine($"We have some header data: {headerData}");
     }
 }
