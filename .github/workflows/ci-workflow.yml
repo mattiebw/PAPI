@@ -58,7 +58,7 @@ jobs:
       with:
         +: gcc
     - name: Build
-      run: make config=${{ steps.string.outputs.lowercase }}_linux -j8 # 8 jobs is hopefully a good middle-ground when we don't know how many cores the machine has.
+      run: make SHELL='sh -x' config=${{ steps.string.outputs.lowercase }}_linux -j8 # 8 jobs is hopefully a good middle-ground when we don't know how many cores the machine has.
     - name: Upload Artifact
       uses: actions/upload-artifact@v4.4.3
       with:
