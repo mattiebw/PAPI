@@ -1,5 +1,12 @@
 ﻿#pragma once
 
+// PAPI Preprocessor Definitions
+#define PAPI_PROP(x) // Usage PAPI_PROP()
+#define PAPI_FUNC(x) // Usage PAPI_FUNC()
+// Usage PAPI_RPC(Server, SendMovement, glm::vec2 position);
+#define PAPI_RPC(type, name, params) void name(params);\
+	void name##_Implementation(params);
+
 #define BIT(x) (1 << (x))
 
 // MSVC compiler intrinsics

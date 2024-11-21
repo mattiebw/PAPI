@@ -15,6 +15,8 @@ class Player : public Entity
 	void Tick(double delta) override;
 	void Render() override;
 
+	PAPI_RPC(Multicast, SendMovement, glm::vec2 position);
+	
 private:
 	float         m_Time = 0;
 	Ref<Texture>  m_Texture;

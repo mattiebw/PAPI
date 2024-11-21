@@ -1,15 +1,14 @@
 ﻿using System.Text.Json;
-using CppAst;
 
 namespace PAPIPreprocessor;
 
 static class Program
 {
     private static Dictionary<string, DateTime> _cachedLastWriteTimes = new();
-    private static CppParserOptions _options = new();
     
     static void Main(string[] args)
     {
+        Console.ForegroundColor = ConsoleColor.White;
         Console.WriteLine("We're running the PAPI preprocessor!");
         
         LoadLastWriteTimes();
@@ -24,34 +23,18 @@ static class Program
         Console.WriteLine(dir);
         dir = Path.GetFullPath(dir);
         
-        _options.IncludeFolders.AddRange(new []
-        {
-            $"{dir}/PAPI/Include/",
-            $"{dir}/PAPI/Vendor/spdlog/include/",
-            $"{dir}/PAPI/Vendor/SDL/include/",
-            $"{dir}/PAPI/Vendor/imgui/",
-            $"{dir}/PAPI/Vendor/msdf-atlas-gen/msdf-atlas-gen/",
-            $"{dir}/PAPI/Vendor/msdf-atlas-gen/msdfgen/",
-            $"{dir}/PAPI/Vendor/glm/Include/",
-            $"{dir}/PAPI/Vendor/stb/",
-        });
-        
-        _options.Defines.AddRange(args[1].Split(';'));
-
-        _options.AdditionalArguments.Add("-std=c++20");
-        
         Console.WriteLine($"Looking for header files in {dir}/PAPI/Include/");
         var files = Directory.GetFiles($"{dir}/PAPI/Include/", "*.h", SearchOption.AllDirectories);
         foreach (var file in files)
         {
-            ProcessHeader(file);
             var lastWriteTime = File.GetLastWriteTime(file);
-            if (_cachedLastWriteTimes.TryGetValue(file, out var cachedLastWriteTime))
+            if (_cachedLastWriteTimes.TryGetValue(file, out var cachedLastWriteTime) && !args.Contains("--force"))
             {
                 if (lastWriteTime == cachedLastWriteTime)
                     continue;
             }
-            
+
+            ProcessHeader(file);
         }
         
         SaveLastWriteTimes();
@@ -60,9 +43,7 @@ static class Program
     static void LoadLastWriteTimes()
     {
         if (!File.Exists("lastWriteTimes.json"))
-        {
             return;
-        }
         var json = File.ReadAllText("lastWriteTimes.json");
         _cachedLastWriteTimes = JsonSerializer.Deserialize<Dictionary<string, DateTime>>(json)!;
 
@@ -81,6 +62,8 @@ static class Program
     
     static void ProcessHeader(string path)
     {
+        FixUpDirectorySeparator(ref path);
+        
         if (_cachedLastWriteTimes.ContainsKey(path))
             _cachedLastWriteTimes[path] = File.GetLastWriteTime(path);
         else
@@ -91,22 +74,32 @@ static class Program
         
         Console.WriteLine($"Processing {path}");
         
-        var headerData = CppParser.Parse(File.ReadAllText(path), _options);
-        if (headerData.HasErrors)
+        HeaderProcessor processor = new(File.ReadAllText(path));
+        var entities = processor.Process();
+        if (entities.Count == 0)
+            return;
+        Console.WriteLine($"Found {entities.Count} entities in {path}:");
+        foreach (var entity in entities) Console.WriteLine($"    {entity.Name}");
+        GenerateSourceForFile(path, entities);
+    }
+
+    static void GenerateSourceForFile(string path, List<Entity> entities)
+    {
+        var sourcePath = path.Replace("Include", "Source").Replace(".h", ".cpp");
+        if (!Path.Exists(sourcePath))
         {
-            Console.WriteLine("Error!");
-            foreach (var error in headerData.Diagnostics.Messages)
-            {
-                Console.WriteLine(error);
-            }
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Couldn't find source file at {sourcePath}");
+            Console.ForegroundColor = ConsoleColor.White;
+            _cachedLastWriteTimes.Remove(path);
+            return;
         }
-        foreach (var cppClass in headerData.Classes)
-        {
-            Console.WriteLine($"Found class: {cppClass.Name}");
-            if (cppClass.BaseTypes.Any(type => type.Type.FullName == "Entity"))
-            {
-                Console.WriteLine($"Found entity class {cppClass.Name}");
-            }
-        }
+        
+        Console.WriteLine($"Writing reflection code to {sourcePath}");
+    }
+
+    static void FixUpDirectorySeparator(ref string path)
+    {
+        path = path.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
     }
 }

@@ -9,8 +9,4 @@
         <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == '' AND '$(PackAsTool)' != 'true'">$(NETCoreSdkRuntimeIdentifier)</RuntimeIdentifier>
     </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="CppAst" Version="0.21.1" />
-    </ItemGroup>
-
 </Project>
