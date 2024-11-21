@@ -199,7 +199,7 @@ public class HeaderProcessor(string content)
                         break;
                     case '/':
                         buffer.Append(c);
-                        if (buffer.Length >= 2 && buffer[^2] == '/')
+                        if (buffer is [.., '/', _])
                             stateStack.Push(HeaderProcessorState.SingleLineComment);
                         break;
                     case '*':
@@ -216,7 +216,7 @@ public class HeaderProcessor(string content)
                                 break;
                             default:
                                 buffer.Append(c);
-                                if (buffer.Length >= 2 && buffer[^2] == '/')
+                                if (buffer is [.., '/', _])
                                     stateStack.Push(HeaderProcessorState.MultiLineComment);
                                 break;
                         }

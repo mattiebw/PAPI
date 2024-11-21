@@ -82,12 +82,12 @@ project "PAPI"
 	}
 
 	filter "system:windows"
-		prebuildcommands { "call \"../Scripts/RunPreprocessor.bat\" PAPI_PLATFORM_WINDOWS;PAPI_DEBUG" }
+		prebuildcommands { "call \"../Scripts/RunPreprocessor.bat\"" }
 		postbuildcommands { "{COPYDIR} " .. path.getdirectory(".") .. "\"./PAPI/Content/\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/Content/\""}
 		postbuildcommands { "{COPYFILE} " .. path.getdirectory(".") .. "\"./PAPI/Vendor/SDL/lib/Win64/SDL3.dll\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/\"" }
 
 	filter "system:linux"
-		prebuildcommands { "../Scripts/RunPreprocessor.sh PAPI_PLATFORM_LINUX;PAPI_DEBUG" }
+		prebuildcommands { "../Scripts/RunPreprocessor.sh" }
 		postbuildcommands { "{COPYDIR} " .. path.getdirectory(".") .. "\"./PAPI/Content/\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/\""}
 		postbuildcommands { "{COPYFILE} " .. path.getdirectory(".") .. "\"./PAPI/Vendor/SDL/lib/Linux64/libSDL3.so\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/\"" }
 		postbuildcommands { "{COPYFILE} " .. path.getdirectory(".") .. "\"./PAPI/Vendor/SDL/lib/Linux64/libSDL3.so.0\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/\"" }
