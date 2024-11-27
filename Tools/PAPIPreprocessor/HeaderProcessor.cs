@@ -10,6 +10,7 @@ public enum HeaderProcessorState
     InEntityPrescope,
     InEntity,
     InIrrelevantScope,
+    InIrrelevantParentheses,
     InProperty,
     InFunc,
     InRPC,
@@ -19,12 +20,22 @@ public enum HeaderProcessorState
 
 public class HeaderProcessor(string content)
 {
+    /// <summary>
+    /// The horrible block of code that processes the header file.
+    /// We've got a basic parser for C++ headers. It looks specifically for any class that inherits from Entity.
+    /// If it does, it looks through it for any PAPI_PROP, PAPI_FUNC, or PAPI_RPC macros, and processes them.
+    /// If we find any, we package up the info into their appropriate classes and return them as an <see cref="Entity"/> class.
+    /// </summary>
+    /// <returns>A list of all entities found in the header. Returns an empty list if there's none.</returns>
     public List<Entity> Process()
     {
         var entities = new List<Entity>();
         StringBuilder buffer = new();
         Stack<HeaderProcessorState>
             stateStack = new(); // Each time we enter a new scope, we push a new state to the stack.
+        Stack<StringBuilder>
+            paramStack =
+                new(); // Each time we enter new parentheses that we care about, we push a new buffer to the stack.
         string previousToken = "";
         string className = "";
         Entity? currentEntity = null;
@@ -34,10 +45,18 @@ public class HeaderProcessor(string content)
         foreach (char c in content)
         {
             i++;
+
+            // If we are in a parameter we care about, we need to append the character to the buffers.
+            if (stateStack.Contains(HeaderProcessorState.InRPC) || stateStack.Contains(HeaderProcessorState.InFunc) ||
+                stateStack.Contains(HeaderProcessorState.InProperty))
+            {
+                foreach (var paramBuffer in paramStack) paramBuffer.Append(c);
+            }
+
             if (stateStack.Peek() == HeaderProcessorState.MultiLineComment)
             {
                 buffer.Append(c);
-                if (buffer.Length >= 2 && buffer[^2] == '*' && buffer[^1] == '/')
+                if (buffer is [.., '*', '/'])
                 {
                     stateStack.Pop();
                     buffer.Clear();
@@ -45,15 +64,8 @@ public class HeaderProcessor(string content)
 
                 continue;
             }
-
-            if (char.IsLetterOrDigit(c))
-            {
-                if (stateStack.Peek() == HeaderProcessorState.SingleLineComment)
-                    continue;
-
-                buffer.Append(c);
-            }
-            else if (stateStack.Peek() == HeaderProcessorState.SingleLineComment)
+            
+            if (stateStack.Peek() == HeaderProcessorState.SingleLineComment)
             {
                 if (c == '\n')
                 {
@@ -93,23 +105,68 @@ public class HeaderProcessor(string content)
                         string parameteredWord = buffer.ToString();
                         buffer.Clear();
 
-                        switch (parameteredWord)
+                        bool Check(string word)
                         {
-                            case "PAPI_PROP":
-                                stateStack.Push(HeaderProcessorState.InProperty);
-                                break;
-                            case "PAPI_FUNC":
-                                stateStack.Push(HeaderProcessorState.InFunc);
-                                break;
-                            case "PAPI_RPC":
-                                stateStack.Push(HeaderProcessorState.InRPC);
-                                break;
+                            if (currentEntity is null)
+                                return false;
+                            
+                            switch (word.Trim())
+                            {
+                                case "PAPI_PROP":
+                                    stateStack.Push(HeaderProcessorState.InProperty);
+                                    paramStack.Push(new StringBuilder());
+                                    return true;
+                                case "PAPI_FUNC":
+                                    stateStack.Push(HeaderProcessorState.InFunc);
+                                    paramStack.Push(new StringBuilder());
+                                    return true;
+                                case "PAPI_RPC":
+                                    stateStack.Push(HeaderProcessorState.InRPC);
+                                    paramStack.Push(new StringBuilder());
+                                    return true;
+                                default:
+                                    return false;
+                            }
+                        }
+
+                        if (!Check(parameteredWord))
+                        {
+                            if (!Check(previousToken))
+                                stateStack.Push(HeaderProcessorState.InIrrelevantParentheses);
                         }
 
                         previousToken = parameteredWord;
 
                         break;
                     case ')':
+                        if (stateStack.Peek() == HeaderProcessorState.InIrrelevantParentheses)
+                        {
+                            stateStack.Pop();
+                            break;
+                        }
+
+                        var paramContent = paramStack.Pop().ToString().Trim();
+                        paramContent = paramContent.Remove(paramContent.Length - 1);
+                        
+                        switch (stateStack.Peek())
+                        {
+                            case HeaderProcessorState.InProperty:
+                                stateStack.Pop();
+                                var property = new PAPIProperty(paramContent);
+                                currentEntity!.Properties.Add(property);
+                                break;
+                            case HeaderProcessorState.InFunc:
+                                stateStack.Pop();
+                                var func = new PAPIFunc(paramContent);
+                                currentEntity!.Functions.Add(func);
+                                break;
+                            case HeaderProcessorState.InRPC:
+                                stateStack.Pop();
+                                var rpc = new PAPIRPC(paramContent);
+                                currentEntity!.RPCs.Add(rpc);
+                                break;
+                        }
+
                         break;
                     case '{':
                         switch (stateStack.Peek())
@@ -221,6 +278,15 @@ public class HeaderProcessor(string content)
                                 break;
                         }
 
+                        break;
+                    default:
+                        if (char.IsWhiteSpace(c))
+                            break;
+                        
+                        if (stateStack.Peek() == HeaderProcessorState.SingleLineComment)
+                            continue;
+
+                        buffer.Append(c);
                         break;
                 }
         }

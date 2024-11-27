@@ -15,7 +15,8 @@ class Player : public Entity
 	void Tick(double delta) override;
 	void Render() override;
 
-	PAPI_RPC(Multicast, SendMovement, glm::vec2 position);
+	PAPI_RPC(Multicast, SendMovement, glm::vec2 position, glm::vec2 velocity);
+	PAPI_RPC(Multicast, OnDeath);
 	
 private:
 	float         m_Time = 0;

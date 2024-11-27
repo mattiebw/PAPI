@@ -9,7 +9,7 @@ IncludeDir = {}
 IncludeDir["spdlog"] = "PAPI/Vendor/spdlog/include" -- MW @todo @build @perf: Consider moving to compiled spdlog
 IncludeDir["SDL"] = "PAPI/Vendor/SDL/include"
 IncludeDir["imgui"] = "PAPI/Vendor/imgui/"
-IncludeDir["msdf-atlas-gen"] = "PAPI/Vendor/msdf-atlas-gen/msdf-atlas-gen/"
+IncludeDir["msdfatlasgen"] = "PAPI/Vendor/msdf-atlas-gen/msdf-atlas-gen/"
 IncludeDir["msdfgen"] = "PAPI/Vendor/msdf-atlas-gen/msdfgen/"
 IncludeDir["glm"] = "PAPI/Vendor/glm/Include"
 IncludeDir["stb"] = "PAPI/Vendor/stb"
@@ -52,6 +52,9 @@ project "PAPI"
 		"%{IncludeDir.imgui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb}",
+		"%{IncludeDir.msdfgen}",
+		"PAPI/Vendor/msdfgen-custom/",
+		"%{IncludeDir.msdfatlasgen}",
 
 		"PAPI/Include"
 	}

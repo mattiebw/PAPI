@@ -44,6 +44,8 @@ project "freetype"
 		"freetype/src/lzw/ftlzw.c",
 		"freetype/src/pcf/pcf.c",
 		"freetype/src/pfr/pfr.c",
+		"freetype/src/svg/ftsvg.c",
+		"freetype/src/svg/svg.c",
 		"freetype/src/psaux/psaux.c",
 		"freetype/src/pshinter/pshinter.c",
 		"freetype/src/psnames/psnames.c",

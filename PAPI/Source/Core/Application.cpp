@@ -11,6 +11,7 @@
 #include "Core/Random.h"
 #include "Core/Input/Input.h"
 #include "Core/Window.h"
+#include "Render/Font.h"
 #include "World/World.h"
 #include "Render/Renderer.h"
 
@@ -88,8 +89,8 @@ bool Application::Init()
 	}
 
 	Input::Init();
-
 	Random::Init();
+	Font::InitFontSystem();
 
 	return true;
 }
@@ -151,6 +152,7 @@ void Application::Shutdown()
 		world->Clean();
 	m_Worlds.clear();
 
+	Font::ShutdownFontSystem();
 	Input::Shutdown();
 	if (m_Renderer)
 	{

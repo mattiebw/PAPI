@@ -1,11 +1,11 @@
 ﻿#pragma once
 
 // PAPI Preprocessor Definitions
-#define PAPI_PROP(x) // Usage PAPI_PROP()
-#define PAPI_FUNC(x) // Usage PAPI_FUNC()
-// Usage PAPI_RPC(Server, SendMovement, glm::vec2 position);
-#define PAPI_RPC(type, name, params) void name(params);\
-	void name##_Implementation(params);
+#define PAPI_PROP(x) x // Usage PAPI_PROP()
+#define PAPI_FUNC(x) x // Usage: PAPI_FUNC(glm::vec2 GetPositionOfEntity(UUID entityID));
+// Usage: PAPI_RPC(Server, SendMovement, glm::vec2 position, glm::vec2 velocity);
+#define PAPI_RPC(type, name, ...) void name(__VA_ARGS__);\
+	void name##_Implementation(__VA_ARGS__)
 
 #define BIT(x) (1 << (x))
 

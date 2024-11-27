@@ -8,6 +8,7 @@
 #include <utility>
 #include <algorithm>
 #include <functional>
+#include <filesystem>
 
 // Data types
 #include <string>
@@ -35,6 +36,7 @@
 #include "Core/Buffer.h"
 #include "Core/Delegate/Delegate.h"
 #include "Core/Utility/MathUtil.h"
+#include "Core/Utility/Timer.h"
 #include "Core/Transform.h"
 #include "Core/UUID.h"
 
