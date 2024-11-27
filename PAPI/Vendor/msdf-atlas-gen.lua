@@ -37,6 +37,7 @@ project "msdf-atlas-gen"
 
 	links
 	{
+		"freetype",
 		"msdfgen"
 	}
 
