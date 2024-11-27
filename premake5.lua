@@ -77,6 +77,7 @@ project "PAPI"
 	{
 		"imgui",
 		"SDL3",
+		"freetype",
 		"msdfgen",
 		"msdf-atlas-gen"
 	}
