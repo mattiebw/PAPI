@@ -5,7 +5,6 @@ project "msdf-atlas-gen"
 	language "C++"
 	cppdialect "C++17"
     staticruntime "On"
-    location "msdf-atlas-gen"
 
 	targetdir ("Build/%{prj.name}/" .. outputdir)
 	objdir ("Build/%{prj.name}/Intermediates/" .. outputdir)
