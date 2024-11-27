@@ -1,7 +1,7 @@
 project "freetype"
 	location "freetype"
 	kind "StaticLib"
-	language "C"
+	language "C++"
     staticruntime "On"
 
 	targetdir ("Build/%{prj.name}/" .. outputdir)
