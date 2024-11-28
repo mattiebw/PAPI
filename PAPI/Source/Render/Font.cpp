@@ -25,6 +25,8 @@ struct AtlasConfig
 	int Width, Height;
 };
 
+constexpr uint8_t threadCount = 8;
+
 template <typename T, typename S, int N, msdf_atlas::GeneratorFunction<S, N> GenFunc>
 static Ref<Texture> GenerateAtlasTexture(const std::string &                           fontName, float size,
                                          const std::vector<msdf_atlas::GlyphGeometry> &glpyhs,
@@ -38,7 +40,7 @@ static Ref<Texture> GenerateAtlasTexture(const std::string &                    
 	msdf_atlas::ImmediateAtlasGenerator<S, N, GenFunc, msdf_atlas::BitmapAtlasStorage<T, N>> generator(
 		config.Width, config.Height);
 	generator.setAttributes(attributes);
-	generator.setThreadCount(8);
+	generator.setThreadCount(threadCount);
 	// MW @todo: This should be configurable, or based on the number of cores. std::thread::hardware_concurrency()?
 
 	// Generate the atlas!
@@ -113,7 +115,33 @@ Font::Font(const std::filesystem::path &fontPath)
 	packer.getDimensions(width, height);
 	emSize = packer.getScale();
 
-	// Now lets generate the atlas texture!
+	// And our edge colouring, for MSDF
+	constexpr uint64_t lcgMultiplier      = 6364136223846793005ull;
+	constexpr uint64_t lcgIncrement       = 1442695040888963407ull;
+	constexpr uint64_t colouringSeed      = 0;
+	constexpr bool     expensiveColouring = true;
+	
+	if (expensiveColouring)
+	{
+		msdf_atlas::Workload([&glyphs = m_Data->Glyphs](int i, int threadNo) -> bool
+		{
+			// Copied from msdf-atlas-gen!
+			uint64_t glyphSeed = (lcgMultiplier * (colouringSeed ^ i) + lcgIncrement) * !!colouringSeed;
+			glyphs[i].edgeColoring(msdfgen::edgeColoringInkTrap, 3.0, glyphSeed);
+			return true;
+		}, m_Data->Glyphs.size()).finish(threadCount);	
+	}
+	else
+	{
+		uint64_t glyphSeed = colouringSeed;
+		for (auto &glyph : m_Data->Glyphs)
+		{
+			glyphSeed *= lcgMultiplier;
+			glyph.edgeColoring(msdfgen::edgeColoringInkTrap, 3.0, glyphSeed);
+		}
+	}
+
+	// Now let's generate the atlas texture!
 	m_Texture = GenerateAtlasTexture<uint8_t, float, 3, msdf_atlas::msdfGenerator>(
 		pathString, static_cast<float>(emSize), m_Data->Glyphs, geo, {width, height});
 
