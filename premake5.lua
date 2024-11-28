@@ -73,6 +73,9 @@ project "PAPI"
 
 	filter {}
 
+	-- Linking order matters with gcc! freetype needs to be at the bottom.
+	-- MW @todo: Understand linking order, consider using 'linkgroups "On"' to avoid linking order issues at the cost of link time.
+	-- https://premake.github.io/docs/linkgroups/
 	links
 	{
 		"imgui",

@@ -7,14 +7,13 @@ Texture::Texture(const TextureSpecification &spec)
 	: m_Spec(spec)
 {
 	PAPI_TRACE("Creating texture with specification");
-	m_Channels = 4; // Force 4 channels for now
 
 	// Create OpenGL texture
 	glGenTextures(1, &m_TextureID);
 	glBindTexture(GL_TEXTURE_2D, m_TextureID);
 
 	// Setup texture storage parameters
-	glTextureStorage2D(m_TextureID, 1, GL_RGBA8, m_Spec.Width, m_Spec.Height);
+	glTextureStorage2D(m_TextureID, 1, static_cast<GLenum>(m_Spec.Format), m_Spec.Width, m_Spec.Height);
 
 	// Set texture parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLint>(m_Spec.Wrap));
@@ -29,8 +28,7 @@ Texture::Texture(std::string_view filename, const TextureSpecification &spec)
 	// Load texture from file using stb_image
 	PAPI_TRACE("Loading texture from file \"{0}\"", filename);
 	stbi_set_flip_vertically_on_load(m_Spec.FlipVertically);
-	uint8_t *data = stbi_load(filename.data(), &m_Spec.Width, &m_Spec.Height, &m_Channels, 4);
-	m_Channels    = 4; // Force 4 channels for now
+	uint8_t *data = stbi_load(filename.data(), &m_Spec.Width, &m_Spec.Height, nullptr, GetChannels());
 
 	// Error check texture loading
 	if (data == nullptr)
@@ -44,7 +42,7 @@ Texture::Texture(std::string_view filename, const TextureSpecification &spec)
 	glBindTexture(GL_TEXTURE_2D, m_TextureID);
 
 	// Setup texture storage parameters
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, m_Spec.Width, m_Spec.Height);
+	glTexStorage2D(GL_TEXTURE_2D, 1, static_cast<GLenum>(m_Spec.Format), m_Spec.Width, m_Spec.Height);
 
 	// Set texture parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLint>(m_Spec.Wrap));
@@ -53,7 +51,7 @@ Texture::Texture(std::string_view filename, const TextureSpecification &spec)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<GLint>(m_Spec.MagFilter));
 
 	// Set data
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Spec.Width, m_Spec.Height, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Spec.Width, m_Spec.Height, FormatToGLFormat(m_Spec.Format), GL_UNSIGNED_BYTE, data);
 
 	// Generate mipmaps if needed
 	if (m_Spec.GenerateMipmaps)
@@ -76,14 +74,14 @@ Texture::~Texture()
 
 void Texture::SetData(const uint8_t *data)
 {
-	// MW @todo: Error checking of size.
+	// MW @todo: Error checking of size. Either take a size parameter, or remove this overload and require a Buffer.
 	glBindTexture(GL_TEXTURE_2D, m_TextureID);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Spec.Width, m_Spec.Height, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Spec.Width, m_Spec.Height, FormatToGLFormat(m_Spec.Format), GL_UNSIGNED_BYTE, data);
 }
 
 void Texture::SetData(const Buffer &data)
 {
-	PAPI_ASSERT(data.Size == m_Spec.Width * m_Spec.Height * m_Channels && "Buffer size doesn't match texture size.");
+	PAPI_ASSERT(data.Size == m_Spec.Width * m_Spec.Height * GetChannels() && "Buffer size doesn't match texture size.");
 	SetData(data.Data);
 }
 

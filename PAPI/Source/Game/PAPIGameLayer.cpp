@@ -8,6 +8,7 @@
 #include "Render/Renderer.h"
 #include "Render/Viewport.h"
 #include "Render/Camera.h"
+#include "Render/Font.h"
 #include "World/TileSets.h"
 #include "World/World.h"
 
@@ -32,6 +33,8 @@ void PAPIGameLayer::Update(double delta)
 
 void PAPIGameLayer::Render(double delta)
 {
+	Application::GetQuadRenderer()->DrawQuad(glm::vec3(0, 5, 0), glm::vec2(3, 3), glm::one<glm::vec4>(),
+	                                         Font::GetDefaultFont()->GetTexture());
 }
 
 void PAPIGameLayer::RenderImGUI(double delta)

@@ -14,15 +14,50 @@ enum class FilterMode
 	Linear  = 0x2601, // GL_LINEAR
 };
 
+enum class TextureFormat
+{
+	RGBA8 = 0x8058, // GL_RGBA8
+	RGB8  = 0x8051, // GL_RGB8
+};
+
+NODISCARD FORCEINLINE int ChannelsFromFormat(TextureFormat format)
+{
+	switch (format)
+	{
+	case TextureFormat::RGBA8:
+		return 4;
+	case TextureFormat::RGB8:
+		return 3;
+	default:
+		PAPI_ASSERT(false && "Invalid texture format");
+		return 0;
+	}
+}
+
+NODISCARD FORCEINLINE int FormatToGLFormat(TextureFormat format)
+{
+	switch (format)
+	{
+	case TextureFormat::RGBA8:
+		return 0x1908; // GL_RGBA
+	case TextureFormat::RGB8:
+		return 0x1907; // GL_RGB
+	default:
+		PAPI_ASSERT(false && "Invalid texture format");
+		return 0;
+	}
+}
+
 struct TextureSpecification
 {
-	bool       FlipVertically  = true;
-	bool       GenerateMipmaps = true;
-	WrapMode   Wrap            = WrapMode::Repeat;
-	FilterMode MinFilter       = FilterMode::Linear;
-	FilterMode MagFilter       = FilterMode::Linear;
-	int32_t    Width           = 0;
-	int32_t    Height          = 0;
+	bool          FlipVertically  = true;
+	bool          GenerateMipmaps = true;
+	TextureFormat Format          = TextureFormat::RGBA8;
+	WrapMode      Wrap            = WrapMode::Repeat;
+	FilterMode    MinFilter       = FilterMode::Linear;
+	FilterMode    MagFilter       = FilterMode::Linear;
+	int32_t       Width           = 0;
+	int32_t       Height          = 0;
 };
 
 class Texture
@@ -40,7 +75,7 @@ public:
 
 	NODISCARD FORCEINLINE int32_t                     GetWidth() const { return m_Spec.Width; }
 	NODISCARD FORCEINLINE int32_t                     GetHeight() const { return m_Spec.Height; }
-	NODISCARD FORCEINLINE int32_t                     GetChannels() const { return m_Channels; }
+	NODISCARD FORCEINLINE int32_t                     GetChannels() const { return ChannelsFromFormat(m_Spec.Format); }
 	NODISCARD FORCEINLINE uint32_t                    GetOpenGLID() const { return m_TextureID; }
 	NODISCARD FORCEINLINE const TextureSpecification& GetSpecification() const { return m_Spec; }
 
@@ -53,6 +88,5 @@ public:
 
 private:
 	TextureSpecification m_Spec;
-	int32_t              m_Channels  = 0;
 	uint32_t             m_TextureID = -1;
 };
