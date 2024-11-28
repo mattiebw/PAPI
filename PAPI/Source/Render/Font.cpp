@@ -41,6 +41,7 @@ static Ref<Texture> GenerateAtlasTexture(const std::string &                    
 		// Okay, we already have all the data.
 		Ref<Texture> texture = CreateRef<Texture>(spec);
 		texture->SetData(data.Data);
+		delete[] data.Data;
 		return texture;
 	}
 	
