@@ -34,7 +34,7 @@ void PAPIGameLayer::Update(double delta)
 void PAPIGameLayer::Render(double delta)
 {
 	Application::GetQuadRenderer()->DrawQuad(glm::vec3(0, 5, 0), glm::vec2(3, 3), glm::one<glm::vec4>(),
-	                                         Font::GetDefaultFont()->GetTexture());
+	                                         Font::GetDefaultFont()->GetAtlasTexture());
 }
 
 void PAPIGameLayer::RenderImGUI(double delta)

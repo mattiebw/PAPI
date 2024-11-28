@@ -57,6 +57,24 @@ struct TextVertex
 	}
 };
 
+class TextureSet
+{
+public:
+	void SetMaxSlots(int max);
+	
+	void BindTextures();
+	void Reset();
+	bool HasTexture(const Ref<Texture>& texture, int& index);
+	int  FindOrAddTexture(const Ref<Texture>& texture);
+
+	MulticastDelegate<> OnFlush;
+	
+protected:
+	int m_MaxSlots = 0;
+	std::vector<Ref<Texture>> m_TextureSlots;
+	size_t                    m_TextureSlotIndex = 0;
+};
+
 class QuadBatch
 {
 public:
@@ -86,21 +104,18 @@ public:
 	void Reset();
 
 private:
-	int FindTexture(const Ref<Texture> &texture);
-
 	RendererData *m_Data = nullptr;
 	uint32_t      m_MaxQuads, m_MaxVertices, m_MaxIndices;
 	glm::vec4     m_QuadPositions[4];
 	glm::vec3     m_QuadPositions3[4];
 
+	TextureSet m_Textures;
 	uint32_t                  m_IndicesCount = 0;
 	Ref<Shader>               m_Shader;
 	Ref<VertexArray>          m_VertexArray;
 	Ref<VertexBuffer>         m_VertexBuffer;
 	QuadVertex *              m_VertexBufferBase = nullptr;
 	QuadVertex *              m_VertexBufferPtr  = nullptr;
-	std::vector<Ref<Texture>> m_TextureSlots;
-	size_t                    m_TextureSlotIndex = 0;
 };
 
 class TilemapRenderer
@@ -128,15 +143,21 @@ struct RenderStats
 class TextRenderer
 {
 public:
-	FORCEINLINE void Init(RendererData *data)
-	{
-		m_Data = data;
-	}
+	FORCEINLINE void Init(RendererData *data, uint32_t maxQuads = 10000);
+	void Flush();
 
-	void DrawString(const std::string &string, Ref<Font> font, const glm::vec3 &position, const glm::vec4 &colour);
+	void DrawString(const std::string &string, Ref<Font> font, const glm::mat4 &transformation, const glm::vec4 &colour);
 
 private:
+	Ref<VertexArray> m_VertexArray;
+	Ref<VertexBuffer> m_VertexBuffer;
+	
+	TextureSet m_Textures;
+	Ref<Shader> m_TextShader;
 	RendererData *m_Data = nullptr;
+
+	TextVertex* m_VertexPtr = nullptr;
+	TextVertex* m_VertexPtrBase = nullptr;
 };
 
 class RendererData

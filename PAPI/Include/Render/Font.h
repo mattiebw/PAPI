@@ -19,7 +19,7 @@ public:
 	static void ShutdownFontSystem();
 
 	NODISCARD FORCEINLINE int                 GetGlyphCount() const { return m_GlyphCount; }
-	NODISCARD FORCEINLINE const Ref<Texture>& GetTexture() const { return m_Texture; }
+	NODISCARD FORCEINLINE const Ref<Texture>& GetAtlasTexture() const { return m_Texture; }
 	NODISCARD FORCEINLINE const MSDFData*     GetData() const { return m_Data.get(); }
 
 	NODISCARD static FORCEINLINE const Ref<Font>& GetDefaultFont() { return s_DefaultFont; }

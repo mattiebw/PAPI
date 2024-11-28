@@ -19,7 +19,7 @@ struct AtlasConfig
 	int Width, Height;
 };
 
-constexpr uint8_t threadCount = 8;
+uint8_t threadCount = std::thread::hardware_concurrency() / 2;
 
 template <typename T, typename S, int N, msdf_atlas::GeneratorFunction<S, N> GenFunc>
 static Ref<Texture> GenerateAtlasTexture(const std::string &                           fontName, float size,

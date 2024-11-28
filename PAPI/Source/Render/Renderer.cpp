@@ -30,6 +30,59 @@ _declspec(dllexport) int   AmdPowerXpressRequestHighPerformance = 1;
 }
 #endif
 
+void TextureSet::SetMaxSlots(int max)
+{
+	m_MaxSlots = max;
+	m_TextureSlots.resize(max, nullptr);
+}
+
+void TextureSet::BindTextures()
+{
+	for (int i = 0; i < m_TextureSlotIndex; i++)
+		m_TextureSlots[i]->Activate(i);
+}
+
+void TextureSet::Reset()
+{
+	for (int i = 0; i < m_TextureSlotIndex; i++) // Can't memset, as they're shared ptrs (so we need to run ref counting)
+		m_TextureSlots[i] = nullptr;
+	m_TextureSlotIndex = 0;
+}
+
+bool TextureSet::HasTexture(const Ref<Texture> &texture, int &index)
+{
+	if (!texture) return false;
+
+	for (int i = 0; i < m_TextureSlotIndex; i++)
+	{
+		if (m_TextureSlots[i] == texture)
+		{
+			index = i;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+int TextureSet::FindOrAddTexture(const Ref<Texture> &texture)
+{
+	if (!texture) return -1;
+	
+	int index;
+	if (!HasTexture(texture, index))
+	{
+		if (m_TextureSlotIndex >= m_TextureSlots.size())
+			OnFlush.Execute();
+		
+		index = static_cast<int32_t>(m_TextureSlotIndex);
+		m_TextureSlots[m_TextureSlotIndex] = texture;
+		m_TextureSlotIndex++;
+		return index;
+	}
+	return index;
+}
+
 QuadBatch::QuadBatch(RendererData *data, uint32_t MaxQuads)
 {
 	m_Data        = data;
@@ -68,8 +121,9 @@ QuadBatch::QuadBatch(RendererData *data, uint32_t MaxQuads)
 	m_VertexArray->SetIndexBuffer(indexBuffer);
 	delete[] quadIndices;
 
-	m_TextureSlots.resize(m_Data->MaxTextureSlots, nullptr);
-
+	m_Textures.SetMaxSlots(m_Data->MaxTextureSlots);
+	m_Textures.OnFlush.BindMethod(this, &QuadBatch::Flush);
+	
 	m_Shader = ShaderLibrary::CreateShader("Quad");
 	m_Shader->AddStageFromFile(GL_VERTEX_SHADER, "Content/Shaders/Quad.vert");
 	m_Shader->AddStageFromFile(GL_FRAGMENT_SHADER, "Content/Shaders/Quad.frag");
@@ -91,7 +145,7 @@ void QuadBatch::DrawQuad(const glm::mat4 &transform, const glm::vec4 &     tintC
 		Flush();
 
 	// Find texture
-	int32_t textureIndex = FindTexture(texture);
+	int32_t textureIndex = m_Textures.FindOrAddTexture(texture);
 
 	for (size_t i = 0; i < 4; i++)
 	{
@@ -119,7 +173,7 @@ void QuadBatch::DrawQuad(const glm::vec3 &centerPosition, const glm::vec2 &size,
 	if (m_IndicesCount >= m_MaxIndices)
 		Flush();
 
-	int32_t textureIndex = FindTexture(texture);
+	int32_t textureIndex = m_Textures.FindOrAddTexture(texture);
 
 	glm::vec3 size3 = glm::vec3(size, 1.0f);
 	for (size_t i = 0; i < 4; i++)
@@ -159,8 +213,7 @@ void QuadBatch::Flush()
 	                             viewport ? viewport->GetCamera()->GetOrthographicViewProjMatrix() : glm::mat4(1.0f));
 
 	// Now let's bind our array and textures.
-	for (int i = 0; i < m_TextureSlotIndex; i++)
-		m_TextureSlots[i]->Activate(i);
+	m_Textures.BindTextures();
 	m_VertexArray->Bind();
 
 	// Now we can render our quads.
@@ -173,40 +226,9 @@ void QuadBatch::Flush()
 
 void QuadBatch::Reset()
 {
-	for (int i = 0; i < m_TextureSlotIndex; i++)
-	{
-		m_TextureSlots[i] = nullptr;
-	}
-	m_TextureSlotIndex = 0;
+	m_Textures.Reset();
 	m_VertexBufferPtr  = m_VertexBufferBase;
 	m_IndicesCount     = 0;
-}
-
-int QuadBatch::FindTexture(const Ref<Texture> &texture)
-{
-	if (!texture) return -1;
-
-	for (int i = 0; i < m_TextureSlotIndex; i++)
-	{
-		if (m_TextureSlots[i] == texture)
-		{
-			return i;
-		}
-	}
-
-	if (m_TextureSlotIndex >= m_Data->MaxTextureSlots)
-	{
-		Flush();
-		m_TextureSlotIndex = 0;
-		m_TextureSlots[0]  = texture;
-
-		return static_cast<int32_t>(m_TextureSlotIndex);
-	}
-
-	int index                          = static_cast<int32_t>(m_TextureSlotIndex);
-	m_TextureSlots[m_TextureSlotIndex] = texture;
-	m_TextureSlotIndex++;
-	return index;
 }
 
 void TilemapRenderer::Init(RendererData *data)
@@ -243,19 +265,117 @@ void TilemapRenderer::DrawTileMapChunk(const glm::vec3 bottomLeftPosition, TileM
 	m_Data->Stats.TileCount += chunk->GetSize().x * chunk->GetSize().y;
 }
 
+void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const glm::mat4 &transformation,
+                              const glm::vec4 &  colour)
+{
+	const msdf_atlas::FontGeometry &fontGeo = font->GetData()->FontGeo;
+	const msdfgen::FontMetrics &    metrics = fontGeo.getMetrics();
+	const Ref<Texture>& atlasTexture = font->GetAtlasTexture();
+	
+	float     fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
+	glm::vec2 pen(0, 0);
+	
+	for (int i = 0; i < string.size(); i++)
+	{
+		auto glyph = fontGeo.getGlyph(string[i]);
+		if (!glyph)
+			glyph = fontGeo.getGlyph('?');
+		if (!glyph)
+		{
+			PAPI_ASSERT(false && "Failed to draw string with font - missing char, and '?' char!");
+			return;
+		}
+
+		// MW @todo: A lot of this code should be done once at font generation, and cached.
+		
+		double atlasLeft, atlasBottom, atlasRight, atlasTop;
+		glyph->getQuadAtlasBounds(atlasLeft, atlasBottom, atlasRight, atlasTop);
+		float texelWidth = 1.0f / atlasTexture->GetWidth();
+		float texelHeight = 1.0f / atlasTexture->GetHeight();
+		glm::vec2 uvMin(static_cast<float>(atlasLeft) * texelWidth, static_cast<float>(atlasBottom) * texelHeight);
+		glm::vec2 uvMax(static_cast<float>(atlasRight) * texelWidth, static_cast<float>(atlasTop) * texelHeight);
+
+		double quadLeft, quadBottom, quadRight, quadTop;
+		glyph->getQuadPlaneBounds(quadLeft, quadBottom, quadRight, quadTop);
+		glm::vec2 quadMin(static_cast<float>(quadLeft) * fsScale, static_cast<float>(quadBottom) * fsScale);
+		glm::vec2 quadMax(static_cast<float>(quadRight) * fsScale, static_cast<float>(quadTop) * fsScale);
+		quadMin += pen;
+		quadMax += pen;
+
+		double advance = glyph->getAdvance();
+		fontGeo.getAdvance(advance, string[i], i == string.size() - 1 ? 0 : string[i + 1]);
+		float kerningOffset = 0; // MW @todo: Where to put this?
+		pen.x += static_cast<float>(advance) * fsScale + kerningOffset;
+	}
+}
+
 void RenderStats::Reset()
 {
 	memset(this, 0, sizeof(RenderStats));
 }
 
-void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const glm::vec3 &position,
-                              const glm::vec4 &  colour)
+void TextRenderer::Init(RendererData *data, uint32_t maxQuads)
 {
-	const msdf_atlas::FontGeometry &fontGeo = font->GetData()->FontGeo;
-	const msdfgen::FontMetrics &    metrics = fontGeo.getMetrics();
+	m_Data = data;
 
-	float     fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
-	glm::vec3 pen     = position + glm::vec3(0.0f, metrics.ascenderY * -fsScale, 0.0f);
+	m_VertexArray = CreateRef<VertexArray>();
+	m_VertexBuffer = CreateRef<VertexBuffer>(static_cast<uint32_t>((maxQuads * 4) * sizeof(TextVertex)),
+											 BufferUsageType::StreamDraw);
+	m_VertexBuffer->SetLayout(TextVertex::GetLayout());
+	m_VertexArray->AddVertexBuffer(m_VertexBuffer);
+
+	uint32_t *quadIndices = new uint32_t[maxQuads * 6];
+	for (uint32_t i = 0; i < maxQuads * 6; i++)
+	{
+		quadIndices[i * 6 + 0] = i * 4 + 0;
+		quadIndices[i * 6 + 1] = i * 4 + 1;
+		quadIndices[i * 6 + 2] = i * 4 + 2;
+		quadIndices[i * 6 + 3] = i * 4 + 2;
+		quadIndices[i * 6 + 4] = i * 4 + 3;
+		quadIndices[i * 6 + 5] = i * 4 + 0;
+	}
+	Ref<IndexBuffer> indexBuffer = CreateRef<IndexBuffer>(quadIndices, maxQuads * 6);
+	m_VertexArray->SetIndexBuffer(indexBuffer);
+	delete[] quadIndices;
+
+	m_Textures.SetMaxSlots(m_Data->MaxTextureSlots);
+	m_Textures.OnFlush.BindMethod(this, &TextRenderer::Flush);
+	
+	m_VertexPtrBase = new TextVertex[maxQuads * 4];
+	m_VertexPtr  = m_VertexPtrBase;
+	
+	m_TextShader = ShaderLibrary::CreateShader("Text");
+	m_TextShader->AddStageFromFile(GL_VERTEX_SHADER, "Content/Shaders/Text.vert");
+	m_TextShader->AddStageFromFile(GL_FRAGMENT_SHADER, "Content/Shaders/Text.frag");
+	m_TextShader->LinkProgram();
+}
+
+void TextRenderer::Flush()
+{
+	if (m_IndicesCount == 0)
+		return; // Nothing to draw.
+
+	// First, lets update our vertex buffer with our new data.
+	m_VertexBuffer->SetData(m_VertexBufferBase,
+							static_cast<uint32_t>(reinterpret_cast<uint8_t*>(m_VertexBufferPtr) - reinterpret_cast<
+								uint8_t*>(m_VertexBufferBase)));
+
+	// Bind our shader and its uniforms.
+	m_Shader->Bind();
+	Viewport *viewport = Renderer::GetCurrentViewport();
+	m_Shader->SetUniformMatrix4f("u_ViewProjection",
+								 viewport ? viewport->GetCamera()->GetOrthographicViewProjMatrix() : glm::mat4(1.0f));
+
+	// Now let's bind our array and textures.
+	m_Textures.BindTextures();
+	m_VertexArray->Bind();
+
+	// Now we can render our quads.
+	glDrawElements(GL_TRIANGLES, static_cast<int>(m_IndicesCount), GL_UNSIGNED_INT, nullptr);
+	m_Data->Stats.DrawCalls++;
+
+	// Now we can reset our state.
+	Reset();
 }
 
 Renderer::Renderer(RendererSpecification rendererSpecification)
