@@ -145,6 +145,8 @@ struct RenderStats
 class TextRenderer
 {
 public:
+	~TextRenderer();
+	
 	FORCEINLINE void Init(RendererData *data, uint32_t maxQuads = 10000);
 	void Flush();
 	void Reset();

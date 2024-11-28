@@ -312,24 +312,24 @@ void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const g
 		m_VertexPtr->FontAtlas = static_cast<float>(textureID);
 		m_VertexPtr++;
 
-		m_VertexPtr->Position = transformation * glm::vec4(quadMin.x, quadMax.y, 0.0f, 1.0f);
-		m_VertexPtr->Color    = colour;
-		m_VertexPtr->TexCoord = glm::vec2(uvMin.x, uvMax.y);
-		m_VertexPtr->FontAtlas = static_cast<float>(textureID);
-		m_VertexPtr++;
-		
-		m_VertexPtr->Position = transformation * glm::vec4(quadMax, 0.0f, 1.0f);
-		m_VertexPtr->Color    = colour;
-		m_VertexPtr->TexCoord = uvMax;
-		m_VertexPtr->FontAtlas = static_cast<float>(textureID);
-		m_VertexPtr++;
-
 		m_VertexPtr->Position = transformation * glm::vec4(quadMax.x, quadMin.y, 0.0f, 1.0f);
 		m_VertexPtr->Color    = colour;
 		m_VertexPtr->TexCoord = glm::vec2(uvMax.x, uvMin.y);
 		m_VertexPtr->FontAtlas = static_cast<float>(textureID);
 		m_VertexPtr++;
 
+		m_VertexPtr->Position = transformation * glm::vec4(quadMax, 0.0f, 1.0f);
+		m_VertexPtr->Color    = colour;
+		m_VertexPtr->TexCoord = uvMax;
+		m_VertexPtr->FontAtlas = static_cast<float>(textureID);
+		m_VertexPtr++;
+
+		m_VertexPtr->Position = transformation * glm::vec4(quadMin.x, quadMax.y, 0.0f, 1.0f);
+		m_VertexPtr->Color    = colour;
+		m_VertexPtr->TexCoord = glm::vec2(uvMin.x, uvMax.y);
+		m_VertexPtr->FontAtlas = static_cast<float>(textureID);
+		m_VertexPtr++;
+		
 		m_IndicesCount += 6;
 		m_Data->Stats.CharCount++;
 
@@ -343,6 +343,11 @@ void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const g
 void RenderStats::Reset()
 {
 	memset(this, 0, sizeof(RenderStats));
+}
+
+TextRenderer::~TextRenderer()
+{
+	delete[] m_VertexPtrBase;
 }
 
 void TextRenderer::Init(RendererData *data, uint32_t maxQuads)

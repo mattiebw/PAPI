@@ -76,5 +76,6 @@ void Player::Render()
 
 	Transform tf = EntityTransform;
 	tf.Position.y += 2;
+	tf.Scale = glm::vec3(3, 3, 1);
 	Application::GetTextRenderer().DrawString("Jerma", Font::GetDefaultFont(), tf.GetTransformationMatrix(), glm::vec4(1));
 }

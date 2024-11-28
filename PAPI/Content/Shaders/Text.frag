@@ -27,9 +27,6 @@ float screenPxRange() {
 
 void main()
 {
-    o_Color = vec4(1);
-    return;
-    
     vec4 texColor = vec4(1);
 
     switch (int(a_FontAtlas))
