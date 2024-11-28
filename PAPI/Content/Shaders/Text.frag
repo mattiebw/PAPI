@@ -11,10 +11,25 @@ layout (location = 2) in flat int a_FontAtlas;
 
 layout (binding = 0) uniform sampler2D u_Textures[32];
 
+const float pixelRange = 2.0f;
+
 layout (location = 0) out vec4 o_Color;
+
+float median(float r, float g, float b) {
+    return max(min(r, g), min(max(r, g), b));
+}
+
+float screenPxRange() {
+    vec2 unitRange = vec2(pixelRange)/vec2(textureSize(u_Textures[a_FontAtlas], 0)); // MW @todo: Shouldn't be indexing with variable.
+    vec2 screenTexSize = vec2(1.0)/fwidth(Input.TexCoord);
+    return max(0.5*dot(unitRange, screenTexSize), 1.0);
+}
 
 void main()
 {
+    o_Color = vec4(1);
+    return;
+    
     vec4 texColor = vec4(1);
 
     switch (int(a_FontAtlas))
@@ -52,6 +67,12 @@ void main()
         case 30: texColor *= texture(u_Textures[30], Input.TexCoord); break;
         case 31: texColor *= texture(u_Textures[31], Input.TexCoord); break;
     }
+    
+    vec3 msd = texColor.rgb;
+    float sd = median(msd.r, msd.g, msd.b);
+    float screenPxDistance = screenPxRange() * (sd - 0.5);
+    float opacity = clamp(screenPxDistance + 0.5, 0.0, 1.0);
 
-    o_Color = texColor;
+    o_Color = Input.Color;
+    o_Color.a = opacity;
 }

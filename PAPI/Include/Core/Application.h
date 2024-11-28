@@ -79,7 +79,7 @@ public:
 	{
 		return s_Instance->m_Renderer->GetTilemapRenderer();
 	}
-	NODISCARD static FORCEINLINE const TextRenderer& GetTextRenderer()
+	NODISCARD static FORCEINLINE TextRenderer& GetTextRenderer()
 	{
 		return s_Instance->m_Renderer->GetTextRenderer();
 	}

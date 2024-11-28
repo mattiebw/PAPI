@@ -36,7 +36,7 @@ void TextureSet::SetMaxSlots(int max)
 	m_TextureSlots.resize(max, nullptr);
 }
 
-void TextureSet::BindTextures()
+void TextureSet::BindTextures() const
 {
 	for (int i = 0; i < m_TextureSlotIndex; i++)
 		m_TextureSlots[i]->Activate(i);
@@ -271,12 +271,16 @@ void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const g
 	const msdf_atlas::FontGeometry &fontGeo = font->GetData()->FontGeo;
 	const msdfgen::FontMetrics &    metrics = fontGeo.getMetrics();
 	const Ref<Texture>& atlasTexture = font->GetAtlasTexture();
+	const int textureID = m_Textures.FindOrAddTexture(atlasTexture);
 	
 	float     fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
 	glm::vec2 pen(0, 0);
 	
 	for (int i = 0; i < string.size(); i++)
 	{
+		if (m_IndicesCount >= m_MaxIndices)
+			Flush();
+		
 		auto glyph = fontGeo.getGlyph(string[i]);
 		if (!glyph)
 			glyph = fontGeo.getGlyph('?');
@@ -302,6 +306,33 @@ void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const g
 		quadMin += pen;
 		quadMax += pen;
 
+		m_VertexPtr->Position = transformation * glm::vec4(quadMin, 0.0f, 1.0f);
+		m_VertexPtr->Color    = colour;
+		m_VertexPtr->TexCoord = uvMin;
+		m_VertexPtr->FontAtlas = static_cast<float>(textureID);
+		m_VertexPtr++;
+
+		m_VertexPtr->Position = transformation * glm::vec4(quadMin.x, quadMax.y, 0.0f, 1.0f);
+		m_VertexPtr->Color    = colour;
+		m_VertexPtr->TexCoord = glm::vec2(uvMin.x, uvMax.y);
+		m_VertexPtr->FontAtlas = static_cast<float>(textureID);
+		m_VertexPtr++;
+		
+		m_VertexPtr->Position = transformation * glm::vec4(quadMax, 0.0f, 1.0f);
+		m_VertexPtr->Color    = colour;
+		m_VertexPtr->TexCoord = uvMax;
+		m_VertexPtr->FontAtlas = static_cast<float>(textureID);
+		m_VertexPtr++;
+
+		m_VertexPtr->Position = transformation * glm::vec4(quadMax.x, quadMin.y, 0.0f, 1.0f);
+		m_VertexPtr->Color    = colour;
+		m_VertexPtr->TexCoord = glm::vec2(uvMax.x, uvMin.y);
+		m_VertexPtr->FontAtlas = static_cast<float>(textureID);
+		m_VertexPtr++;
+
+		m_IndicesCount += 6;
+		m_Data->Stats.CharCount++;
+
 		double advance = glyph->getAdvance();
 		fontGeo.getAdvance(advance, string[i], i == string.size() - 1 ? 0 : string[i + 1]);
 		float kerningOffset = 0; // MW @todo: Where to put this?
@@ -324,7 +355,8 @@ void TextRenderer::Init(RendererData *data, uint32_t maxQuads)
 	m_VertexBuffer->SetLayout(TextVertex::GetLayout());
 	m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 
-	uint32_t *quadIndices = new uint32_t[maxQuads * 6];
+	m_MaxIndices = maxQuads * 6;
+	uint32_t *quadIndices = new uint32_t[m_MaxIndices];
 	for (uint32_t i = 0; i < maxQuads; i++)
 	{
 		quadIndices[i * 6 + 0] = i * 4 + 0;
@@ -334,7 +366,7 @@ void TextRenderer::Init(RendererData *data, uint32_t maxQuads)
 		quadIndices[i * 6 + 4] = i * 4 + 3;
 		quadIndices[i * 6 + 5] = i * 4 + 0;
 	}
-	Ref<IndexBuffer> indexBuffer = CreateRef<IndexBuffer>(quadIndices, maxQuads * 6);
+	Ref<IndexBuffer> indexBuffer = CreateRef<IndexBuffer>(quadIndices, m_MaxIndices);
 	m_VertexArray->SetIndexBuffer(indexBuffer);
 	delete[] quadIndices;
 
@@ -370,7 +402,7 @@ void TextRenderer::Flush()
 	m_Textures.BindTextures();
 	m_VertexArray->Bind();
 
-	// Now we can render our quads.
+	// Now we can render our text.
 	glDrawElements(GL_TRIANGLES, m_IndicesCount, GL_UNSIGNED_INT, nullptr);
 	m_Data->Stats.DrawCalls++;
 
@@ -599,6 +631,7 @@ void Renderer::Render()
 		s_CurrentViewport = viewport.get();
 		viewport->Render();
 		m_QuadBatch->Flush();
+		m_TextRenderer.Flush();
 	}
 	s_CurrentViewport = nullptr;
 
@@ -626,8 +659,8 @@ void Renderer::RenderImGUI()
 		ImGui::Text("Draw Calls: %d", m_Data->Stats.DrawCalls);
 		ImGui::Text("Quad Count: %d", m_Data->Stats.QuadCount);
 		ImGui::Text("Tile Count: %d", m_Data->Stats.TileCount);
-		ImGui::Text("Total Quad Count: %d", m_Data->Stats.TileCount + m_Data->Stats.QuadCount);
 		ImGui::Text("String Characters Count: %d", m_Data->Stats.CharCount);
+		ImGui::Text("Total Quad Count: %d", m_Data->Stats.TileCount + m_Data->Stats.QuadCount + m_Data->Stats.CharCount);
 		ImGui::Checkbox("Should Restart", &g_ShouldRestart);
 		ImGui::End();
 	}

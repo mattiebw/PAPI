@@ -6,6 +6,7 @@
 #include "Game/PulsatingRectangle.h"
 #include "World/World.h"
 #include "Render/Camera.h"
+#include "Render/Font.h"
 #include "Render/Renderer.h"
 #include "Render/Viewport.h"
 
@@ -72,4 +73,8 @@ void Player::Render()
 	float sine = (glm::sin(m_Time) + 1) / 2;
 	Application::GetQuadRenderer()->DrawQuad(EntityTransform.Position, glm::vec2(1.0f),
 	                                         glm::vec4(sine, sine, sine, 1.0f), m_Texture);
+
+	Transform tf = EntityTransform;
+	tf.Position.y += 2;
+	Application::GetTextRenderer().DrawString("Jerma", Font::GetDefaultFont(), tf.GetTransformationMatrix(), glm::vec4(1));
 }

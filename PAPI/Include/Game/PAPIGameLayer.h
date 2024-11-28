@@ -12,4 +12,7 @@ public:
 	void Update(double delta) override;
 	void Render(double delta) override;
 	void RenderImGUI(double delta) override;
+
+protected:
+	Transform m_TextTransform;
 };

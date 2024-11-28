@@ -46,6 +46,7 @@ struct TextVertex
 	glm::vec3 Position;
 	glm::vec4 Color;
 	glm::vec2 TexCoord;
+	float     FontAtlas;
 
 	static BufferLayout GetLayout()
 	{
@@ -53,6 +54,7 @@ struct TextVertex
 			{"a_Position", ShaderDataType::Float3},
 			{"a_Color", ShaderDataType::Float4},
 			{"a_TexCoord", ShaderDataType::Float2},
+			{"a_FontAtlas", ShaderDataType::Float},
 		}));
 	}
 };
@@ -62,7 +64,7 @@ class TextureSet
 public:
 	void SetMaxSlots(int max);
 	
-	void BindTextures();
+	void BindTextures() const;
 	void Reset();
 	bool HasTexture(const Ref<Texture>& texture, int& index);
 	int  FindOrAddTexture(const Ref<Texture>& texture);
@@ -159,7 +161,7 @@ private:
 
 	TextVertex* m_VertexPtr = nullptr;
 	TextVertex* m_VertexPtrBase = nullptr;
-	int32_t m_IndicesCount = 0;
+	int32_t m_IndicesCount = 0, m_MaxIndices = 0;
 };
 
 class RendererData
