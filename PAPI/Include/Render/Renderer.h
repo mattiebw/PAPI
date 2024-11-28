@@ -1,12 +1,12 @@
 ﻿#pragma once
 
 #include <SDL3/SDL_events.h>
-#include <SDL3/SDL_video.h>
 
 #include "RenderBuffer.h"
 #include "Shader.h"
 #include "VertexArray.h"
 
+class Font;
 class TileMapChunk;
 class Texture;
 class BufferLayout;
@@ -41,6 +41,22 @@ struct TileVertex
 	glm::vec2 Position;
 };
 
+struct TextVertex
+{
+	glm::vec3 Position;
+	glm::vec4 Color;
+	glm::vec2 TexCoord;
+
+	static BufferLayout GetLayout()
+	{
+		return std::move(BufferLayout({
+			{"a_Position", ShaderDataType::Float3},
+			{"a_Color", ShaderDataType::Float4},
+			{"a_TexCoord", ShaderDataType::Float2},
+		}));
+	}
+};
+
 class QuadBatch
 {
 public:
@@ -72,7 +88,7 @@ public:
 private:
 	int FindTexture(const Ref<Texture> &texture);
 
-	RendererData *m_Data;
+	RendererData *m_Data = nullptr;
 	uint32_t      m_MaxQuads, m_MaxVertices, m_MaxIndices;
 	glm::vec4     m_QuadPositions[4];
 	glm::vec3     m_QuadPositions3[4];
@@ -104,8 +120,23 @@ struct RenderStats
 	uint32_t DrawCalls = 0;
 	uint32_t QuadCount = 0;
 	uint32_t TileCount = 0;
+	uint32_t CharCount = 0;
 
 	void Reset();
+};
+
+class TextRenderer
+{
+public:
+	FORCEINLINE void Init(RendererData *data)
+	{
+		m_Data = data;
+	}
+
+	void DrawString(const std::string &string, Ref<Font> font, const glm::vec3 &position, const glm::vec4 &colour);
+
+private:
+	RendererData *m_Data = nullptr;
 };
 
 class RendererData
@@ -142,6 +173,7 @@ public:
 
 	NODISCARD FORCEINLINE const Ref<QuadBatch>& GetQuadRenderer() const { return m_QuadBatch; }
 	NODISCARD FORCEINLINE TilemapRenderer&      GetTilemapRenderer() { return m_TilemapRenderer; }
+	NODISCARD FORCEINLINE TextRenderer&         GetTextRenderer() { return m_TextRenderer; }
 
 	void SetVSync(bool enabled);
 
@@ -164,18 +196,20 @@ private:
 
 	void ShutdownImGUI();
 
+	TilemapRenderer            m_TilemapRenderer;
+	TextRenderer               m_TextRenderer;
 	RendererSpecification      m_Specification;
 	RendererData *             m_Data;
 	Ref<QuadBatch>             m_QuadBatch;
-	TilemapRenderer            m_TilemapRenderer;
-	bool                       m_Initialised      = false;
-	bool                       m_ImGUIInitialised = false;
-	Ref<Window>                m_Window           = nullptr;
+	Ref<Window>                m_Window = nullptr;
 	std::vector<Ref<Viewport>> m_Viewports;
-	SDL_GLContext              m_Context = nullptr;
+	struct SDL_GLContextState *m_Context = nullptr; // SDL_GLContext.
 
 	Ref<VertexBuffer> m_TileQuadVertexBuffer = nullptr;
 	Ref<IndexBuffer>  m_TileQuadIndexBuffer  = nullptr;
+
+	bool m_Initialised      = false;
+	bool m_ImGUIInitialised = false;
 
 	// Debug UI stuff
 	bool m_DebugUIVisible = false;

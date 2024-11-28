@@ -9,6 +9,8 @@
 #include "Core/Window.h"
 #include "Core/Input/Input.h"
 #include "Render/Camera.h"
+#include "Render/Font.h"
+#include "Render/MSDFData.h"
 #include "Render/RenderBuffer.h"
 #include "Render/ShaderLibrary.h"
 #include "Render/SpriteSheet.h"
@@ -152,14 +154,9 @@ void QuadBatch::Flush()
 
 	// Bind our shader and its uniforms.
 	m_Shader->Bind();
-	if (Viewport *viewport = Renderer::GetCurrentViewport())
-	{
-		m_Shader->SetUniformMatrix4f("u_ViewProjection", viewport->GetCamera()->GetOrthographicViewProjMatrix());
-	}
-	else
-	{
-		m_Shader->SetUniformMatrix4f("u_ViewProjection", glm::mat4(1.0f));
-	}
+	Viewport *viewport = Renderer::GetCurrentViewport();
+	m_Shader->SetUniformMatrix4f("u_ViewProjection",
+	                             viewport ? viewport->GetCamera()->GetOrthographicViewProjMatrix() : glm::mat4(1.0f));
 
 	// Now let's bind our array and textures.
 	for (int i = 0; i < m_TextureSlotIndex; i++)
@@ -231,12 +228,11 @@ void TilemapRenderer::DrawTileMapChunk(const glm::vec3 bottomLeftPosition, TileM
 		m_TilemapShader->SetUniformMatrix4f("uViewProjection", glm::mat4(1.0f));
 	m_TilemapShader->SetUniformVec3("uPos", bottomLeftPosition);
 	m_TilemapShader->SetUniformIVec2("uChunkSize", chunk->GetSize());
-	chunk->GetTileMap()->GetTileSet()->GetSpritesheet()->GetTexture()->Activate(0); // MW @todo: This is way too long!
+	// MW @todo: This is way too long!
+	const Ref<Texture> &tex = chunk->GetTileMap()->GetTileSet()->GetSpritesheet()->GetTexture();
+	tex->Activate(0);
 	m_TilemapShader->SetUniform1i("uTexture", 0);
-	m_TilemapShader->SetUniform2f("uTileSize",
-	                              16.0f / chunk->GetTileMap()->GetTileSet()->GetSpritesheet()->GetTexture()->GetWidth(),
-	                              16.0f / chunk->GetTileMap()->GetTileSet()->GetSpritesheet()->GetTexture()->
-	                                             GetHeight());
+	m_TilemapShader->SetUniform2f("uTileSize", 16.0f / tex->GetWidth(), 16.0f / tex->GetHeight());
 	// MW @todo @hack: This is hardcoded!	
 
 	chunk->UpdateTileData();
@@ -252,8 +248,18 @@ void RenderStats::Reset()
 	memset(this, 0, sizeof(RenderStats));
 }
 
+void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const glm::vec3 &position,
+                              const glm::vec4 &  colour)
+{
+	const msdf_atlas::FontGeometry &fontGeo = font->GetData()->FontGeo;
+	const msdfgen::FontMetrics &    metrics = fontGeo.getMetrics();
+
+	float     fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
+	glm::vec3 pen     = position + glm::vec3(0.0f, metrics.ascenderY * -fsScale, 0.0f);
+}
+
 Renderer::Renderer(RendererSpecification rendererSpecification)
-	: m_Specification(std::move(rendererSpecification))
+	: m_Specification(std::move(rendererSpecification)), m_Data(nullptr)
 {
 }
 
@@ -294,6 +300,7 @@ bool Renderer::Init(Ref<Window> window)
 	m_TileQuadIndexBuffer   = CreateRef<IndexBuffer>(quadIndices, 6);
 
 	m_TilemapRenderer.Init(m_Data);
+	m_TextRenderer.Init(m_Data);
 
 	return true;
 }
@@ -493,6 +500,7 @@ void Renderer::RenderImGUI()
 		ImGui::Text("Quad Count: %d", m_Data->Stats.QuadCount);
 		ImGui::Text("Tile Count: %d", m_Data->Stats.TileCount);
 		ImGui::Text("Total Quad Count: %d", m_Data->Stats.TileCount + m_Data->Stats.QuadCount);
+		ImGui::Text("String Characters Count: %d", m_Data->Stats.CharCount);
 		ImGui::Checkbox("Should Restart", &g_ShouldRestart);
 		ImGui::End();
 	}

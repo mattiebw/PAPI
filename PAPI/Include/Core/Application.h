@@ -74,6 +74,14 @@ public:
 	{
 		return s_Instance->m_Renderer->GetQuadRenderer();
 	}
+	NODISCARD static FORCEINLINE const TilemapRenderer& GetTilemapRenderer()
+	{
+		return s_Instance->m_Renderer->GetTilemapRenderer();
+	}
+	NODISCARD static FORCEINLINE const TextRenderer& GetTextRenderer()
+	{
+		return s_Instance->m_Renderer->GetTextRenderer();
+	}
 
 	NODISCARD static FORCEINLINE uint16_t GetFPS() { return s_Instance->m_FPSCounter.GetFPS(); };
 

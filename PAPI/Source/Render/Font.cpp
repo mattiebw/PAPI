@@ -4,16 +4,10 @@
 #include <msdf-atlas-gen.h>
 #include <msdfgen.h>
 
+#include "Render/MSDFData.h"
+
 msdfgen::FreetypeHandle *Font::s_FTHandle    = nullptr;
 Ref<Font>                Font::s_DefaultFont = nullptr;
-
-// MW @todo: All we need to store after loading is the atlas texture and the font metrics
-// We should use a custom type to store the metrics, to untie us from the msdf libraries, and completely avoid linking
-// to them in a distribution build.
-struct MSDFData
-{
-	std::vector<msdf_atlas::GlyphGeometry> Glyphs;
-};
 
 struct CharRange
 {
@@ -81,8 +75,8 @@ Font::Font(const std::filesystem::path &fontPath)
 		return;
 	}
 
-	m_Data = std::make_unique<MSDFData>();
-	msdf_atlas::FontGeometry geo(&m_Data->Glyphs);
+	m_Data = CreateScope<MSDFData>();
+	m_Data->FontGeo = msdf_atlas::FontGeometry(&m_Data->Glyphs);
 
 	// Now lets add our charset.
 	// MW @todo: This should be configurable per font.
@@ -93,7 +87,7 @@ Font::Font(const std::filesystem::path &fontPath)
 			charset.add(i);
 
 	// Got the charset, lets load it!
-	m_GlyphCount = geo.loadCharset(font, 1.0, charset);
+	m_GlyphCount = m_Data->FontGeo.loadCharset(font, 1.0, charset);
 
 	// Now lets pack our atlas.
 	// First, set up our packer:
@@ -143,7 +137,7 @@ Font::Font(const std::filesystem::path &fontPath)
 
 	// Now let's generate the atlas texture!
 	m_Texture = GenerateAtlasTexture<uint8_t, float, 3, msdf_atlas::msdfGenerator>(
-		pathString, static_cast<float>(emSize), m_Data->Glyphs, geo, {width, height});
+		pathString, static_cast<float>(emSize), m_Data->Glyphs, m_Data->FontGeo, {width, height});
 
 	// Clean up!
 	msdfgen::destroyFont(font);
