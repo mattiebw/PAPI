@@ -145,6 +145,7 @@ class TextRenderer
 public:
 	FORCEINLINE void Init(RendererData *data, uint32_t maxQuads = 10000);
 	void Flush();
+	void Reset();
 
 	void DrawString(const std::string &string, Ref<Font> font, const glm::mat4 &transformation, const glm::vec4 &colour);
 
@@ -158,6 +159,7 @@ private:
 
 	TextVertex* m_VertexPtr = nullptr;
 	TextVertex* m_VertexPtrBase = nullptr;
+	int32_t m_IndicesCount = 0;
 };
 
 class RendererData

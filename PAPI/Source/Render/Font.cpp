@@ -4,6 +4,7 @@
 #include <msdf-atlas-gen.h>
 #include <msdfgen.h>
 
+#include "Core/Application.h"
 #include "Render/MSDFData.h"
 
 msdfgen::FreetypeHandle *Font::s_FTHandle    = nullptr;
@@ -26,6 +27,23 @@ static Ref<Texture> GenerateAtlasTexture(const std::string &                    
                                          const std::vector<msdf_atlas::GlyphGeometry> &glpyhs,
                                          const msdf_atlas::FontGeometry &              geo, const AtlasConfig &config)
 {
+	// Set up some values we'll need later..
+	TextureSpecification spec;
+	spec.Width           = static_cast<int32_t>(config.Width);
+	spec.Height          = static_cast<int32_t>(config.Height);
+	spec.Format          = TextureFormat::RGB8;
+	
+	// First, lets see if it's cached.
+	std::string cacheName = fmt::format("Cache/{}.atlas", fontName);
+	Buffer data = Application::GetSavedDataManager().GetBinaryData(cacheName);
+	if (data.Data)
+	{
+		// Okay, we already have all the data.
+		Ref<Texture> texture = CreateRef<Texture>(spec);
+		texture->SetData(data.Data);
+		return texture;
+	}
+	
 	// Lets set up our atlas generator
 	msdf_atlas::GeneratorAttributes attributes;
 	attributes.scanlinePass          = true;
@@ -44,12 +62,12 @@ static Ref<Texture> GenerateAtlasTexture(const std::string &                    
 	msdfgen::BitmapConstRef<T, N> bitmap = static_cast<msdfgen::BitmapConstRef<T, N>>(generator.atlasStorage());
 
 	// And set up a GPU texture for it:
-	TextureSpecification spec;
-	spec.Width           = static_cast<int32_t>(config.Width);
-	spec.Height          = static_cast<int32_t>(config.Height);
-	spec.Format          = TextureFormat::RGB8;
 	Ref<Texture> texture = CreateRef<Texture>(spec);
 	texture->SetData(bitmap.pixels);
+
+	// Let's also cache the texture to disk.
+	// MW @hack: Technically the texture could have a different size due to some data manipulation by the Texture class.
+	Application::GetSavedDataManager().SaveBinaryData(cacheName, { (uint8_t*)bitmap.pixels, texture->GetDataSize() }); 
 
 	return texture;
 }
@@ -137,7 +155,7 @@ Font::Font(const std::filesystem::path &fontPath)
 
 	// Now let's generate the atlas texture!
 	m_Texture = GenerateAtlasTexture<uint8_t, float, 3, msdf_atlas::msdfGenerator>(
-		pathString, static_cast<float>(emSize), m_Data->Glyphs, m_Data->FontGeo, {width, height});
+		fontPath.filename().generic_string(), static_cast<float>(emSize), m_Data->Glyphs, m_Data->FontGeo, {width, height});
 
 	// Clean up!
 	msdfgen::destroyFont(font);

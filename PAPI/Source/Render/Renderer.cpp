@@ -325,7 +325,7 @@ void TextRenderer::Init(RendererData *data, uint32_t maxQuads)
 	m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 
 	uint32_t *quadIndices = new uint32_t[maxQuads * 6];
-	for (uint32_t i = 0; i < maxQuads * 6; i++)
+	for (uint32_t i = 0; i < maxQuads; i++)
 	{
 		quadIndices[i * 6 + 0] = i * 4 + 0;
 		quadIndices[i * 6 + 1] = i * 4 + 1;
@@ -356,14 +356,14 @@ void TextRenderer::Flush()
 		return; // Nothing to draw.
 
 	// First, lets update our vertex buffer with our new data.
-	m_VertexBuffer->SetData(m_VertexBufferBase,
-							static_cast<uint32_t>(reinterpret_cast<uint8_t*>(m_VertexBufferPtr) - reinterpret_cast<
-								uint8_t*>(m_VertexBufferBase)));
+	m_VertexBuffer->SetData(m_VertexPtrBase,
+							static_cast<uint32_t>(reinterpret_cast<uint8_t*>(m_VertexPtr) - reinterpret_cast<
+								uint8_t*>(m_VertexPtrBase)));
 
 	// Bind our shader and its uniforms.
-	m_Shader->Bind();
+	m_TextShader->Bind();
 	Viewport *viewport = Renderer::GetCurrentViewport();
-	m_Shader->SetUniformMatrix4f("u_ViewProjection",
+	m_TextShader->SetUniformMatrix4f("u_ViewProjection",
 								 viewport ? viewport->GetCamera()->GetOrthographicViewProjMatrix() : glm::mat4(1.0f));
 
 	// Now let's bind our array and textures.
@@ -371,11 +371,18 @@ void TextRenderer::Flush()
 	m_VertexArray->Bind();
 
 	// Now we can render our quads.
-	glDrawElements(GL_TRIANGLES, static_cast<int>(m_IndicesCount), GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_TRIANGLES, m_IndicesCount, GL_UNSIGNED_INT, nullptr);
 	m_Data->Stats.DrawCalls++;
 
 	// Now we can reset our state.
 	Reset();
+}
+
+void TextRenderer::Reset()
+{
+	m_Textures.Reset();
+	m_VertexPtr  = m_VertexPtrBase;
+	m_IndicesCount     = 0;
 }
 
 Renderer::Renderer(RendererSpecification rendererSpecification)

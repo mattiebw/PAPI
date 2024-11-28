@@ -81,7 +81,7 @@ void Texture::SetData(const uint8_t *data)
 
 void Texture::SetData(const Buffer &data)
 {
-	PAPI_ASSERT(data.Size == m_Spec.Width * m_Spec.Height * GetChannels() && "Buffer size doesn't match texture size.");
+	PAPI_ASSERT(data.Size == GetDataSize() && "Buffer size doesn't match texture size.");
 	SetData(data.Data);
 }
 

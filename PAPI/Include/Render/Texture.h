@@ -77,6 +77,7 @@ public:
 	NODISCARD FORCEINLINE int32_t                     GetHeight() const { return m_Spec.Height; }
 	NODISCARD FORCEINLINE int32_t                     GetChannels() const { return ChannelsFromFormat(m_Spec.Format); }
 	NODISCARD FORCEINLINE uint32_t                    GetOpenGLID() const { return m_TextureID; }
+	NODISCARD FORCEINLINE uint32_t                    GetDataSize() const { return m_Spec.Width * m_Spec.Height * GetChannels(); } // MW @todo: This depends on format.
 	NODISCARD FORCEINLINE const TextureSpecification& GetSpecification() const { return m_Spec; }
 
 	NODISCARD FORCEINLINE bool IsValid() const { return m_TextureID != 0; }

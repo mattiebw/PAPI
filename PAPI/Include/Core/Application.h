@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Layer.h"
+#include "SavedDataManager.h"
 #include "Render/Renderer.h"
 
 class QuadBatch;
@@ -85,6 +86,11 @@ public:
 
 	NODISCARD static FORCEINLINE uint16_t GetFPS() { return s_Instance->m_FPSCounter.GetFPS(); };
 
+	NODISCARD static FORCEINLINE SavedDataManager& GetSavedDataManager()
+	{
+		return s_Instance->m_SavedData;
+	}
+
 	NODISCARD FORCEINLINE bool             IsRunning() const { return m_Running; }
 	NODISCARD FORCEINLINE bool             IsInitialised() const { return m_Initialised; }
 	NODISCARD FORCEINLINE std::string_view GetError() const { return m_Error; }
@@ -109,6 +115,7 @@ protected:
 	std::vector<Ref<World>>  m_Worlds;
 	std::vector<Ref<Layer>>  m_Layers;
 	FPSCounter               m_FPSCounter;
+	SavedDataManager         m_SavedData;
 	bool                     m_Running     = false;
 	bool                     m_Initialised = false;
 	std::string              m_Error;

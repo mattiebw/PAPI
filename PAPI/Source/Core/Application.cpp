@@ -69,7 +69,9 @@ bool Application::Init()
 		return false;
 
 	m_Initialised = true; // Set initialised to true so we can shut down properly.
-
+	
+	m_SavedData.Init(std::filesystem::path(SDL_GetPrefPath("PAPI", "papi")) / "Saved");
+	
 	// Create the main window.
 	m_MainWindow = CreateRef<Window>(WindowSpecification{
 		.Title = m_Specification.AppName,
