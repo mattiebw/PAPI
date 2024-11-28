@@ -8,5 +8,5 @@ public:
     static void Init();
     
     static Ref<TileSet> MainTileSet;
-    static uint16_t Grass, Stone;
+    static uint16_t Grass, StoneFloor, StoneWall;
 };

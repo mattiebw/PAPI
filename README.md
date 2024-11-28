@@ -22,7 +22,7 @@ First, you have to clone the repo. Ensure you do this with the ``recursive`` fla
 as [GitHub Desktop](https://desktop.github.com/download/), and use the clone button. It will clone recursively
 automatically.
 
-Once you have cloned, run **Scripts/GenerateProjectsWindows.bat** (or **GenerateProjectsLinux.sh** if you're on Linux).
+Once you have cloned, run **Setup.bat** (or **Setup.sh** if you're on Linux).
 
 Assuming you're on Windows, there will now be a **PAPI.sln** file in the root directory, which you can open in Visual
 Studio 2022, and build and run like normal.
@@ -83,3 +83,29 @@ switch (type)
 ```
 
 That's it, the entity should now work and you can override the Update() and Render() functions like normal.
+
+#### Adding a New Tile
+
+First, go to TileSets.h and add the tile type to the declarations. For example, if adding ``FlowerTile``, change:
+```c++
+static uint16_t Grass, StoneFloor, StoneWall;
+```
+to:
+```c++
+static uint16_t Grass, StoneFloor, StoneWall, FlowerTile;
+```
+
+Then, in TileSets.cpp, add the definition at the top of the file:
+
+```c++
+uint16_t TileSets::FlowerTile = 0;
+```
+
+And then, at the bottom of the Init() function, create the tile. For this example:
+
+```c++
+TileData flowerTileData;
+flowerTileData.SpriteIndex = 10;
+flowerTileData.IsSolid = false;
+FlowerTile = MainTileSet->AddTile(flowerTileData);
+```

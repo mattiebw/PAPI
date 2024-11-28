@@ -7,7 +7,8 @@
 
 Ref<TileSet> TileSets::MainTileSet = nullptr;
 uint16_t TileSets::Grass = 0;
-uint16_t TileSets::Stone = 0;
+uint16_t TileSets::StoneFloor = 0;
+uint16_t TileSets::StoneWall = 0;
 
 void TileSets::Init()
 {
@@ -21,8 +22,13 @@ void TileSets::Init()
     grassData.IsSolid = false;
     Grass = MainTileSet->AddTile(grassData);
 
-    TileData stoneData;
-    stoneData.SpriteIndex = 9;
-    stoneData.IsSolid = true;
-    Stone = MainTileSet->AddTile(stoneData);
+    TileData stoneFloorData;
+    stoneFloorData.SpriteIndex = 8;
+    stoneFloorData.IsSolid = false;
+    StoneFloor = MainTileSet->AddTile(stoneFloorData);
+
+    TileData stoneWallData;
+    stoneWallData.SpriteIndex = 9;
+    stoneWallData.IsSolid = true;
+    StoneWall = MainTileSet->AddTile(stoneWallData);
 }
