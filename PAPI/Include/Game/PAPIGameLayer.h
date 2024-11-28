@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Core/Layer.h"
 
+class Player;
 class World;
 class Camera;
 
@@ -14,5 +15,6 @@ public:
 	void RenderImGUI(double delta) override;
 
 protected:
+	Ref<Player> m_Player;
 	Transform m_TextTransform;
 };

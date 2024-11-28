@@ -17,6 +17,8 @@ class Player : public Entity
 
 	PAPI_RPC(Multicast, SendMovement, glm::vec2 position, glm::vec2 velocity);
 	PAPI_RPC(Multicast, OnDeath);
+
+	std::string Name = "Qerma";
 	
 private:
 	float         m_Time = 0;

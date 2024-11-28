@@ -4,6 +4,9 @@
 #include <msdf-atlas-gen.h>
 #include <msdfgen.h>
 
+#include <algorithm>
+#include <SDL3/SDL_gpu.h>
+
 #include "Core/Application.h"
 #include "Render/MSDFData.h"
 
@@ -187,4 +190,45 @@ void Font::ShutdownFontSystem()
 	s_DefaultFont = nullptr;
 	deinitializeFreetype(s_FTHandle);
 	s_FTHandle = nullptr;
+}
+
+glm::vec2 Font::MeasureString(const std::string &string)
+{
+	msdfgen::FontMetrics metrics = m_Data->FontGeo.getMetrics();
+	float     fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
+	glm::vec2 pen(0, 0);
+
+	float minX = 0, maxX = 0;
+	float minY = 0, maxY = 0;
+	
+	for (int i = 0; i < string.size(); i++)
+	{
+		auto glyph = m_Data->FontGeo.getGlyph(string[i]);
+		if (!glyph)
+			glyph = m_Data->FontGeo.getGlyph('?');
+		if (!glyph)
+		{
+			PAPI_ASSERT(false && "Failed to draw string with font - missing char, and '?' char!");
+			return { 0, 0 };
+		}
+
+		double quadLeft, quadBottom, quadRight, quadTop;
+		glyph->getQuadPlaneBounds(quadLeft, quadBottom, quadRight, quadTop);
+		glm::vec2 quadMin(static_cast<float>(quadLeft) * fsScale, static_cast<float>(quadBottom) * fsScale);
+		glm::vec2 quadMax(static_cast<float>(quadRight) * fsScale, static_cast<float>(quadTop) * fsScale);
+		quadMin += pen;
+		quadMax += pen;
+
+		minX = std::min(minX, quadMin.x);
+		minY = std::min(minY, quadMin.y);
+		maxX = std::max(maxX, quadMax.x);
+		maxY = std::max(maxY, quadMax.y);
+
+		double advance = glyph->getAdvance();
+		if (i != string.size() - 1)
+			m_Data->FontGeo.getAdvance(advance, string[i], string[i + 1]);
+		pen.x += static_cast<float>(advance) * fsScale;
+	}
+
+	return { maxX - minX, maxY - minY };
 }

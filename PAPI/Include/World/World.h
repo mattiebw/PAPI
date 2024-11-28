@@ -19,16 +19,17 @@ public:
 	}
 
 	template <typename T, typename... Args>
-	void AddEntity(Args &&... args)
+	Ref<T> AddEntity(Args &&... args)
 	{
 		static_assert(std::is_base_of_v<Entity, T>, "T must inherit from Entity");
 		UUID        uuid;
-		Ref<Entity> entity = CreateRef<T>(std::forward<Args>(args)...);
+		Ref<T> entity = CreateRef<T>(std::forward<Args>(args)...);
 		entity->SetUUID(uuid);
 		entity->Created();
 		entity->SetWorld(this);
 		entity->AddedToWorld(this);
 		m_Entities[uuid] = entity;
+		return entity;
 	}
 
 	void UpdateEntityUUID(UUID oldID, UUID newID);

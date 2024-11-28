@@ -18,6 +18,8 @@ public:
 	static void InitFontSystem();
 	static void ShutdownFontSystem();
 
+	glm::vec2 MeasureString(const std::string& string);
+
 	NODISCARD FORCEINLINE int                 GetGlyphCount() const { return m_GlyphCount; }
 	NODISCARD FORCEINLINE const Ref<Texture>& GetAtlasTexture() const { return m_Texture; }
 	NODISCARD FORCEINLINE const MSDFData*     GetData() const { return m_Data.get(); }

@@ -74,9 +74,16 @@ void Player::Render()
 	Application::GetQuadRenderer()->DrawQuad(EntityTransform.Position, glm::vec2(1.0f),
 	                                         glm::vec4(sine, sine, sine, 1.0f), m_Texture);
 
+	auto size = Font::GetDefaultFont()->MeasureString(Name) * 0.5f;
 	Transform tf = EntityTransform;
-	tf.Position.y += 1;
-	tf.Position.x -= 0.5;
+	tf.Position.y += size.y * 2.5f;
+	tf.Position.x -= size.x / 2;
 	tf.Scale = glm::vec3(0.5, 0.5, 1.0);
-	Application::GetTextRenderer().DrawString("Jerma", Font::GetDefaultFont(), tf.GetTransformationMatrix(), glm::vec4(1));
+	Application::GetTextRenderer().DrawString(Name, Font::GetDefaultFont(), tf.GetTransformationMatrix(), glm::vec4(1));
+	tf.Position.z -= 0.01f;
+	tf.Scale = glm::vec3(size.x + 0.2f, size.y + 0.3f, 1);
+	tf.Position.x += size.x / 2;
+	tf.Position.y += size.y / 2;
+	tf.Position.y -= 0.05f;
+	Application::GetQuadRenderer()->DrawQuad(tf.GetTransformationMatrix(), glm::vec4(1, 1, 1, 0.5));
 }

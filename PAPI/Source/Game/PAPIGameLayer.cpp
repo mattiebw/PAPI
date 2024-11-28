@@ -12,6 +12,8 @@
 #include "World/TileSets.h"
 #include "World/World.h"
 
+#include <misc/cpp/imgui_stdlib.h>
+
 void PAPIGameLayer::OnAttach()
 {
 	PAPI_INFO("Initialising PAPI game!");
@@ -20,7 +22,7 @@ void PAPIGameLayer::OnAttach()
 	TileSets::Init();
 	Application *app   = Application::Get();
 	Ref<World>   world = app->AddWorld();
-	world->AddEntity<Player>("Player");
+	m_Player = world->AddEntity<Player>("Player");
 
 	m_TextTransform.Position.z = -0.05f;
 }
@@ -41,8 +43,6 @@ void PAPIGameLayer::Render(double delta)
 void PAPIGameLayer::RenderImGUI(double delta)
 {
 	ImGui::Begin("Text Test");
-	ImGui::InputFloat3("Text Position", glm::value_ptr(m_TextTransform.Position));
-	ImGui::InputFloat3("Text Rotation", glm::value_ptr(m_TextTransform.Rotation));
-	ImGui::InputFloat3("Text Scale", glm::value_ptr(m_TextTransform.Scale));
+	ImGui::InputText("Player name", &m_Player->Name);
 	ImGui::End();
 }
