@@ -63,16 +63,16 @@ class TextureSet
 {
 public:
 	void SetMaxSlots(int max);
-	
+
 	void BindTextures() const;
 	void Reset();
-	bool HasTexture(const Ref<Texture>& texture, int& index);
-	int  FindOrAddTexture(const Ref<Texture>& texture);
+	bool HasTexture(const Ref<Texture> &texture, int &index);
+	int  FindOrAddTexture(const Ref<Texture> &texture);
 
 	MulticastDelegate<> OnFlush;
-	
+
 protected:
-	int m_MaxSlots = 0;
+	int                       m_MaxSlots = 0;
 	std::vector<Ref<Texture>> m_TextureSlots;
 	size_t                    m_TextureSlotIndex = 0;
 };
@@ -111,13 +111,13 @@ private:
 	glm::vec4     m_QuadPositions[4];
 	glm::vec3     m_QuadPositions3[4];
 
-	TextureSet m_Textures;
-	uint32_t                  m_IndicesCount = 0;
-	Ref<Shader>               m_Shader;
-	Ref<VertexArray>          m_VertexArray;
-	Ref<VertexBuffer>         m_VertexBuffer;
-	QuadVertex *              m_VertexBufferBase = nullptr;
-	QuadVertex *              m_VertexBufferPtr  = nullptr;
+	TextureSet        m_Textures;
+	uint32_t          m_IndicesCount = 0;
+	Ref<Shader>       m_Shader;
+	Ref<VertexArray>  m_VertexArray;
+	Ref<VertexBuffer> m_VertexBuffer;
+	QuadVertex *      m_VertexBufferBase = nullptr;
+	QuadVertex *      m_VertexBufferPtr  = nullptr;
 };
 
 class TilemapRenderer
@@ -146,24 +146,25 @@ class TextRenderer
 {
 public:
 	~TextRenderer();
-	
-	FORCEINLINE void Init(RendererData *data, uint32_t maxQuads = 10000);
-	void Flush();
-	void Reset();
 
-	void DrawString(const std::string &string, Ref<Font> font, const glm::mat4 &transformation, const glm::vec4 &colour);
+	FORCEINLINE void Init(RendererData *data, uint32_t maxQuads = 10000);
+	void             Flush();
+	void             Reset();
+
+	void DrawString(const std::string &string, Ref<Font> font, const glm::mat4 &transformation,
+	                const glm::vec4 &  colour);
 
 private:
-	Ref<VertexArray> m_VertexArray;
+	Ref<VertexArray>  m_VertexArray;
 	Ref<VertexBuffer> m_VertexBuffer;
-	
-	TextureSet m_Textures;
-	Ref<Shader> m_TextShader;
+
+	TextureSet    m_Textures;
+	Ref<Shader>   m_TextShader;
 	RendererData *m_Data = nullptr;
 
-	TextVertex* m_VertexPtr = nullptr;
-	TextVertex* m_VertexPtrBase = nullptr;
-	int32_t m_IndicesCount = 0, m_MaxIndices = 0;
+	TextVertex *m_VertexPtr     = nullptr;
+	TextVertex *m_VertexPtrBase = nullptr;
+	int32_t     m_IndicesCount  = 0, m_MaxIndices = 0;
 };
 
 class RendererData

@@ -12,7 +12,7 @@ public:
 
 	FORCEINLINE void Restart()
 	{
-		m_End = 0;
+		m_End   = 0;
 		m_Begin = SDL_GetPerformanceCounter();
 	}
 

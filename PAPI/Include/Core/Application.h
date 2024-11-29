@@ -75,10 +75,12 @@ public:
 	{
 		return s_Instance->m_Renderer->GetQuadRenderer();
 	}
+
 	NODISCARD static FORCEINLINE const TilemapRenderer& GetTilemapRenderer()
 	{
 		return s_Instance->m_Renderer->GetTilemapRenderer();
 	}
+
 	NODISCARD static FORCEINLINE TextRenderer& GetTextRenderer()
 	{
 		return s_Instance->m_Renderer->GetTextRenderer();

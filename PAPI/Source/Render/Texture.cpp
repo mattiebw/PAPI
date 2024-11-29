@@ -51,7 +51,8 @@ Texture::Texture(std::string_view filename, const TextureSpecification &spec)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<GLint>(m_Spec.MagFilter));
 
 	// Set data
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Spec.Width, m_Spec.Height, FormatToGLFormat(m_Spec.Format), GL_UNSIGNED_BYTE, data);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Spec.Width, m_Spec.Height, FormatToGLFormat(m_Spec.Format),
+	                GL_UNSIGNED_BYTE, data);
 
 	// Generate mipmaps if needed
 	if (m_Spec.GenerateMipmaps)
@@ -76,7 +77,8 @@ void Texture::SetData(const uint8_t *data)
 {
 	// MW @todo: Error checking of size. Either take a size parameter, or remove this overload and require a Buffer.
 	glBindTexture(GL_TEXTURE_2D, m_TextureID);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Spec.Width, m_Spec.Height, FormatToGLFormat(m_Spec.Format), GL_UNSIGNED_BYTE, data);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Spec.Width, m_Spec.Height, FormatToGLFormat(m_Spec.Format),
+	                GL_UNSIGNED_BYTE, data);
 }
 
 void Texture::SetData(const Buffer &data)

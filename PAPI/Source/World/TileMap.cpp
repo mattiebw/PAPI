@@ -7,7 +7,7 @@ TileMap::TileMap(const Ref<TileSet> &tileSet, int chunkWidth, int chunkHeight)
 	: m_ChunkSize(chunkWidth, chunkHeight), m_TileSet(tileSet)
 {
 	m_Chunks[glm::ivec2(0, 0)] = CreateRef<TileMapChunk>(this, glm::ivec2(0, 0));
-	m_ChunkProvider = CreateRef<DefaultChunkProvider>();
+	m_ChunkProvider            = CreateRef<DefaultChunkProvider>();
 }
 
 void TileMap::SetTile(int x, int y, uint32_t tile, bool canCreateChunk)

@@ -87,10 +87,13 @@ That's it, the entity should now work and you can override the Update() and Rend
 #### Adding a New Tile
 
 First, go to TileSets.h and add the tile type to the declarations. For example, if adding ``FlowerTile``, change:
+
 ```c++
 static uint16_t Grass, StoneFloor, StoneWall;
 ```
+
 to:
+
 ```c++
 static uint16_t Grass, StoneFloor, StoneWall, FlowerTile;
 ```

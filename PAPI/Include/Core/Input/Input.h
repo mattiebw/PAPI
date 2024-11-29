@@ -10,28 +10,36 @@ public:
 	static void Init();
 	static void Shutdown();
 
-	NODISCARD static FORCEINLINE bool IsKeyDown(const Scancode key) { return s_Keys[key]; }
+	NODISCARD static FORCEINLINE bool IsKeyDown(const Scancode key) { return !s_ImGuiHasKeyboardFocus && s_Keys[key]; }
 	NODISCARD static FORCEINLINE bool IsKeyDownThisFrame(const Scancode key)
 	{
-		return s_Keys[key] && !s_PreviousKeys[key];
+		return !s_ImGuiHasKeyboardFocus && s_Keys[key] && !s_PreviousKeys[key];
 	}
 
-	NODISCARD static FORCEINLINE bool IsKeyUp(const Scancode key) { return !s_Keys[key]; }
+	NODISCARD static FORCEINLINE bool IsKeyUp(const Scancode key) { return !s_ImGuiHasKeyboardFocus && !s_Keys[key]; }
 	NODISCARD static FORCEINLINE bool IsKeyUpThisFrame(const Scancode key)
 	{
-		return !s_Keys[key] && s_PreviousKeys[key];
+		return !s_ImGuiHasKeyboardFocus && !s_Keys[key] && s_PreviousKeys[key];
 	}
 
-	NODISCARD static FORCEINLINE bool IsMouseButtonDown(const MouseButton button) { return s_MouseButtons[button]; }
+	NODISCARD static FORCEINLINE bool IsMouseButtonDown(const MouseButton button)
+	{
+		return !s_ImGuiHasMouseFocus && s_MouseButtons[button];
+	}
+
 	NODISCARD static FORCEINLINE bool IsMouseButtonDownThisFrame(const MouseButton button)
 	{
-		return s_MouseButtons[button] && !s_PreviousMouseButtons[button];
+		return !s_ImGuiHasMouseFocus && s_MouseButtons[button] && !s_PreviousMouseButtons[button];
 	}
 
-	NODISCARD static FORCEINLINE bool IsMouseButtonUp(const MouseButton button) { return !s_MouseButtons[button]; }
+	NODISCARD static FORCEINLINE bool IsMouseButtonUp(const MouseButton button)
+	{
+		return !s_ImGuiHasMouseFocus && !s_MouseButtons[button];
+	}
+
 	NODISCARD static FORCEINLINE bool IsMouseButtonUpThisFrame(const MouseButton button)
 	{
-		return !s_MouseButtons[button] && s_PreviousMouseButtons[button];
+		return !s_ImGuiHasMouseFocus && !s_MouseButtons[button] && s_PreviousMouseButtons[button];
 	}
 
 	NODISCARD static FORCEINLINE glm::vec2 GetMousePosition() { return s_MousePosition; }
@@ -43,6 +51,11 @@ public:
 		memcpy(s_PreviousKeys, s_Keys, PAPI_KEY_COUNT * sizeof(bool));
 		memcpy(s_PreviousMouseButtons, s_MouseButtons, PAPI_MOUSE_BUTTON_COUNT * sizeof(bool));
 		s_MouseDelta = glm::vec2(0.0f);
+		#ifndef PAPI_NO_IMGUI
+		ImGuiIO &io             = ImGui::GetIO();
+		s_ImGuiHasKeyboardFocus = io.WantCaptureKeyboard;
+		s_ImGuiHasMouseFocus    = io.WantCaptureMouse;
+		#endif
 	}
 
 	static void ProcessKeyboardInputEvent(const SDL_KeyboardEvent &event);
@@ -57,4 +70,7 @@ protected:
 	static bool      s_MouseButtons[PAPI_MOUSE_BUTTON_COUNT];
 	static bool      s_PreviousMouseButtons[PAPI_MOUSE_BUTTON_COUNT];
 	static glm::vec2 s_MousePosition, s_MouseDelta;
+
+	static bool s_ImGuiHasKeyboardFocus;
+	static bool s_ImGuiHasMouseFocus;
 };

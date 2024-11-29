@@ -20,9 +20,9 @@ float median(float r, float g, float b) {
 }
 
 float screenPxRange() {
-    vec2 unitRange = vec2(pixelRange)/vec2(textureSize(u_Textures[a_FontAtlas], 0)); // MW @todo: Shouldn't be indexing with variable.
-    vec2 screenTexSize = vec2(1.0)/fwidth(Input.TexCoord);
-    return max(0.5*dot(unitRange, screenTexSize), 1.0);
+    vec2 unitRange = vec2(pixelRange) / vec2(textureSize(u_Textures[a_FontAtlas], 0)); // MW @todo: Shouldn't be indexing with variable.
+    vec2 screenTexSize = vec2(1.0) / fwidth(Input.TexCoord);
+    return max(0.5 * dot(unitRange, screenTexSize), 1.0);
 }
 
 void main()
@@ -31,16 +31,16 @@ void main()
 
     switch (int(a_FontAtlas))
     {
-        case  0: texColor *= texture(u_Textures[ 0], Input.TexCoord); break;
-        case  1: texColor *= texture(u_Textures[ 1], Input.TexCoord); break;
-        case  2: texColor *= texture(u_Textures[ 2], Input.TexCoord); break;
-        case  3: texColor *= texture(u_Textures[ 3], Input.TexCoord); break;
-        case  4: texColor *= texture(u_Textures[ 4], Input.TexCoord); break;
-        case  5: texColor *= texture(u_Textures[ 5], Input.TexCoord); break;
-        case  6: texColor *= texture(u_Textures[ 6], Input.TexCoord); break;
-        case  7: texColor *= texture(u_Textures[ 7], Input.TexCoord); break;
-        case  8: texColor *= texture(u_Textures[ 8], Input.TexCoord); break;
-        case  9: texColor *= texture(u_Textures[ 9], Input.TexCoord); break;
+        case 0: texColor *= texture(u_Textures[0], Input.TexCoord); break;
+        case 1: texColor *= texture(u_Textures[1], Input.TexCoord); break;
+        case 2: texColor *= texture(u_Textures[2], Input.TexCoord); break;
+        case 3: texColor *= texture(u_Textures[3], Input.TexCoord); break;
+        case 4: texColor *= texture(u_Textures[4], Input.TexCoord); break;
+        case 5: texColor *= texture(u_Textures[5], Input.TexCoord); break;
+        case 6: texColor *= texture(u_Textures[6], Input.TexCoord); break;
+        case 7: texColor *= texture(u_Textures[7], Input.TexCoord); break;
+        case 8: texColor *= texture(u_Textures[8], Input.TexCoord); break;
+        case 9: texColor *= texture(u_Textures[9], Input.TexCoord); break;
         case 10: texColor *= texture(u_Textures[10], Input.TexCoord); break;
         case 11: texColor *= texture(u_Textures[11], Input.TexCoord); break;
         case 12: texColor *= texture(u_Textures[12], Input.TexCoord); break;
@@ -64,7 +64,7 @@ void main()
         case 30: texColor *= texture(u_Textures[30], Input.TexCoord); break;
         case 31: texColor *= texture(u_Textures[31], Input.TexCoord); break;
     }
-    
+
     vec3 msd = texColor.rgb;
     float sd = median(msd.r, msd.g, msd.b);
     float screenPxDistance = screenPxRange() * (sd - 0.5);

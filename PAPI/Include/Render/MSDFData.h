@@ -9,5 +9,5 @@
 struct MSDFData
 {
 	std::vector<msdf_atlas::GlyphGeometry> Glyphs;
-	msdf_atlas::FontGeometry FontGeo;
+	msdf_atlas::FontGeometry               FontGeo;
 };

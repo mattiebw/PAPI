@@ -44,7 +44,8 @@ void TextureSet::BindTextures() const
 
 void TextureSet::Reset()
 {
-	for (int i = 0; i < m_TextureSlotIndex; i++) // Can't memset, as they're shared ptrs (so we need to run ref counting)
+	for (int i = 0; i < m_TextureSlotIndex; i++)
+		// Can't memset, as they're shared ptrs (so we need to run ref counting)
 		m_TextureSlots[i] = nullptr;
 	m_TextureSlotIndex = 0;
 }
@@ -68,14 +69,14 @@ bool TextureSet::HasTexture(const Ref<Texture> &texture, int &index)
 int TextureSet::FindOrAddTexture(const Ref<Texture> &texture)
 {
 	if (!texture) return -1;
-	
+
 	int index;
 	if (!HasTexture(texture, index))
 	{
 		if (m_TextureSlotIndex >= m_TextureSlots.size())
 			OnFlush.Execute();
-		
-		index = static_cast<int32_t>(m_TextureSlotIndex);
+
+		index                              = static_cast<int32_t>(m_TextureSlotIndex);
 		m_TextureSlots[m_TextureSlotIndex] = texture;
 		m_TextureSlotIndex++;
 		return index;
@@ -123,7 +124,7 @@ QuadBatch::QuadBatch(RendererData *data, uint32_t MaxQuads)
 
 	m_Textures.SetMaxSlots(m_Data->MaxTextureSlots);
 	m_Textures.OnFlush.BindMethod(this, &QuadBatch::Flush);
-	
+
 	m_Shader = ShaderLibrary::CreateShader("Quad");
 	m_Shader->AddStageFromFile(GL_VERTEX_SHADER, "Content/Shaders/Quad.vert");
 	m_Shader->AddStageFromFile(GL_FRAGMENT_SHADER, "Content/Shaders/Quad.frag");
@@ -227,8 +228,8 @@ void QuadBatch::Flush()
 void QuadBatch::Reset()
 {
 	m_Textures.Reset();
-	m_VertexBufferPtr  = m_VertexBufferBase;
-	m_IndicesCount     = 0;
+	m_VertexBufferPtr = m_VertexBufferBase;
+	m_IndicesCount    = 0;
 }
 
 void TilemapRenderer::Init(RendererData *data)
@@ -268,19 +269,19 @@ void TilemapRenderer::DrawTileMapChunk(const glm::vec3 bottomLeftPosition, TileM
 void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const glm::mat4 &transformation,
                               const glm::vec4 &  colour)
 {
-	const msdf_atlas::FontGeometry &fontGeo = font->GetData()->FontGeo;
-	const msdfgen::FontMetrics &    metrics = fontGeo.getMetrics();
-	const Ref<Texture>& atlasTexture = font->GetAtlasTexture();
-	const int textureID = m_Textures.FindOrAddTexture(atlasTexture);
-	
+	const msdf_atlas::FontGeometry &fontGeo      = font->GetData()->FontGeo;
+	const msdfgen::FontMetrics &    metrics      = fontGeo.getMetrics();
+	const Ref<Texture> &            atlasTexture = font->GetAtlasTexture();
+	const int                       textureID    = m_Textures.FindOrAddTexture(atlasTexture);
+
 	float     fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
 	glm::vec2 pen(0, 0);
-	
+
 	for (int i = 0; i < string.size(); i++)
 	{
 		if (m_IndicesCount >= m_MaxIndices)
 			Flush();
-		
+
 		auto glyph = fontGeo.getGlyph(string[i]);
 		if (!glyph)
 			glyph = fontGeo.getGlyph('?');
@@ -291,11 +292,11 @@ void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const g
 		}
 
 		// MW @todo: A lot of this code should be done once at font generation, and cached.
-		
+
 		double atlasLeft, atlasBottom, atlasRight, atlasTop;
 		glyph->getQuadAtlasBounds(atlasLeft, atlasBottom, atlasRight, atlasTop);
-		float texelWidth = 1.0f / atlasTexture->GetWidth();
-		float texelHeight = 1.0f / atlasTexture->GetHeight();
+		float     texelWidth  = 1.0f / atlasTexture->GetWidth();
+		float     texelHeight = 1.0f / atlasTexture->GetHeight();
 		glm::vec2 uvMin(static_cast<float>(atlasLeft) * texelWidth, static_cast<float>(atlasBottom) * texelHeight);
 		glm::vec2 uvMax(static_cast<float>(atlasRight) * texelWidth, static_cast<float>(atlasTop) * texelHeight);
 
@@ -306,30 +307,30 @@ void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const g
 		quadMin += pen;
 		quadMax += pen;
 
-		m_VertexPtr->Position = transformation * glm::vec4(quadMin, 0.0f, 1.0f);
-		m_VertexPtr->Color    = colour;
-		m_VertexPtr->TexCoord = uvMin;
+		m_VertexPtr->Position  = transformation * glm::vec4(quadMin, 0.0f, 1.0f);
+		m_VertexPtr->Color     = colour;
+		m_VertexPtr->TexCoord  = uvMin;
 		m_VertexPtr->FontAtlas = static_cast<float>(textureID);
 		m_VertexPtr++;
 
-		m_VertexPtr->Position = transformation * glm::vec4(quadMax.x, quadMin.y, 0.0f, 1.0f);
-		m_VertexPtr->Color    = colour;
-		m_VertexPtr->TexCoord = glm::vec2(uvMax.x, uvMin.y);
+		m_VertexPtr->Position  = transformation * glm::vec4(quadMax.x, quadMin.y, 0.0f, 1.0f);
+		m_VertexPtr->Color     = colour;
+		m_VertexPtr->TexCoord  = glm::vec2(uvMax.x, uvMin.y);
 		m_VertexPtr->FontAtlas = static_cast<float>(textureID);
 		m_VertexPtr++;
 
-		m_VertexPtr->Position = transformation * glm::vec4(quadMax, 0.0f, 1.0f);
-		m_VertexPtr->Color    = colour;
-		m_VertexPtr->TexCoord = uvMax;
+		m_VertexPtr->Position  = transformation * glm::vec4(quadMax, 0.0f, 1.0f);
+		m_VertexPtr->Color     = colour;
+		m_VertexPtr->TexCoord  = uvMax;
 		m_VertexPtr->FontAtlas = static_cast<float>(textureID);
 		m_VertexPtr++;
 
-		m_VertexPtr->Position = transformation * glm::vec4(quadMin.x, quadMax.y, 0.0f, 1.0f);
-		m_VertexPtr->Color    = colour;
-		m_VertexPtr->TexCoord = glm::vec2(uvMin.x, uvMax.y);
+		m_VertexPtr->Position  = transformation * glm::vec4(quadMin.x, quadMax.y, 0.0f, 1.0f);
+		m_VertexPtr->Color     = colour;
+		m_VertexPtr->TexCoord  = glm::vec2(uvMin.x, uvMax.y);
 		m_VertexPtr->FontAtlas = static_cast<float>(textureID);
 		m_VertexPtr++;
-		
+
 		m_IndicesCount += 6;
 		m_Data->Stats.CharCount++;
 
@@ -354,13 +355,13 @@ void TextRenderer::Init(RendererData *data, uint32_t maxQuads)
 {
 	m_Data = data;
 
-	m_VertexArray = CreateRef<VertexArray>();
+	m_VertexArray  = CreateRef<VertexArray>();
 	m_VertexBuffer = CreateRef<VertexBuffer>(static_cast<uint32_t>((maxQuads * 4) * sizeof(TextVertex)),
-											 BufferUsageType::StreamDraw);
+	                                         BufferUsageType::StreamDraw);
 	m_VertexBuffer->SetLayout(TextVertex::GetLayout());
 	m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 
-	m_MaxIndices = maxQuads * 6;
+	m_MaxIndices          = maxQuads * 6;
 	uint32_t *quadIndices = new uint32_t[m_MaxIndices];
 	for (uint32_t i = 0; i < maxQuads; i++)
 	{
@@ -377,10 +378,10 @@ void TextRenderer::Init(RendererData *data, uint32_t maxQuads)
 
 	m_Textures.SetMaxSlots(m_Data->MaxTextureSlots);
 	m_Textures.OnFlush.BindMethod(this, &TextRenderer::Flush);
-	
+
 	m_VertexPtrBase = new TextVertex[maxQuads * 4];
-	m_VertexPtr  = m_VertexPtrBase;
-	
+	m_VertexPtr     = m_VertexPtrBase;
+
 	m_TextShader = ShaderLibrary::CreateShader("Text");
 	m_TextShader->AddStageFromFile(GL_VERTEX_SHADER, "Content/Shaders/Text.vert");
 	m_TextShader->AddStageFromFile(GL_FRAGMENT_SHADER, "Content/Shaders/Text.frag");
@@ -394,14 +395,16 @@ void TextRenderer::Flush()
 
 	// First, lets update our vertex buffer with our new data.
 	m_VertexBuffer->SetData(m_VertexPtrBase,
-							static_cast<uint32_t>(reinterpret_cast<uint8_t*>(m_VertexPtr) - reinterpret_cast<
-								uint8_t*>(m_VertexPtrBase)));
+	                        static_cast<uint32_t>(reinterpret_cast<uint8_t*>(m_VertexPtr) - reinterpret_cast<
+		                        uint8_t*>(m_VertexPtrBase)));
 
 	// Bind our shader and its uniforms.
 	m_TextShader->Bind();
 	Viewport *viewport = Renderer::GetCurrentViewport();
 	m_TextShader->SetUniformMatrix4f("u_ViewProjection",
-								 viewport ? viewport->GetCamera()->GetOrthographicViewProjMatrix() : glm::mat4(1.0f));
+	                                 viewport
+		                                 ? viewport->GetCamera()->GetOrthographicViewProjMatrix()
+		                                 : glm::mat4(1.0f));
 
 	// Now let's bind our array and textures.
 	m_Textures.BindTextures();
@@ -418,8 +421,8 @@ void TextRenderer::Flush()
 void TextRenderer::Reset()
 {
 	m_Textures.Reset();
-	m_VertexPtr  = m_VertexPtrBase;
-	m_IndicesCount     = 0;
+	m_VertexPtr    = m_VertexPtrBase;
+	m_IndicesCount = 0;
 }
 
 Renderer::Renderer(RendererSpecification rendererSpecification)
@@ -665,7 +668,8 @@ void Renderer::RenderImGUI()
 		ImGui::Text("Quad Count: %d", m_Data->Stats.QuadCount);
 		ImGui::Text("Tile Count: %d", m_Data->Stats.TileCount);
 		ImGui::Text("String Characters Count: %d", m_Data->Stats.CharCount);
-		ImGui::Text("Total Quad Count: %d", m_Data->Stats.TileCount + m_Data->Stats.QuadCount + m_Data->Stats.CharCount);
+		ImGui::Text("Total Quad Count: %d",
+		            m_Data->Stats.TileCount + m_Data->Stats.QuadCount + m_Data->Stats.CharCount);
 		ImGui::Checkbox("Should Restart", &g_ShouldRestart);
 		ImGui::End();
 	}

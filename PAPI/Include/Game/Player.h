@@ -19,7 +19,7 @@ class Player : public Entity
 	PAPI_RPC(Multicast, OnDeath);
 
 	std::string Name = "Qerma";
-	
+
 private:
 	float         m_Time = 0;
 	Ref<Texture>  m_Texture;

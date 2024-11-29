@@ -6,6 +6,8 @@ bool      Input::s_PreviousKeys[PAPI_KEY_COUNT];
 bool      Input::s_MouseButtons[PAPI_MOUSE_BUTTON_COUNT];
 bool      Input::s_PreviousMouseButtons[PAPI_MOUSE_BUTTON_COUNT];
 glm::vec2 Input::s_MousePosition, Input::s_MouseDelta;
+bool      Input::s_ImGuiHasKeyboardFocus = false;
+bool      Input::s_ImGuiHasMouseFocus    = false;
 
 void Input::Init()
 {

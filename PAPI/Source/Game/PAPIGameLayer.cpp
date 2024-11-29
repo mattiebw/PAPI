@@ -22,7 +22,7 @@ void PAPIGameLayer::OnAttach()
 	TileSets::Init();
 	Application *app   = Application::Get();
 	Ref<World>   world = app->AddWorld();
-	m_Player = world->AddEntity<Player>("Player");
+	m_Player           = world->AddEntity<Player>("Player");
 
 	m_TextTransform.Position.z = -0.05f;
 }
@@ -37,7 +37,8 @@ void PAPIGameLayer::Update(double delta)
 
 void PAPIGameLayer::Render(double delta)
 {
-	Application::GetTextRenderer().DrawString("Hello", Font::GetDefaultFont(), m_TextTransform.GetTransformationMatrix(), glm::vec4(1.0f));
+	Application::GetTextRenderer().DrawString("Hello", Font::GetDefaultFont(),
+	                                          m_TextTransform.GetTransformationMatrix(), glm::vec4(1.0f));
 }
 
 void PAPIGameLayer::RenderImGUI(double delta)

@@ -6,29 +6,29 @@
 #include "Render/SpriteSheet.h"
 
 Ref<TileSet> TileSets::MainTileSet = nullptr;
-uint16_t TileSets::Grass = 0;
-uint16_t TileSets::StoneFloor = 0;
-uint16_t TileSets::StoneWall = 0;
+uint16_t     TileSets::Grass       = 0;
+uint16_t     TileSets::StoneFloor  = 0;
+uint16_t     TileSets::StoneWall   = 0;
 
 void TileSets::Init()
 {
-    Ref<Texture> texture = CreateRef<Texture>("Content/Textures/TerrainSpritesheet.png");
-    Ref<SpriteSheet> spriteSheet = CreateRef<SpriteSheet>(texture);
-    spriteSheet->CreateTilesFromTileSize(16, 16);
-    MainTileSet = CreateRef<TileSet>(spriteSheet);
+	Ref<Texture>     texture     = CreateRef<Texture>("Content/Textures/TerrainSpritesheet.png");
+	Ref<SpriteSheet> spriteSheet = CreateRef<SpriteSheet>(texture);
+	spriteSheet->CreateTilesFromTileSize(16, 16);
+	MainTileSet = CreateRef<TileSet>(spriteSheet);
 
-    TileData grassData;
-    grassData.SpriteIndex = 0;
-    grassData.IsSolid = false;
-    Grass = MainTileSet->AddTile(grassData);
+	TileData grassData;
+	grassData.SpriteIndex = 0;
+	grassData.IsSolid     = false;
+	Grass                 = MainTileSet->AddTile(grassData);
 
-    TileData stoneFloorData;
-    stoneFloorData.SpriteIndex = 8;
-    stoneFloorData.IsSolid = false;
-    StoneFloor = MainTileSet->AddTile(stoneFloorData);
+	TileData stoneFloorData;
+	stoneFloorData.SpriteIndex = 8;
+	stoneFloorData.IsSolid     = false;
+	StoneFloor                 = MainTileSet->AddTile(stoneFloorData);
 
-    TileData stoneWallData;
-    stoneWallData.SpriteIndex = 9;
-    stoneWallData.IsSolid = true;
-    StoneWall = MainTileSet->AddTile(stoneWallData);
+	TileData stoneWallData;
+	stoneWallData.SpriteIndex = 9;
+	stoneWallData.IsSolid     = true;
+	StoneWall                 = MainTileSet->AddTile(stoneWallData);
 }

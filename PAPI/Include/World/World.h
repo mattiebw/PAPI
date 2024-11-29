@@ -22,7 +22,7 @@ public:
 	Ref<T> AddEntity(Args &&... args)
 	{
 		static_assert(std::is_base_of_v<Entity, T>, "T must inherit from Entity");
-		UUID        uuid;
+		UUID   uuid;
 		Ref<T> entity = CreateRef<T>(std::forward<Args>(args)...);
 		entity->SetUUID(uuid);
 		entity->Created();

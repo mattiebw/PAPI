@@ -33,7 +33,7 @@ protected:
 	// The key in our chunk map is the chunk coordinate.
 	// For example, if the chunk size is 32x32 and the chunk coordinate is (1, 2),
 	// then the top left tile in that chunk is tile (32, 64).
-	Ref<ChunkProvider> m_ChunkProvider;
+	Ref<ChunkProvider>                                m_ChunkProvider;
 	std::unordered_map<glm::ivec2, Ref<TileMapChunk>> m_Chunks;
 	glm::ivec2                                        m_ChunkSize;
 
