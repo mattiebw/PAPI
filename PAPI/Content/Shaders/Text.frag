@@ -20,7 +20,43 @@ float median(float r, float g, float b) {
 }
 
 float screenPxRange() {
-    vec2 unitRange = vec2(pixelRange) / vec2(textureSize(u_Textures[a_FontAtlas], 0)); // MW @todo: Shouldn't be indexing with variable.
+    vec2 texSize = vec2(0);
+    switch (int(a_FontAtlas))
+    {
+        case 0: texSize = vec2(textureSize(u_Textures[0], 0)); break;
+        case 1: texSize = vec2(textureSize(u_Textures[1], 0)); break;
+        case 2: texSize = vec2(textureSize(u_Textures[2], 0)); break;
+        case 3: texSize = vec2(textureSize(u_Textures[3], 0)); break;
+        case 4: texSize = vec2(textureSize(u_Textures[4], 0)); break;
+        case 5: texSize = vec2(textureSize(u_Textures[5], 0)); break;
+        case 6: texSize = vec2(textureSize(u_Textures[6], 0)); break;
+        case 7: texSize = vec2(textureSize(u_Textures[7], 0)); break;
+        case 8: texSize = vec2(textureSize(u_Textures[8], 0)); break;
+        case 9: texSize = vec2(textureSize(u_Textures[9], 0)); break;
+        case 10: texSize = vec2(textureSize(u_Textures[10], 0)); break;
+        case 11: texSize = vec2(textureSize(u_Textures[11], 0)); break;
+        case 12: texSize = vec2(textureSize(u_Textures[12], 0)); break;
+        case 13: texSize = vec2(textureSize(u_Textures[13], 0)); break;
+        case 14: texSize = vec2(textureSize(u_Textures[14], 0)); break;
+        case 15: texSize = vec2(textureSize(u_Textures[15], 0)); break;
+        case 16: texSize = vec2(textureSize(u_Textures[16], 0)); break;
+        case 17: texSize = vec2(textureSize(u_Textures[17], 0)); break;
+        case 18: texSize = vec2(textureSize(u_Textures[18], 0)); break;
+        case 19: texSize = vec2(textureSize(u_Textures[19], 0)); break;
+        case 20: texSize = vec2(textureSize(u_Textures[20], 0)); break;
+        case 21: texSize = vec2(textureSize(u_Textures[21], 0)); break;
+        case 22: texSize = vec2(textureSize(u_Textures[22], 0)); break;
+        case 23: texSize = vec2(textureSize(u_Textures[23], 0)); break;
+        case 24: texSize = vec2(textureSize(u_Textures[24], 0)); break;
+        case 25: texSize = vec2(textureSize(u_Textures[25], 0)); break;
+        case 26: texSize = vec2(textureSize(u_Textures[26], 0)); break;
+        case 27: texSize = vec2(textureSize(u_Textures[27], 0)); break;
+        case 28: texSize = vec2(textureSize(u_Textures[28], 0)); break;
+        case 29: texSize = vec2(textureSize(u_Textures[29], 0)); break;
+        case 30: texSize = vec2(textureSize(u_Textures[30], 0)); break;
+        case 31: texSize = vec2(textureSize(u_Textures[31], 0)); break;
+    }
+    vec2 unitRange = vec2(pixelRange) / texSize;
     vec2 screenTexSize = vec2(1.0) / fwidth(Input.TexCoord);
     return max(0.5 * dot(unitRange, screenTexSize), 1.0);
 }
