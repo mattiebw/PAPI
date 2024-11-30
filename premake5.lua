@@ -14,6 +14,7 @@ IncludeDir["msdfgen"] = "PAPI/Vendor/msdf-atlas-gen/msdfgen/"
 IncludeDir["glm"] = "PAPI/Vendor/glm/Include"
 IncludeDir["stb"] = "PAPI/Vendor/stb"
 IncludeDir["steamworks"] = "PAPI/Vendor/Steamworks/Include"
+IncludeDir["fmod"] = "PAPI/Vendor/FMOD/Include"
 
 group "Vendor"
 include "PAPI/Vendor/imgui.lua"
@@ -57,6 +58,7 @@ project "PAPI"
 		"PAPI/Vendor/msdfgen-custom/",
 		"%{IncludeDir.msdfatlasgen}",
 		"%{IncludeDir.steamworks}",
+		"%{IncludeDir.fmod}",
 
 		"PAPI/Include"
 	}
@@ -65,24 +67,36 @@ project "PAPI"
 		libdirs 
 		{
 			"PAPI/Vendor/SDL/lib/Win64",
-			"PAPI/Vendor/Steamworks/Bin/win64"
+			"PAPI/Vendor/Steamworks/Bin/win64",
+			"PAPI/Vendor/FMOD/Lib/Win64"
 		}
 
 		links 
 		{
-			"steam_api64"
+			"steam_api64",
+
+			-- FMOD
+			"fmod_vc",
+			"fmodstudio_vc",
+			"fsbank_vc",
 		}
 
 	filter "system:linux"
 		libdirs 
 		{
 			"PAPI/Vendor/SDL/lib/Linux64",
-			"PAPI/Vendor/Steamworks/Bin/linux64"
+			"PAPI/Vendor/Steamworks/Bin/linux64",
+			"PAPI/Vendor/FMOD/Lib/Linux64"
 		}
 		
 		links 
 		{
-			"steam_api"
+			"steam_api",
+
+			-- FMOD
+			"fmod",
+			"fmodstudio",
+			"fsbank",
 		}
 
 	filter {}
@@ -94,6 +108,8 @@ project "PAPI"
 	{
 		"imgui",
 		"SDL3",
+
+		-- MSDF
 		"msdf-atlas-gen",
 		"msdfgen",
 		"freetype",
