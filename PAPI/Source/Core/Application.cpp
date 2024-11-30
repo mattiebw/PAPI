@@ -258,6 +258,18 @@ bool Application::InitRenderer()
 	return true;
 }
 
+extern "C" void SteamWarningMessage(int level, const char * message)
+{
+	if (level == 0)
+		PAPI_INFO("Steamworks message: {0}", message);
+	else if (level == 1)
+		PAPI_WARN("Steamworks warning: {0}", message);
+	else
+		PAPI_ERROR("Steamworks error: {0}", message);
+
+	PAPI_ASSERT(level == 0); // Break on warnings/errors
+}
+
 bool Application::InitSteamworks()
 {
 	SteamErrMsg error; // SteamErrMsg is a char[1024]
@@ -276,6 +288,8 @@ bool Application::InitSteamworks()
 		ShowError(err.c_str(), "Steam Error");
 		return false;
 	}
+
+	SteamUtils()->SetWarningMessageHook(&SteamWarningMessage);
 	
 	m_SteamworksInitialised = true;
 	PAPI_INFO("Successfully initialised Steamworks. App ID: {}", SteamUtils()->GetAppID());
