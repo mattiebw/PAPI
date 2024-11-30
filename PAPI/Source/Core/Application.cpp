@@ -77,6 +77,16 @@ bool Application::Init()
 
 	m_SavedData.Init(std::filesystem::path(SDL_GetPrefPath("PAPI", "papi")) / "Saved");
 
+	// We initialise Steamworks pretty early. This is because it needs to be up and 
+	// running before we initialise OpenGL, so that it can hook into device creation
+	// to create the overlay.
+	// @See: https://partner.steamgames.com/doc/features/overlay
+	if (!InitSteamworks())
+	{
+		Shutdown();
+		return false;
+	}
+
 	// Create the main window.
 	m_MainWindow = CreateRef<Window>(WindowSpecification{
 		.Title = m_Specification.AppName,
@@ -96,12 +106,6 @@ bool Application::Init()
 	}
 
 	if (!AudioManager::Init())
-	{
-		Shutdown();
-		return false;
-	}
-
-	if (!InitSteamworks())
 	{
 		Shutdown();
 		return false;
@@ -301,17 +305,9 @@ bool Application::InitSteamworks()
 	SteamErrMsg error; // SteamErrMsg is a char[1024]
 	if (SteamAPI_InitEx(&error) != k_ESteamAPIInitResult_OK)
 	{
-		std::string err = fmt::format("Failed to initialise Steamworks: {}", static_cast<const char*>(error));
+		std::string err = fmt::format("Failed to initialise Steamworks (make sure Steam is running): {}", static_cast<const char*>(error));
 		PAPI_ERROR("{0}", err);
 		ShowError(err.c_str(), "Steamworks Initialisation Error");
-		return false;
-	}
-
-	if (!SteamAPI_IsSteamRunning())
-	{
-		std::string err = "Steam is not running! Steam needs to be open to run the game.";
-		PAPI_ERROR("{0}", err);
-		ShowError(err.c_str(), "Steam Error");
 		return false;
 	}
 
