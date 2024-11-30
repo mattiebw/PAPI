@@ -6,6 +6,8 @@
 #include <SDL3/SDL_messagebox.h>
 #include <SDL3/SDL_timer.h>
 
+#include <steam/steam_api.h>
+
 #include "PAPI.h"
 #include "Core/Layer.h"
 #include "Core/Random.h"
@@ -90,6 +92,12 @@ bool Application::Init()
 		return false;
 	}
 
+	if (!InitSteamworks())
+	{
+		Shutdown();
+		return false;
+	}
+
 	Input::Init();
 	Random::Init();
 	Font::InitFontSystem();
@@ -154,6 +162,7 @@ void Application::Shutdown()
 		world->Clean();
 	m_Worlds.clear();
 
+	ShutdownSteamworks();
 	Font::ShutdownFontSystem();
 	Input::Shutdown();
 	if (m_Renderer)
@@ -246,6 +255,30 @@ bool Application::InitRenderer()
 		}
 	});
 
+	return true;
+}
+
+bool Application::InitSteamworks()
+{
+	SteamErrMsg error; // SteamErrMsg is a char[1024]
+	if (SteamAPI_InitEx(&error) != k_ESteamAPIInitResult_OK)
+	{
+		std::string err = fmt::format("Failed to initialise Steamworks: {}", static_cast<const char*>(error));
+		PAPI_ERROR("{0}", err);
+		ShowError(err.c_str(), "Steamworks Initialisation Error");
+		return false;
+	}
+
+	if (!SteamAPI_IsSteamRunning())
+	{
+		std::string err = "Steam is not running! Steam needs to be open to run the game.";
+		PAPI_ERROR("{0}", err);
+		ShowError(err.c_str(), "Steam Error");
+		return false;
+	}
+	
+	m_SteamworksInitialised = true;
+	PAPI_INFO("Successfully initialised Steamworks. App ID: {}", SteamUtils()->GetAppID());
 	return true;
 }
 
@@ -376,6 +409,15 @@ void Application::Render()
 	m_Renderer->BeginFrame();
 	m_Renderer->Render();
 	m_Renderer->EndFrame();
+}
+
+void Application::ShutdownSteamworks() const
+{
+	if (!m_SteamworksInitialised)
+		return;
+	
+	PAPI_TRACE("Shutting down Steamworks");
+	SteamAPI_Shutdown();
 }
 
 void Application::ShutdownSDL()

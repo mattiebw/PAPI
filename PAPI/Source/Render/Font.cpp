@@ -192,7 +192,8 @@ void Font::InitFontSystem()
 void Font::ShutdownFontSystem()
 {
 	s_DefaultFont = nullptr;
-	deinitializeFreetype(s_FTHandle);
+	if (s_FTHandle)
+		deinitializeFreetype(s_FTHandle);
 	s_FTHandle = nullptr;
 }
 

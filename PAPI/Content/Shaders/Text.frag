@@ -105,6 +105,9 @@ void main()
     float sd = median(msd.r, msd.g, msd.b);
     float screenPxDistance = screenPxRange() * (sd - 0.5);
     float opacity = clamp(screenPxDistance + 0.5, 0.0, 1.0);
+    
+    if (opacity == 0.0)
+        discard;
 
     o_Color = Input.Color;
     o_Color.a = opacity;

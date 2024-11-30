@@ -282,6 +282,20 @@ void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const g
 		if (m_IndicesCount >= m_MaxIndices)
 			Flush();
 
+		if (string[i] == '\r')
+			continue;
+		if (string[i] == '\n')
+		{
+			pen.x = 0;
+			pen.y -= static_cast<float>(metrics.lineHeight) * fsScale;
+			continue;
+		}
+		if (string[i] == '\t')
+		{
+			pen.x += fontGeo.getGlyph(' ')->getAdvance() * fsScale * 4;
+			continue;
+		}
+		
 		auto glyph = fontGeo.getGlyph(string[i]);
 		if (!glyph)
 			glyph = fontGeo.getGlyph('?');
@@ -516,12 +530,7 @@ bool Renderer::InitOpenGL()
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(GLErrorCallback, nullptr);
 	#endif
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_LINE_SMOOTH);
-
+	
 	// Create our white texture
 	uint32_t             whiteTextureData = 0xffffffff;
 	TextureSpecification spec;
@@ -630,6 +639,12 @@ void Renderer::ProcessSDLEvent(const SDL_Event *e)
 void Renderer::BeginFrame()
 {
 	m_Data->Stats.Reset();
+
+	// Reset some OpenGL state, as ImGUI can mess with it.
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LINE_SMOOTH);
 }
 
 void Renderer::Render()

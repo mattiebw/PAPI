@@ -6,8 +6,6 @@
 Texture::Texture(const TextureSpecification &spec)
 	: m_Spec(spec)
 {
-	PAPI_TRACE("Creating texture with specification");
-
 	// Create OpenGL texture
 	glGenTextures(1, &m_TextureID);
 	glBindTexture(GL_TEXTURE_2D, m_TextureID);

@@ -13,6 +13,7 @@ IncludeDir["msdfatlasgen"] = "PAPI/Vendor/msdf-atlas-gen/msdf-atlas-gen/"
 IncludeDir["msdfgen"] = "PAPI/Vendor/msdf-atlas-gen/msdfgen/"
 IncludeDir["glm"] = "PAPI/Vendor/glm/Include"
 IncludeDir["stb"] = "PAPI/Vendor/stb"
+IncludeDir["steamworks"] = "PAPI/Vendor/Steamworks/Include"
 
 group "Vendor"
 include "PAPI/Vendor/imgui.lua"
@@ -55,6 +56,7 @@ project "PAPI"
 		"%{IncludeDir.msdfgen}",
 		"PAPI/Vendor/msdfgen-custom/",
 		"%{IncludeDir.msdfatlasgen}",
+		"%{IncludeDir.steamworks}",
 
 		"PAPI/Include"
 	}
@@ -62,13 +64,25 @@ project "PAPI"
 	filter "system:windows"
 		libdirs 
 		{
-			"PAPI/Vendor/SDL/lib/Win64"
+			"PAPI/Vendor/SDL/lib/Win64",
+			"PAPI/Vendor/Steamworks/Bin/win64"
+		}
+
+		links 
+		{
+			"steam_api64"
 		}
 
 	filter "system:linux"
 		libdirs 
 		{
-			"PAPI/Vendor/SDL/lib/Linux64"
+			"PAPI/Vendor/SDL/lib/Linux64",
+			"PAPI/Vendor/Steamworks/Bin/linux64"
+		}
+		
+		links 
+		{
+			"steam_api"
 		}
 
 	filter {}
@@ -89,10 +103,13 @@ project "PAPI"
 		"_CRT_SECURE_NO_WARNINGS"
 	}
 
+	postbuildcommands { "{COPYFILE} \"./steam_appid.txt\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/\"" }
+
 	filter "system:windows"
 		prebuildcommands { "call \"../Scripts/RunPreprocessor.bat\"" }
 		postbuildcommands { "{COPYDIR} " .. path.getdirectory(".") .. "\"./PAPI/Content/\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/Content/\""}
 		postbuildcommands { "{COPYFILE} " .. path.getdirectory(".") .. "\"./PAPI/Vendor/SDL/lib/Win64/SDL3.dll\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/\"" }
+		postbuildcommands { "{COPYFILE} " .. path.getdirectory(".") .. "\"./PAPI/Vendor/Steamworks/Bin/win64/steam_api64.dll\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/\"" }
 
 	filter "system:linux"
 		prebuildcommands { "../Scripts/RunPreprocessor.sh" }
@@ -100,8 +117,9 @@ project "PAPI"
 		postbuildcommands { "{COPYFILE} " .. path.getdirectory(".") .. "\"./PAPI/Vendor/SDL/lib/Linux64/libSDL3.so\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/\"" }
 		postbuildcommands { "{COPYFILE} " .. path.getdirectory(".") .. "\"./PAPI/Vendor/SDL/lib/Linux64/libSDL3.so.0\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/\"" }
 		postbuildcommands { "{COPYFILE} " .. path.getdirectory(".") .. "\"./PAPI/Vendor/SDL/lib/Linux64/libSDL3.so.0.1.5\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/\"" }
+		postbuildcommands { "{COPYFILE} " .. path.getdirectory(".") .. "\"./PAPI/Vendor/Steamworks/Bin/linux64/libsteam_api.so\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/\"" }
 		postbuildcommands { "{COPYFILE} \"./RunPAPI.sh\" \"" .. path.getdirectory("path") .. "/../Build/%{prj.name}/" .. outputdir .. "/\"" }
-		
+
 	filter { "system:linux", "files:PAPI/Source/Vendor/stb.cpp" }
 		optimize "On" -- MW @hack: stb doesn't compile properly with GCC without optimizations (@credit https://git.suyu.dev/suyu/suyu/pulls/63)
 

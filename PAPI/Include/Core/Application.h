@@ -101,12 +101,14 @@ public:
 protected:
 	bool InitSDL();
 	bool InitRenderer();
+	bool InitSteamworks();
 
 	void PreUpdate();
 	void PollEvents();
 	void Update();
 	void Render();
 
+	void        ShutdownSteamworks() const;
 	static void ShutdownSDL();
 
 	static Application *s_Instance;
@@ -118,8 +120,9 @@ protected:
 	std::vector<Ref<Layer>>  m_Layers;
 	FPSCounter               m_FPSCounter;
 	SavedDataManager         m_SavedData;
-	bool                     m_Running     = false;
-	bool                     m_Initialised = false;
+	bool                     m_Running          = false;
+	bool                     m_Initialised      = false;
+	bool                     m_SteamworksInitialised = false;
 	std::string              m_Error;
 	double                   m_DeltaTime = 0;
 };
