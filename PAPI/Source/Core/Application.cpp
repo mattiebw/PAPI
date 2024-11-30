@@ -162,6 +162,7 @@ void Application::Run()
 
 		PreUpdate();
 		PollEvents();
+		SteamAPI_RunCallbacks();
 		Update();
 		Render();
 	}

@@ -24,6 +24,9 @@
 // GLAD
 #include <Vendor/glad/gl.h>
 
+// Steamworks
+#include <steam/steam_api.h>
+
 // imgui
 #ifndef PAPI_NO_IMGUI
 #include <imgui.h>

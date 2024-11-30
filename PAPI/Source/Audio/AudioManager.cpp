@@ -22,6 +22,15 @@ bool AudioManager::Init()
 		return false;
 	}
 
+	FMOD_RESULT initResult = m_FMODSystem->initialize(512, FMOD_STUDIO_INIT_NORMAL, FMOD_INIT_NORMAL, nullptr);
+	if (initResult != FMOD_OK)
+	{
+		std::string error = fmt::format("Failed to initialise FMOD system! Error: {}", FMOD_ErrorString(initResult));
+		PAPI_ERROR("{}", error);
+		Application::Get()->ShowError(error.c_str(), "FMOD Error");
+		return false;
+	}
+
 	sw.End();
 	PAPI_TRACE("Initialised AudioManager/FMOD in {0}ms", sw.GetElapsedMilliseconds());
 	return true;

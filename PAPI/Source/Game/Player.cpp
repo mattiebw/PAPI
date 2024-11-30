@@ -10,6 +10,11 @@
 #include "Render/Renderer.h"
 #include "Render/Viewport.h"
 
+void Player::OnPersonaNameChange(PersonaStateChange_t *parameter)
+{
+	Name = SteamFriends()->GetPersonaName();
+}
+
 void Player::Created()
 {
 	m_Texture = CreateRef<Texture>("Content/Textures/jeremy.jpeg");
@@ -19,6 +24,8 @@ void Player::Created()
 
 	m_Viewport = Application::GetRenderer()->CreateViewport();
 	m_Viewport->SetCamera(m_Camera);
+
+	Name = SteamFriends()->GetPersonaName();
 }
 
 void Player::AddedToWorld(World *world)

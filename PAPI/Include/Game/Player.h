@@ -19,6 +19,8 @@ class Player : public Entity
 	PAPI_RPC(Multicast, OnDeath);
 
 	std::string Name = "Qerma";
+	
+	STEAM_CALLBACK( Player, OnPersonaNameChange, PersonaStateChange_t );
 
 private:
 	float         m_Time = 0;
