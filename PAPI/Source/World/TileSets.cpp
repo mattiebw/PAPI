@@ -32,3 +32,8 @@ void TileSets::Init()
 	stoneWallData.IsSolid     = true;
 	StoneWall                 = MainTileSet->AddTile(stoneWallData);
 }
+
+void TileSets::Shutdown()
+{
+	MainTileSet = nullptr;
+}

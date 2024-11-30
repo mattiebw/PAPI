@@ -9,6 +9,7 @@
 #include <steam/steam_api.h>
 
 #include "PAPI.h"
+#include "Audio/AudioManager.h"
 #include "Core/Layer.h"
 #include "Core/Random.h"
 #include "Core/Input/Input.h"
@@ -66,6 +67,8 @@ void Application::Construct()
 
 bool Application::Init()
 {
+	Stopwatch sw;
+	
 	// First, initialise our core APIs.
 	if (!InitSDL())
 		return false;
@@ -92,6 +95,12 @@ bool Application::Init()
 		return false;
 	}
 
+	if (!AudioManager::Init())
+	{
+		Shutdown();
+		return false;
+	}
+
 	if (!InitSteamworks())
 	{
 		Shutdown();
@@ -102,6 +111,9 @@ bool Application::Init()
 	Random::Init();
 	Font::InitFontSystem();
 
+	sw.End();
+	PAPI_TRACE("Application initialisation took {0}ms", sw.GetElapsedMilliseconds());
+	
 	return true;
 }
 
@@ -122,6 +134,8 @@ void Application::BindDelegates()
 
 void Application::Run()
 {
+	Stopwatch sw;
+	
 	m_Running = true;
 
 	BindDelegates();
@@ -151,6 +165,9 @@ void Application::Run()
 		Update();
 		Render();
 	}
+
+	sw.End();
+	PAPI_TRACE("Application ran for {0}s", sw.GetElapsedSeconds());
 }
 
 void Application::Shutdown()
@@ -158,13 +175,19 @@ void Application::Shutdown()
 	if (!m_Initialised)
 		return;
 
+	Stopwatch sw;
 	for (const Ref<World> &world : m_Worlds)
 		world->Clean();
 	m_Worlds.clear();
 
+	for (const Ref<Layer> &layer : m_Layers)
+		layer->OnDetach();
+	m_Layers.clear();
+
 	ShutdownSteamworks();
 	Font::ShutdownFontSystem();
 	Input::Shutdown();
+	AudioManager::Shutdown();
 	if (m_Renderer)
 	{
 		m_Renderer->Shutdown();
@@ -178,6 +201,8 @@ void Application::Shutdown()
 	ShutdownSDL();
 	m_Running     = false;
 	m_Initialised = false;
+	sw.End();
+	PAPI_TRACE("Application shutdown took {0}ms", sw.GetElapsedMilliseconds());
 }
 
 void Application::AddLayer(const Ref<Layer> &layer)

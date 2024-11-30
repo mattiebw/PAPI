@@ -29,6 +29,7 @@ void PAPIGameLayer::OnAttach()
 
 void PAPIGameLayer::OnDetach()
 {
+	TileSets::Shutdown();
 }
 
 void PAPIGameLayer::Update(double delta)
