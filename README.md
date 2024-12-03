@@ -2,6 +2,14 @@
 
 Team 12Z's Programming APIs coursework.
 
+### The Team
+
+- **Addi** - Work on Steamworks (friends, avatars, etc)
+- **Callum** - Work on Steamworks (screenshots, chat, etc)
+- **Iain** - Noise-based procedural world generation
+- **Louis** - Audio through FMOD
+- **Matt** - OpenGL renderer, Steamworks multiplayer/networking system, core engine
+
 ### The Project
 
 For this project, we're making a small, multiplayer, top-down wizard combat game with some procedurally generated (and
