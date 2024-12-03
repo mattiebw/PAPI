@@ -169,6 +169,7 @@ void Application::Run()
 		SteamAPI_RunCallbacks();
 		Update();
 		Render();
+		AudioManager::Update();
 	}
 
 	sw.End();
