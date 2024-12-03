@@ -435,14 +435,13 @@ void Application::Update()
 
 void Application::Render()
 {
-	// Render our layers
-	for (Ref<Layer> &layer : m_Layers)
-		layer->Render(m_DeltaTime);
-
 	if (!m_Renderer || !m_MainWindow || !m_MainWindow->IsValid())
 		return;
 
 	m_Renderer->BeginFrame();
+	// Render our layers
+	for (Ref<Layer> &layer : m_Layers)
+		layer->Render(m_DeltaTime);
 	m_Renderer->Render();
 	m_Renderer->EndFrame();
 }
