@@ -94,6 +94,12 @@ void AudioManager::PlayBackgroundMusic()
 	}
 }
 
+SoundHandle AudioManager::PlaySound(const char *soundName)
+{
+	// TODO
+	return SoundHandle(nullptr);
+}
+
 void AudioManager::Update()
 {
 	if (m_FMODSystem)

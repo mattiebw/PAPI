@@ -27,6 +27,14 @@ bool SteamManager::Init()
 	}
 
 	SteamUtils()->SetWarningMessageHook(&SteamWarningMessage);
+
+	// TODO: Okay, lets try and print out all of our friends.
+	// You'll want to look at https://partner.steamgames.com/doc/api/ISteamFriends
+	// GetFriendCount(), GetFriendByIndex()
+	for (int i = 0; i < SteamFriends()->GetFriendCount(k_EFriendFlagImmediate); i++)
+	{
+		auto steamFriend = SteamFriends()->GetFriendByIndex(i, k_EFriendFlagImmediate);
+	}
 	
 	m_SteamworksInitialised = true;
 	PAPI_INFO("Successfully initialised Steamworks. App ID: {}", SteamUtils()->GetAppID());
