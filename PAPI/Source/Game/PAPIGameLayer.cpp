@@ -14,6 +14,9 @@
 
 #include <misc/cpp/imgui_stdlib.h>
 
+#include "World/ChunkProvider.h"
+#include "World/TileMap.h"
+
 void PAPIGameLayer::OnAttach()
 {
 	PAPI_INFO("Initialising PAPI game!");
@@ -23,6 +26,9 @@ void PAPIGameLayer::OnAttach()
 	Application *app   = Application::Get();
 	Ref<World>   world = app->AddWorld();
 	m_Player           = world->AddEntity<Player>("Player");
+
+	auto tilemap = world->CreateTileMap(TileSets::MainTileSet);
+	tilemap->SetChunkProvider(CreateRef<DefaultChunkProvider>());
 
 	m_TextTransform.Position.z = -0.05f;
 }

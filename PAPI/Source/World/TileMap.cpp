@@ -6,7 +6,6 @@
 TileMap::TileMap(const Ref<TileSet> &tileSet, int chunkWidth, int chunkHeight)
 	: m_ChunkSize(chunkWidth, chunkHeight), m_TileSet(tileSet)
 {
-	m_Chunks[glm::ivec2(0, 0)] = CreateRef<TileMapChunk>(this, glm::ivec2(0, 0));
 	m_ChunkProvider            = CreateRef<DefaultChunkProvider>();
 }
 
@@ -44,6 +43,10 @@ uint32_t TileMap::GetTile(int x, int y, bool canCreateChunk) const
 
 void TileMap::UpdateChunkLoading(const std::vector<glm::ivec2> &playerPositions)
 {
+	for (glm::ivec2 pos : playerPositions)
+	{
+		// TODO: Fill this in!
+	}
 }
 
 void TileMap::Render()
@@ -70,6 +73,11 @@ TileMapChunk* TileMap::GetChunkFromTileCoordinate(int x, int y, bool canCreateCh
 		return nullptr;
 	}
 	return chunk->second.get();
+}
+
+void TileMap::SetChunkProvider(const Ref<ChunkProvider> &chunkProvider)
+{
+	m_ChunkProvider = chunkProvider;
 }
 
 bool TileMap::RectOverlapsSolidTile(const FRect &rect)

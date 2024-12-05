@@ -15,7 +15,13 @@ void TileSets::Init()
 {
 	if (Application::Get()->HasFrontend())
 	{
-		Ref<Texture>     texture     = CreateRef<Texture>("Content/Textures/TerrainSpritesheet.png");
+		TextureSpecification spec;
+		spec.MagFilter = FilterMode::Nearest;
+		spec.MinFilter = FilterMode::Nearest;
+		spec.Wrap = WrapMode::ClampToEdge;
+		spec.FlipVertically = false;
+		Ref<Texture>     texture     = CreateRef<Texture>("Content/Textures/TerrainSpritesheet.png", spec);
+		
 		Ref<SpriteSheet> spriteSheet = CreateRef<SpriteSheet>(texture);
 		spriteSheet->CreateTilesFromTileSize(16, 16);
 		MainTileSet = CreateRef<TileSet>(spriteSheet);

@@ -63,6 +63,13 @@ void World::DestroyEntity(Entity *entity)
 	DestroyEntity(entity->GetUUID());
 }
 
+Ref<TileMap> World::CreateTileMap(const Ref<TileSet> &tileSet, int chunkWidth, int chunkHeight)
+{
+	auto tilemap = CreateRef<TileMap>(tileSet, chunkWidth, chunkHeight);
+	m_TileMaps.emplace_back(tilemap);
+	return tilemap;
+}
+
 void World::Tick(double delta)
 {
 	m_UnscaledDelta = delta;

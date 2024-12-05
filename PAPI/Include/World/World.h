@@ -54,6 +54,8 @@ public:
 	void DestroyEntity(UUID id);
 	void DestroyEntity(Entity *entity);
 
+	Ref<TileMap> CreateTileMap(const Ref<class TileSet> &tileSet, int chunkWidth = 32, int chunkHeight = 32);
+
 	void Tick(double delta);
 	void Render();
 
