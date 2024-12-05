@@ -35,10 +35,20 @@ bool SteamManager::Init()
 	{
 		auto steamFriend = SteamFriends()->GetFriendByIndex(i, k_EFriendFlagImmediate);
 	}
+
+	// For networking:
+	// Lets initialise the Steam relay access.
+	// MW @todo: Setup a callback so we know when we have (or don't have) access to the relay.
+	SteamNetworkingUtils()->InitRelayNetworkAccess();
 	
 	m_SteamworksInitialised = true;
 	PAPI_INFO("Successfully initialised Steamworks. App ID: {}", SteamUtils()->GetAppID());
 	return true;
+}
+
+void SteamManager::Update()
+{
+	SteamAPI_RunCallbacks();
 }
 
 void SteamManager::Shutdown()
@@ -50,6 +60,16 @@ void SteamManager::Shutdown()
 	SteamAPI_Shutdown();
 
 	m_SteamworksInitialised = false;
+}
+
+void SteamManager::SetRequestingLobbies()
+{
+	m_RequestingLobbies = true;	
+}
+
+void SteamManager::SetNotRequestingLobbies()
+{
+	m_RequestingLobbies = false;
 }
 
 void SteamManager::OnScreenshot(ScreenshotReady_t *pParam)

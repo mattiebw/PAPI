@@ -52,24 +52,26 @@ void Player::Tick(double delta)
 	{
 		case EntityNetworkType::LocalOnly:
 		case EntityNetworkType::RemoteOwned:
-			glm::vec2 input(0.0f);
-			input.x -= Input::IsKeyDown(PAPI_KEY_A) ? 1.0f : 0.0f;
-			input.x += Input::IsKeyDown(PAPI_KEY_D) ? 1.0f : 0.0f;
-			input.y -= Input::IsKeyDown(PAPI_KEY_S) ? 1.0f : 0.0f;
-			input.y += Input::IsKeyDown(PAPI_KEY_W) ? 1.0f : 0.0f;
-
-			if (input.x != 0 || input.y != 0)
 			{
-				input = normalize(input);
-				FRect collision(EntityTransform.Position.x - 0.45f, EntityTransform.Position.y - 0.45f, 0.9f, 0.9f);
-				collision.Position.x += input.x * static_cast<float>(delta) * 5.0f;
-				if (m_World->RectOverlapsAnySolidTile(collision))
-					collision.Position.x = EntityTransform.Position.x - 0.45f;
-				collision.Position.y += input.y * static_cast<float>(delta) * 5.0f;
-				if (m_World->RectOverlapsAnySolidTile(collision))
-					collision.Position.y = EntityTransform.Position.y - 0.45f;
-				EntityTransform.Position = glm::vec3(collision.Position.x + 0.45f, collision.Position.y + 0.45f,
-													 EntityTransform.Position.z);
+				glm::vec2 input(0.0f);
+				input.x -= Input::IsKeyDown(PAPI_KEY_A) ? 1.0f : 0.0f;
+				input.x += Input::IsKeyDown(PAPI_KEY_D) ? 1.0f : 0.0f;
+				input.y -= Input::IsKeyDown(PAPI_KEY_S) ? 1.0f : 0.0f;
+				input.y += Input::IsKeyDown(PAPI_KEY_W) ? 1.0f : 0.0f;
+
+				if (input.x != 0 || input.y != 0)
+				{
+					input = normalize(input);
+					FRect collision(EntityTransform.Position.x - 0.45f, EntityTransform.Position.y - 0.45f, 0.9f, 0.9f);
+					collision.Position.x += input.x * static_cast<float>(delta) * 5.0f;
+					if (m_World->RectOverlapsAnySolidTile(collision))
+						collision.Position.x = EntityTransform.Position.x - 0.45f;
+					collision.Position.y += input.y * static_cast<float>(delta) * 5.0f;
+					if (m_World->RectOverlapsAnySolidTile(collision))
+						collision.Position.y = EntityTransform.Position.y - 0.45f;
+					EntityTransform.Position = glm::vec3(collision.Position.x + 0.45f, collision.Position.y + 0.45f,
+														 EntityTransform.Position.z);
+				}
 			}
 			break;
 		default:

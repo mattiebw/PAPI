@@ -14,6 +14,7 @@
 #include "Core/Input/Input.h"
 #include "Core/Window.h"
 #include "Network/SteamManager.h"
+#include "Network/Server.h"
 #include "Render/Font.h"
 #include "World/World.h"
 #include "Render/Renderer.h"
@@ -174,7 +175,7 @@ void Application::Run()
 
 		PreUpdate();
 		PollEvents();
-		SteamAPI_RunCallbacks();
+		m_SteamManager->Update();
 		Update();
 		AudioManager::Update();
 		Render();
@@ -300,6 +301,18 @@ bool Application::InitRenderer()
 			layer->RenderImGUI(Get()->m_DeltaTime);
 		}
 	});
+
+	return true;
+}
+
+bool Application::CreateServer()
+{
+	if (m_Server)
+	{
+		m_Server = nullptr; // Destroy our old server.
+	}
+	
+	m_Server = CreateRef<Server>();
 
 	return true;
 }
