@@ -81,16 +81,20 @@ void Player::Render()
 	Application::GetQuadRenderer()->DrawQuad(EntityTransform.Position, glm::vec2(1.0f),
 	                                         glm::vec4(sine, sine, sine, 1.0f), m_Texture);
 
-	auto      size = Font::GetDefaultFont()->MeasureString(Name) * 0.5f;
+	// MW @todo: optimise, create a struct to wrap drawing a string allowing us to cache the measurement
+	// Stopwatch sw;
 	Transform tf   = EntityTransform;
 	tf.Position.y += .8f;
-	tf.Position.x -= size.x / 2;
 	tf.Scale = glm::vec3(0.5, 0.5, 1.0);
+	FontMeasurement measurement = Font::GetDefaultFont()->MeasureString(Name, tf.Scale);
+	tf.Position.x -= measurement.Size.x / 2;
 	Application::GetTextRenderer().DrawString(Name, Font::GetDefaultFont(), tf.GetTransformationMatrix(), glm::vec4(1));
-	tf.Position.z -= 0.01f;
-	tf.Scale = glm::vec3(size.x + 0.2f, size.y + 0.3f, 1);
-	tf.Position.x += size.x / 2;
-	tf.Position.y += size.y / 2;
-	tf.Position.y -= 0.05f;
-	Application::GetQuadRenderer()->DrawQuad(tf.GetTransformationMatrix(), glm::vec4(1, 1, 1, 0.5));
+	tf.Position.x += measurement.Size.x / 2;
+	tf.Position.y += measurement.Size.y / 2;
+	tf.Position += glm::vec3(measurement.Offset, 0);
+	tf.Scale = glm::vec3(measurement.Size + glm::vec2(0.1f, 0.1f), 1);
+	tf.Position.z -= 0.05f;
+	Application::GetQuadRenderer()->DrawQuad(tf.GetTransformationMatrix(), glm::vec4(1, 1, 1, .25));
+	// sw.End();
+	// PAPI_TRACE("DrawString took {0}us ({1} ms)", sw.GetElapsedMicroseconds(), sw.GetElapsedMilliseconds());
 }

@@ -7,6 +7,12 @@ namespace msdfgen
 	class FreetypeHandle;
 }
 
+struct FontMeasurement
+{
+	glm::vec2 Size;
+	glm::vec2 Offset;
+};
+
 struct MSDFData;
 
 class Font
@@ -18,7 +24,7 @@ public:
 	static void InitFontSystem();
 	static void ShutdownFontSystem();
 
-	glm::vec2 MeasureString(const std::string &string);
+	FontMeasurement MeasureString(const std::string &string, const glm::vec3& scale = {1.0f, 1.0f, 1.0f});
 
 	NODISCARD FORCEINLINE int                 GetGlyphCount() const { return m_GlyphCount; }
 	NODISCARD FORCEINLINE const Ref<Texture>& GetAtlasTexture() const { return m_Texture; }

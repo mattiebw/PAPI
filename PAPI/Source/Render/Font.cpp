@@ -197,7 +197,7 @@ void Font::ShutdownFontSystem()
 	s_FTHandle = nullptr;
 }
 
-glm::vec2 Font::MeasureString(const std::string &string)
+FontMeasurement Font::MeasureString(const std::string &string, const glm::vec3 &scale)
 {
 	msdfgen::FontMetrics metrics = m_Data->FontGeo.getMetrics();
 	float                fsScale = 1.0f / static_cast<float>(metrics.ascenderY - metrics.descenderY);
@@ -214,7 +214,7 @@ glm::vec2 Font::MeasureString(const std::string &string)
 		if (!glyph)
 		{
 			PAPI_ASSERT(false && "Failed to draw string with font - missing char, and '?' char!");
-			return {0, 0};
+			return {};
 		}
 
 		double quadLeft, quadBottom, quadRight, quadTop;
@@ -235,5 +235,12 @@ glm::vec2 Font::MeasureString(const std::string &string)
 		pen.x += static_cast<float>(advance) * fsScale;
 	}
 
-	return {maxX - minX, maxY - minY};
+	FontMeasurement measurement;
+	measurement.Size   = {maxX - minX, maxY - minY};
+	measurement.Offset = {minX, minY};
+	measurement.Size.x *= scale.x;
+	measurement.Size.y *= scale.y;
+	measurement.Offset.x *= scale.x;
+	measurement.Offset.y *= scale.y;
+	return measurement;
 }
