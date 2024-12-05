@@ -5,35 +5,33 @@
 
 #include "Core/Random.h"
 #include "Game/Player.h"
-#include "Render/SpriteSheet.h"
-#include "Render/Texture.h"
 #include "World/TileMap.h"
 #include "World/Entity.h"
 
 World::World()
 {
-	TextureSpecification spec;
-	spec.MagFilter                  = FilterMode::Nearest;
-	spec.MinFilter                  = FilterMode::Nearest;
-	spec.Wrap                       = WrapMode::ClampToEdge;
-	spec.FlipVertically             = false;
-	Ref<Texture> spritesheetTexture = CreateRef<Texture>("Content/Textures/TerrainSpritesheet.png", spec);
-
-	Ref<SpriteSheet> spritesheet = CreateRef<SpriteSheet>(spritesheetTexture);
-	spritesheet->CreateTilesFromTileSize(16, 16);
-	Ref<TileSet> tileset = CreateRef<TileSet>(spritesheet);
-	tileset->AddTile({0, false});  // Grass
-	tileset->AddTile({10, false}); // Flower Grass
-	tileset->AddTile({9, true});   // Stone
-	tileset->AddTile({8, false});  // Stone Floor
-	m_TileMap    = CreateRef<TileMap>(tileset);
-	m_TileMap->Z = -10;
-
-	for (int y = 0; y < 32; y++)
-	{
-		for (int x = 0; x < 32; x++)
-			m_TileMap->SetTile(x, y, Random::Int(0, 4));
-	}
+	// TextureSpecification spec;
+	// spec.MagFilter                  = FilterMode::Nearest;
+	// spec.MinFilter                  = FilterMode::Nearest;
+	// spec.Wrap                       = WrapMode::ClampToEdge;
+	// spec.FlipVertically             = false;
+	// Ref<Texture> spritesheetTexture = CreateRef<Texture>("Content/Textures/TerrainSpritesheet.png", spec);
+	//
+	// Ref<SpriteSheet> spritesheet = CreateRef<SpriteSheet>(spritesheetTexture);
+	// spritesheet->CreateTilesFromTileSize(16, 16);
+	// Ref<TileSet> tileset = CreateRef<TileSet>(spritesheet);
+	// tileset->AddTile({0, false});  // Grass
+	// tileset->AddTile({10, false}); // Flower Grass
+	// tileset->AddTile({9, true});   // Stone
+	// tileset->AddTile({8, false});  // Stone Floor
+	// m_TileMap    = CreateRef<TileMap>(tileset);
+	// m_TileMap->Z = -10;
+	//
+	// for (int y = 0; y < 32; y++)
+	// {
+	// 	for (int x = 0; x < 32; x++)
+	// 		m_TileMap->SetTile(x, y, Random::Int(0, 4));
+	// }
 }
 
 void World::UpdateEntityUUID(UUID oldID, UUID newID)
@@ -69,6 +67,10 @@ void World::Tick(double delta)
 {
 	m_UnscaledDelta = delta;
 	m_Delta         = delta * m_TimeScale;
+
+	// MW @todo: This sucks; players should either update the tilemap themselves (or call a function on the world that does it),
+	// or the World should keep a list of all the players. Regardless, we should not be interating over all entities to find
+	// all the players every frame.
 	std::vector<glm::ivec2> playerPositions;
 	for (const auto &entity : m_Entities | std::views::values)
 	{
@@ -80,25 +82,33 @@ void World::Tick(double delta)
 			playerPositions.push_back(player->GetPosition());
 		}
 	}
-	m_TileMap->UpdateChunkLoading(playerPositions);
+	
+	for (const auto& tilemap : m_TileMaps)
+		tilemap->UpdateChunkLoading(playerPositions);
 }
 
 void World::Render()
 {
-	m_TileMap->Render();
+	for (const auto& tilemap : m_TileMaps)
+		tilemap->Render();
 
 	for (const auto &entity : m_Entities | std::views::values)
-	{
 		entity->Render();
-	}
 }
 
 bool World::RectOverlapsAnySolidTile(const FRect &rect) const
 {
-	return m_TileMap->RectOverlapsSolidTile(rect);
+	for (const auto& tilemap : m_TileMaps)
+	{
+		if (tilemap->RectOverlapsSolidTile(rect))
+			return true;
+	}
+	
+	return false;
 }
 
 void World::Clean()
 {
+	m_TileMaps.clear();
 	m_Entities.clear();
 }

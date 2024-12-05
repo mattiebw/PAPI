@@ -11,6 +11,9 @@ FMOD::Studio::EventInstance* AudioManager::m_BackgroundMusicInstance = nullptr;
 
 bool AudioManager::Init()
 {
+	if (!Application::Get()->HasFrontend())
+		return false;
+	
 	PAPI_TRACE("Initialising AudioManager and FMOD.");
 	Stopwatch sw;
 
@@ -51,6 +54,8 @@ bool AudioManager::Init()
 
 bool AudioManager::LoadBank(const std::string& bankName)
 {
+	PAPI_ASSERT(m_FMODSystem && "Attempting to load bank from uninitialised FMOD system");
+	
 	FMOD::Studio::Bank* bank;
 	FMOD_RESULT result = m_FMODSystem->loadBankFile(fmt::format("Content/Audio/{}", bankName).c_str(), FMOD_STUDIO_LOAD_BANK_NORMAL, &bank);
 	if (result != FMOD_OK)
@@ -102,6 +107,9 @@ SoundHandle AudioManager::PlaySound(const char *soundName)
 
 void AudioManager::Update()
 {
+	if (!Application::Get()->HasFrontend())
+		return;
+	
 	if (m_FMODSystem)
 	{
 		FMOD_RESULT result = m_FMODSystem->update();
@@ -116,6 +124,9 @@ void AudioManager::Update()
 
 void AudioManager::Shutdown()
 {
+	if (!Application::Get()->HasFrontend())
+		return;
+	
 	PAPI_TRACE("Shutting down AudioManager and FMOD.");
 	
 	if (m_BackgroundMusicInstance)

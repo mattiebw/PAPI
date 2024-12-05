@@ -42,6 +42,7 @@
 #include "Core/Utility/Timer.h"
 #include "Core/Transform.h"
 #include "Core/UUID.h"
+#include "Network/Network.h"
 
 // Platform specific
 #ifdef PAPI_PLATFORM_WINDOWS

@@ -31,6 +31,7 @@ public:
 	NODISCARD FORCEINLINE const glm::vec3&   GetScale() const { return EntityTransform.Scale; }
 	NODISCARD FORCEINLINE World*             GetWorld() const { return m_World; }
 	NODISCARD FORCEINLINE UUID               GetUUID() const { return m_UUID; }
+	NODISCARD FORCEINLINE EntityNetworkType  GetEntityNetworkType() const { return m_EntityNetworkType; }
 
 	FORCEINLINE void SetName(const std::string &name) { m_Name = name; }
 	FORCEINLINE void SetPosition(glm::vec3 newPos) { EntityTransform.Position = newPos; }
@@ -49,6 +50,8 @@ public:
 	virtual void Render();
 	virtual void Destroyed();
 
+	NODISCARD FORCEINLINE bool HasAuthority() { return m_EntityNetworkType != EntityNetworkType::RemoteProxy; }
+	
 	void Destroy();
 
 	Transform EntityTransform;
@@ -60,6 +63,8 @@ protected:
 	UUID        m_UUID;
 	std::string m_Name  = "Entity";
 	World *     m_World = nullptr;
+
+	EntityNetworkType m_EntityNetworkType;
 
 	friend class World;
 };

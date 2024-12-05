@@ -10,7 +10,7 @@ class World
 public:
 	World();
 
-	void AddEntity(Ref<Entity> entity)
+	void AddEntity(const Ref<Entity>& entity)
 	{
 		m_Entities[entity->GetUUID()] = entity;
 		// MW @todo: check if the entity was already in a world.
@@ -26,10 +26,28 @@ public:
 		Ref<T> entity = CreateRef<T>(std::forward<Args>(args)...);
 		entity->SetUUID(uuid);
 		entity->Created();
-		entity->SetWorld(this);
-		entity->AddedToWorld(this);
-		m_Entities[uuid] = entity;
+		AddEntity(entity);
+
+		switch (m_NetworkType)
+		{
+		case NetworkType::Standalone:
+		case NetworkType::Client:
+			entity->m_EntityNetworkType = EntityNetworkType::LocalOnly;
+			break;
+		case NetworkType::DedicatedServer:
+		case NetworkType::ListenServer:
+			entity->m_EntityNetworkType = EntityNetworkType::LocalReplicated;
+			break;
+		}
+		
 		return entity;
+	}
+	
+	template <typename T, typename... Args>
+	Ref<T> AddEntityWithNetmode(EntityNetworkType netMode, Args &&... args)
+	{
+		Ref<T> entity = AddEntity(std::forward<Args>(args)...);
+		entity->m_EntityNetworkType = netMode;
 	}
 
 	void UpdateEntityUUID(UUID oldID, UUID newID);
@@ -43,6 +61,7 @@ public:
 
 	void Clean();
 
+	NODISCARD FORCEINLINE NetworkType GetNetworkType() const { return m_NetworkType; }
 	NODISCARD FORCEINLINE double  GetDelta() const { return m_Delta; }
 	NODISCARD FORCEINLINE double  GetUnscaledDelta() const { return m_UnscaledDelta; }
 	NODISCARD FORCEINLINE double  GetTimeScale() const { return m_TimeScale; }
@@ -54,9 +73,12 @@ public:
 	}
 
 private:
-	Ref<TileMap>                          m_TileMap;
+	std::unordered_map<UUID, Ref<Entity>> m_Entities;
+	std::vector<Ref<TileMap>>             m_TileMaps;
 	double                                m_TimeScale     = 1.0f;
 	double                                m_Delta         = 0;
 	double                                m_UnscaledDelta = 0;
-	std::unordered_map<UUID, Ref<Entity>> m_Entities;
+	NetworkType                           m_NetworkType = NetworkType::Standalone;
+
+	friend class Application;
 };

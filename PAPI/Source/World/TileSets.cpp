@@ -1,6 +1,7 @@
 ﻿#include "papipch.h"
 #include "World/TileSets.h"
 
+#include "Core/Application.h"
 #include "World/TileSet.h"
 #include "Render/Texture.h"
 #include "Render/SpriteSheet.h"
@@ -12,10 +13,16 @@ uint16_t     TileSets::StoneWall   = 0;
 
 void TileSets::Init()
 {
-	Ref<Texture>     texture     = CreateRef<Texture>("Content/Textures/TerrainSpritesheet.png");
-	Ref<SpriteSheet> spriteSheet = CreateRef<SpriteSheet>(texture);
-	spriteSheet->CreateTilesFromTileSize(16, 16);
-	MainTileSet = CreateRef<TileSet>(spriteSheet);
+	if (Application::Get()->HasFrontend())
+	{
+		Ref<Texture>     texture     = CreateRef<Texture>("Content/Textures/TerrainSpritesheet.png");
+		Ref<SpriteSheet> spriteSheet = CreateRef<SpriteSheet>(texture);
+		spriteSheet->CreateTilesFromTileSize(16, 16);
+		MainTileSet = CreateRef<TileSet>(spriteSheet);
+	} else
+	{
+		MainTileSet = CreateRef<TileSet>(nullptr);
+	}
 
 	TileData grassData;
 	grassData.SpriteIndex = 0;

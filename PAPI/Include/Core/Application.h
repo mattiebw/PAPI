@@ -1,8 +1,11 @@
 ﻿#pragma once
+
 #include "Layer.h"
 #include "SavedDataManager.h"
 #include "Render/Renderer.h"
 
+class Server;
+class Client;
 class SteamManager;
 class QuadBatch;
 class Layer;
@@ -68,6 +71,10 @@ public:
 	void       RemoveWorld(const Ref<World> &world);
 	Ref<World> GetWorldFromPointer(const World *world);
 
+	bool CreateServer();
+	bool JoinServer();
+	void DisconnectFromServer();
+	
 	void ShowError(const char *message, const char *title = "Error");
 
 	NODISCARD static FORCEINLINE Application*          Get() { return s_Instance; }
@@ -98,6 +105,8 @@ public:
 	NODISCARD FORCEINLINE bool             IsInitialised() const { return m_Initialised; }
 	NODISCARD FORCEINLINE std::string_view GetError() const { return m_Error; }
 	NODISCARD FORCEINLINE double           GetDeltaTime() const { return m_DeltaTime; }
+	NODISCARD FORCEINLINE NetworkType      GetNetworkType() const { return m_NetworkType; }
+	NODISCARD FORCEINLINE bool             HasFrontend() const { return m_NetworkType != NetworkType::DedicatedServer; }
 
 protected:
 	bool InitSDL();
@@ -112,16 +121,19 @@ protected:
 
 	static Application *s_Instance;
 
+	FPSCounter               m_FPSCounter;
 	ApplicationSpecification m_Specification;
+	SavedDataManager         m_SavedData;
+	std::vector<Ref<World>>  m_Worlds;
+	std::vector<Ref<Layer>>  m_Layers;
+	std::string              m_Error;
 	Ref<Window>              m_MainWindow;
 	Ref<Renderer>            m_Renderer;
 	Ref<SteamManager>        m_SteamManager;
-	std::vector<Ref<World>>  m_Worlds;
-	std::vector<Ref<Layer>>  m_Layers;
-	FPSCounter               m_FPSCounter;
-	SavedDataManager         m_SavedData;
+	Ref<Client>              m_Client;
+	Ref<Server>              m_Server;
+	double                   m_DeltaTime = 0;
 	bool                     m_Running     = false;
 	bool                     m_Initialised = false;
-	std::string              m_Error;
-	double                   m_DeltaTime = 0;
+	NetworkType              m_NetworkType = NetworkType::Standalone;
 };

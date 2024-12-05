@@ -8,7 +8,6 @@
 
 #include <steam/steam_api.h>
 
-#include "PAPI.h"
 #include "Audio/AudioManager.h"
 #include "Core/Layer.h"
 #include "Core/Random.h"
@@ -89,33 +88,37 @@ bool Application::Init()
 		return false;
 	}
 
-	// Create the main window.
-	m_MainWindow = CreateRef<Window>(WindowSpecification{
-		.Title = m_Specification.AppName,
-		.Centered = true
-	});
-	if (!m_MainWindow->IsValid()) // If the window is invalid, we can't continue.
-	{
-		m_Error = "Failed to create main window";
-		Shutdown();
-		return false;
-	}
-
-	if (!InitRenderer())
-	{
-		Shutdown();
-		return false;
-	}
-
-	if (!AudioManager::Init())
-	{
-		Shutdown();
-		return false;
-	}
-
 	Input::Init();
 	Random::Init();
-	Font::InitFontSystem();
+
+	// Create the main window.
+	if (HasFrontend())
+	{
+		m_MainWindow = CreateRef<Window>(WindowSpecification{
+			.Title = m_Specification.AppName,
+			.Centered = true
+		});
+		if (!m_MainWindow->IsValid()) // If the window is invalid, we can't continue.
+		{
+			m_Error = "Failed to create main window";
+			Shutdown();
+			return false;
+		}
+
+		if (!InitRenderer())
+		{
+			Shutdown();
+			return false;
+		}
+
+		if (!AudioManager::Init())
+		{
+			Shutdown();
+			return false;
+		}
+		
+		Font::InitFontSystem();
+	}
 
 	sw.End();
 	PAPI_TRACE("Application initialisation took {0}ms", sw.GetElapsedMilliseconds());
@@ -125,17 +128,20 @@ bool Application::Init()
 
 void Application::BindDelegates()
 {
-	m_MainWindow->OnClose.BindLambda([](Window *window)
+	if (m_MainWindow)
 	{
-		Get()->m_Running = false;
-	});
-	m_MainWindow->OnKeyPressed.BindLambda([](Window *window, Scancode scancode, bool repeat)
-	{
-		if (scancode == PAPI_KEY_F11)
-			window->ToggleFullscreen();
+		m_MainWindow->OnClose.BindLambda([](Window *window)
+		{
+			Get()->m_Running = false;
+		});
+		m_MainWindow->OnKeyPressed.BindLambda([](Window *window, Scancode scancode, bool repeat)
+		{
+			if (scancode == PAPI_KEY_F11)
+				window->ToggleFullscreen();
 
-		return false;
-	});
+			return false;
+		});
+	}
 }
 
 void Application::Run()
@@ -170,8 +176,8 @@ void Application::Run()
 		PollEvents();
 		SteamAPI_RunCallbacks();
 		Update();
-		Render();
 		AudioManager::Update();
+		Render();
 	}
 
 	sw.End();
@@ -191,8 +197,7 @@ void Application::Shutdown()
 	for (const Ref<Layer> &layer : m_Layers)
 		layer->OnDetach();
 	m_Layers.clear();
-
-
+	
 	if (m_SteamManager)
 	{
 		m_SteamManager->Shutdown();
@@ -235,7 +240,9 @@ void Application::RemoveLayer(const Ref<Layer> &layer)
 
 Ref<World> Application::AddWorld()
 {
-	return m_Worlds.emplace_back(CreateRef<World>());
+	auto world = m_Worlds.emplace_back(CreateRef<World>());
+	world->m_NetworkType = m_NetworkType;
+	return world;
 }
 
 void Application::RemoveWorld(const Ref<World> &world)
@@ -299,11 +306,15 @@ bool Application::InitRenderer()
 
 void Application::PreUpdate()
 {
-	Input::PreUpdate();
+	if (HasFrontend())
+		Input::PreUpdate();
 }
 
 void Application::PollEvents()
 {
+	if (!HasFrontend())
+		return;
+	
 	SDL_Event e;
 	while (SDL_PollEvent(&e))
 	{
@@ -414,7 +425,7 @@ void Application::Update()
 
 void Application::Render()
 {
-	if (!m_Renderer || !m_MainWindow || !m_MainWindow->IsValid())
+	if (!HasFrontend() || !m_Renderer || !m_MainWindow || !m_MainWindow->IsValid())
 		return;
 
 	m_Renderer->BeginFrame();
