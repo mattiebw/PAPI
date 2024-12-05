@@ -5,24 +5,27 @@ namespace PAPIPreprocessor;
 static class Program
 {
     private static Dictionary<string, DateTime> _cachedLastWriteTimes = new();
-    
+
     static void Main(string[] args)
     {
         Console.ForegroundColor = ConsoleColor.White;
         Console.WriteLine("We're running the PAPI preprocessor!");
-        
+
         LoadLastWriteTimes();
 
-        if (args.Length < 1)
+        if (args.Length < 2)
         {
-            Console.WriteLine("Please provide a directory to search for header files.");
-            return;    
+            Console.WriteLine("Please provide a directory to search for header files, and the build type.");
+            return;
         }
-        
+
         var dir = args[0];
         Console.WriteLine(dir);
         dir = Path.GetFullPath(dir);
-        
+
+        Console.WriteLine("Performing preprocessor copies");
+        DoPreprocessorCopies(dir, args[1]);
+
         Console.WriteLine($"Looking for header files in {dir}/PAPI/Include/");
         var files = Directory.GetFiles($"{dir}/PAPI/Include/", "*.h", SearchOption.AllDirectories);
         foreach (var file in files)
@@ -36,8 +39,102 @@ static class Program
 
             ProcessHeader(file);
         }
-        
+
         SaveLastWriteTimes();
+    }
+
+    static void DoPreprocessorCopies(string dir, string buildType)
+    {
+        if (!File.Exists($"{dir}/PreprocessorCopies.txt"))
+            return;
+
+        string platform = "Unknown";
+        if (buildType.Contains("windows"))
+            platform = "Win64";
+        else if (buildType.Contains("Linux"))
+            platform = "Linux64";
+
+        var lines = File.ReadAllLines($"{dir}/PreprocessorCopies.txt");
+        foreach (var line in lines)
+        {
+            if (string.IsNullOrWhiteSpace(line)) continue;
+
+            var parts = line.Split(" ");
+            int mode = 0;
+            if (parts[0] == "always")
+                mode = 0;
+            else if (parts[0] == "ifnewer")
+                mode = 1;
+            else
+            {
+                Console.WriteLine($"Unknown mode {parts[0]} in PreprocessorCopies.txt");
+                continue;
+            }
+
+            bool shouldCopy = true;
+            foreach (var part in parts)
+            {
+                if (part.StartsWith("plat="))
+                    if (platform != part.Split('=')[1])
+                        shouldCopy = false;
+            }
+
+            if (!shouldCopy) continue;
+
+            var source = parts[1];
+            var dest = parts[2];
+
+            FixUpDirectorySeparator(ref source);
+            FixUpDirectorySeparator(ref dest);
+
+            void CopyFile(string src, string destination)
+            {
+                if (!File.Exists(src))
+                {
+                    Console.WriteLine($"Source file {src} doesn't exist!");
+                    return;
+                }
+
+                if (mode == 1
+                    && File.Exists(destination))
+                {
+                    var sourceTime = File.GetLastWriteTime(src);
+                    var destTime = File.GetLastWriteTime(destination);
+                    if (sourceTime <= destTime)
+                        return;
+                }
+
+                var newDir = Path.GetDirectoryName(destination)!;
+                if (!Directory.Exists(newDir))
+                    Directory.CreateDirectory(newDir);
+
+                File.Copy(src, destination, true);
+            }
+
+            source = Path.Combine(dir, source);
+            source = source.Replace("{Lib}", $"/Lib/{platform}/");
+            dest = Path.Combine(dir, dest);
+            dest = dest.Replace("{BuildPath}", $"/Build/PAPI/{buildType}/");
+            FixUpDirectorySeparator(ref dest);
+
+            if (File.Exists(source))
+                CopyFile(source, Path.Combine(dest, Path.GetFileName(source)));
+            else if (Directory.Exists(source))
+            {
+                // Copy the directory
+                var files = Directory.GetFiles(source, "*", SearchOption.AllDirectories);
+                foreach (var file in files)
+                {
+                    var relativePath = file.Substring(source.Length);
+                    var destPath = Path.Combine(dest, relativePath);
+                    CopyFile(file, destPath);
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Source {source} doesn't exist - not a file, nor a directory!");
+            }
+        }
     }
 
     static void LoadLastWriteTimes()
@@ -53,17 +150,17 @@ static class Program
             _cachedLastWriteTimes = new();
         }
     }
-    
+
     static void SaveLastWriteTimes()
     {
         var json = JsonSerializer.Serialize(_cachedLastWriteTimes);
         File.WriteAllText("lastWriteTimes.json", json);
     }
-    
+
     static void ProcessHeader(string path)
     {
         FixUpDirectorySeparator(ref path);
-        
+
         if (_cachedLastWriteTimes.ContainsKey(path))
             _cachedLastWriteTimes[path] = File.GetLastWriteTime(path);
         else
@@ -71,9 +168,9 @@ static class Program
 
         if (path.ToLower().Contains("vendor")) // Lets not process vendor headers!
             return;
-        
+
         Console.WriteLine($"Processing {path}");
-        
+
         HeaderProcessor processor = new(File.ReadAllText(path));
         var entities = processor.Process();
         if (entities.Count == 0)
@@ -94,7 +191,7 @@ static class Program
             _cachedLastWriteTimes.Remove(path);
             return;
         }
-        
+
         Console.WriteLine($"Writing reflection code to {sourcePath}");
     }
 

@@ -3,6 +3,7 @@
 #include "SavedDataManager.h"
 #include "Render/Renderer.h"
 
+class SteamManager;
 class QuadBatch;
 class Layer;
 class World;
@@ -101,14 +102,12 @@ public:
 protected:
 	bool InitSDL();
 	bool InitRenderer();
-	bool InitSteamworks();
 
 	void PreUpdate();
 	void PollEvents();
 	void Update();
 	void Render();
 
-	void        ShutdownSteamworks() const;
 	static void ShutdownSDL();
 
 	static Application *s_Instance;
@@ -116,13 +115,13 @@ protected:
 	ApplicationSpecification m_Specification;
 	Ref<Window>              m_MainWindow;
 	Ref<Renderer>            m_Renderer;
+	Ref<SteamManager>        m_SteamManager;
 	std::vector<Ref<World>>  m_Worlds;
 	std::vector<Ref<Layer>>  m_Layers;
 	FPSCounter               m_FPSCounter;
 	SavedDataManager         m_SavedData;
-	bool                     m_Running          = false;
-	bool                     m_Initialised      = false;
-	bool                     m_SteamworksInitialised = false;
+	bool                     m_Running     = false;
+	bool                     m_Initialised = false;
 	std::string              m_Error;
 	double                   m_DeltaTime = 0;
 };

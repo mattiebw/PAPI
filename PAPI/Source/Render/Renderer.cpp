@@ -274,7 +274,7 @@ void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const g
 	const Ref<Texture> &            atlasTexture = font->GetAtlasTexture();
 	const int                       textureID    = m_Textures.FindOrAddTexture(atlasTexture);
 
-	float     fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
+	float     fsScale = 1.0f / static_cast<float>(metrics.ascenderY - metrics.descenderY);
 	glm::vec2 pen(0, 0);
 
 	for (int i = 0; i < string.size(); i++)
@@ -292,7 +292,7 @@ void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const g
 		}
 		if (string[i] == '\t')
 		{
-			pen.x += fontGeo.getGlyph(' ')->getAdvance() * fsScale * 4;
+			pen.x += static_cast<float>(fontGeo.getGlyph(' ')->getAdvance()) * fsScale * 4;
 			continue;
 		}
 		

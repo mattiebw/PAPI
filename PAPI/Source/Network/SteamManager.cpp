@@ -1,0 +1,50 @@
+﻿#include "papipch.h"
+#include "Network/SteamManager.h"
+
+#include "Core/Application.h"
+
+extern "C" void SteamWarningMessage(int level, const char * message)
+{
+	if (level == 0)
+		PAPI_INFO("Steamworks message: {0}", message);
+	else if (level == 1)
+		PAPI_WARN("Steamworks warning: {0}", message);
+	else
+		PAPI_ERROR("Steamworks error: {0}", message);
+
+	PAPI_ASSERT(level == 0); // Break on warnings/errors
+}
+
+bool SteamManager::Init()
+{
+	SteamErrMsg error; // SteamErrMsg is a char[1024]
+	if (SteamAPI_InitEx(&error) != k_ESteamAPIInitResult_OK)
+	{
+		std::string err = fmt::format("Failed to initialise Steamworks (make sure Steam is running): {}", static_cast<const char*>(error));
+		PAPI_ERROR("{0}", err);
+		Application::Get()->ShowError(err.c_str(), "Steamworks Initialisation Error");
+		return false;
+	}
+
+	SteamUtils()->SetWarningMessageHook(&SteamWarningMessage);
+	
+	m_SteamworksInitialised = true;
+	PAPI_INFO("Successfully initialised Steamworks. App ID: {}", SteamUtils()->GetAppID());
+	return true;
+}
+
+void SteamManager::Shutdown()
+{
+	if (!m_SteamworksInitialised)
+		return;
+	
+	PAPI_TRACE("Shutting down Steamworks");
+	SteamAPI_Shutdown();
+
+	m_SteamworksInitialised = false;
+}
+
+void SteamManager::OnScreenshot(ScreenshotReady_t *pParam)
+{
+	PAPI_INFO("Screenshot taken: {0}", pParam->m_eResult == k_EResultOK ? "OK" : "Failed");
+}

@@ -28,16 +28,16 @@ bool AudioManager::Init()
 	{
 		std::string error = fmt::format("Failed to initialise FMOD system! Error: {}", FMOD_ErrorString(initResult));
 		PAPI_ERROR("{}", error);
-		Application::Get()->ShowError(error.c_str(), "FMOD Error");
+		Application::Get()->ShowError(error.c_str(), "FMOD Error!");
 		return false;
 	}
 
-	if (!LoadBank("../Audio/FMOD/PAPI/Build/Desktop/Master.bank"))
+	if (!LoadBank("Master.bank"))
 	{
 		return false;
 	}
 
-	if (!LoadBank("../Audio/FMOD/PAPI/Build/Desktop/Master.strings.bank"))
+	if (!LoadBank("Master.strings.bank"))
 	{
 		return false;
 	}
@@ -49,13 +49,13 @@ bool AudioManager::Init()
 	return true;
 }
 
-bool AudioManager::LoadBank(const std::string& bankPath)
+bool AudioManager::LoadBank(const std::string& bankName)
 {
 	FMOD::Studio::Bank* bank;
-	FMOD_RESULT result = m_FMODSystem->loadBankFile(bankPath.c_str(), FMOD_STUDIO_LOAD_BANK_NORMAL, &bank);
+	FMOD_RESULT result = m_FMODSystem->loadBankFile(fmt::format("Content/Audio/{}", bankName).c_str(), FMOD_STUDIO_LOAD_BANK_NORMAL, &bank);
 	if (result != FMOD_OK)
 	{
-		std::string error = fmt::format("Failed to load bank file {}! Error: {}", bankPath, FMOD_ErrorString(result));
+		std::string error = fmt::format("Failed to load bank file {}! Error: {}", bankName, FMOD_ErrorString(result));
 		PAPI_ERROR("{}", error);
 		Application::Get()->ShowError(error.c_str(), "FMOD Error");
 		return false;
@@ -66,7 +66,7 @@ bool AudioManager::LoadBank(const std::string& bankPath)
 void AudioManager::PlayBackgroundMusic()
 {
 	FMOD::Studio::EventDescription* eventDescription = nullptr;
-	FMOD_RESULT result = m_FMODSystem->getEvent("event:/backgroundMusic", &eventDescription);
+	FMOD_RESULT result = m_FMODSystem->getEvent("event:/Music/BackgroundMusic", &eventDescription);
 	if (result != FMOD_OK)
 	{
 		std::string error = fmt::format("Failed to get background music event! Error: {}", FMOD_ErrorString(result));

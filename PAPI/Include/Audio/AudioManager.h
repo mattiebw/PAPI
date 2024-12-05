@@ -18,5 +18,5 @@ private:
 	static FMOD::Studio::System* m_FMODSystem;
 	static FMOD::Studio::EventInstance* m_BackgroundMusicInstance;
 
-	static bool LoadBank(const std::string& bankPath);
+	static bool LoadBank(const std::string& bankName);
 };

@@ -14,6 +14,7 @@
 #include "Core/Random.h"
 #include "Core/Input/Input.h"
 #include "Core/Window.h"
+#include "Network/SteamManager.h"
 #include "Render/Font.h"
 #include "World/World.h"
 #include "Render/Renderer.h"
@@ -81,7 +82,8 @@ bool Application::Init()
 	// running before we initialise OpenGL, so that it can hook into device creation
 	// to create the overlay.
 	// @See: https://partner.steamgames.com/doc/features/overlay
-	if (!InitSteamworks())
+	m_SteamManager = CreateRef<SteamManager>();
+	if (!m_SteamManager->Init())
 	{
 		Shutdown();
 		return false;
@@ -190,7 +192,13 @@ void Application::Shutdown()
 		layer->OnDetach();
 	m_Layers.clear();
 
-	ShutdownSteamworks();
+
+	if (m_SteamManager)
+	{
+		m_SteamManager->Shutdown();
+		m_SteamManager = nullptr;
+	}
+	
 	Font::ShutdownFontSystem();
 	Input::Shutdown();
 	AudioManager::Shutdown();
@@ -286,36 +294,6 @@ bool Application::InitRenderer()
 		}
 	});
 
-	return true;
-}
-
-extern "C" void SteamWarningMessage(int level, const char * message)
-{
-	if (level == 0)
-		PAPI_INFO("Steamworks message: {0}", message);
-	else if (level == 1)
-		PAPI_WARN("Steamworks warning: {0}", message);
-	else
-		PAPI_ERROR("Steamworks error: {0}", message);
-
-	PAPI_ASSERT(level == 0); // Break on warnings/errors
-}
-
-bool Application::InitSteamworks()
-{
-	SteamErrMsg error; // SteamErrMsg is a char[1024]
-	if (SteamAPI_InitEx(&error) != k_ESteamAPIInitResult_OK)
-	{
-		std::string err = fmt::format("Failed to initialise Steamworks (make sure Steam is running): {}", static_cast<const char*>(error));
-		PAPI_ERROR("{0}", err);
-		ShowError(err.c_str(), "Steamworks Initialisation Error");
-		return false;
-	}
-
-	SteamUtils()->SetWarningMessageHook(&SteamWarningMessage);
-	
-	m_SteamworksInitialised = true;
-	PAPI_INFO("Successfully initialised Steamworks. App ID: {}", SteamUtils()->GetAppID());
 	return true;
 }
 
@@ -445,15 +423,6 @@ void Application::Render()
 		layer->Render(m_DeltaTime);
 	m_Renderer->Render();
 	m_Renderer->EndFrame();
-}
-
-void Application::ShutdownSteamworks() const
-{
-	if (!m_SteamworksInitialised)
-		return;
-	
-	PAPI_TRACE("Shutting down Steamworks");
-	SteamAPI_Shutdown();
 }
 
 void Application::ShutdownSDL()
