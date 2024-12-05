@@ -25,7 +25,7 @@
         - [ ] Draw Animated Sprite
             - [ ] Animated sprite class/struct
         - [ ] Draw Circle
-        - [ ] Draw Text
+        - [x] Draw Text
         - [x] Draw Tilemap
 - [x] Layer system - or something so applications can start to do stuff with the "core".
 - [ ] ImGUI for debug UI
@@ -36,31 +36,41 @@
     - [ ] Add a nice way for entities and other places to add debugging windows or values.
 - [x] The "world" (or worlds).
 - [ ] Networking
-    - [ ] Integrate GNS
+    - [x] Integrate GNS/Steamworks
     - [ ] Stream readers and writers for reading messages
     - [ ] Handshake, check versions?
 - [ ] Steamworks
-    - [ ] Integrate Steamworks into the project
-    - [ ] Initialise the API, start reading data from the client
+    - [x] Integrate Steamworks into the project
+    - [x] Initialise the API, start reading data from the client
     - [ ] Lobbying
+      - https://partner.steamgames.com/doc/features/multiplayer/matchmaking
     - [ ] Send data over steam
+    - [ ] [Callum] Tag screenshots with visible players
+    - [ ] [Addi] Load player's friends, etc so they can be invited
 - [ ] Entities (ecs? or something more traditional but slower).
     - [x] Basic reflection - ability to create entity class from a static ID
         - https://stackoverflow.com/questions/347358/inheriting-constructors
         - https://stackoverflow.com/questions/4007382/how-to-create-class-objects-dynamically
     - [ ] Better collision system
     - [ ] Event system
-    - [ ] Provision for multiplayer sided-ness; relevancy.
+    - [ ] Provision for multiplayer
+      - [ ] Network mode
+      - [ ] Relevancy
 - [ ] Basic asset system?
 - [ ] Text rendering
     - [x] Add freetype, msdfgen
-    - [ ] MSDF atlas generation
-    - [ ] Cache atlases
-    - [ ] Shader
-    - [ ] Rendering functions
+    - [x] MSDF atlas generation
+    - [x] Cache atlases
+    - [x] Shader
+    - [x] Rendering functions
+    - [x] Measurement function
+    - [ ] Utility struct for rendering text, caching layout
 - [ ] Audio system
-    - [ ] Add FMOD
-    - [ ] [Louis] Work out how to use it
+    - [x] Add FMOD
+    - [x] Integrate FMOD banks with build system
+    - [x] [Louis] Initialise library, load banks
+    - [ ] [Louis] Sounds for playing sounds
+    - [ ] [Louis] Sound handles for stopping, setting volume, etc
 - [ ] Level generation
     - [x] Add FastNoiseLite
     - [ ] Chunk provider system

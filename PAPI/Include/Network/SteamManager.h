@@ -16,11 +16,15 @@ public:
 	void SetNotRequestingLobbies();
 	std::vector<Lobby> GetLobbies() { return m_Lobbies; };
 
+	FORCEINLINE bool HasRelayAccess() { return SteamNetworkingUtils()->GetRelayNetworkStatus(nullptr) == k_ESteamNetworkingAvailability_Current; }
+
 	STEAM_CALLBACK(SteamManager, OnScreenshot, ScreenshotReady_t);
+	STEAM_CALLBACK(SteamManager, OnRelayNetworkStatusChanged, SteamRelayNetworkStatus_t);
 
 private:
-	bool m_RequestingLobbies = false;
 	std::vector<Lobby> m_Lobbies;
+	bool m_RequestingLobbies = false;
+	bool m_HasRelayAccess = false;
 	
 	bool m_SteamworksInitialised = false;
 };

@@ -7,5 +7,5 @@ public:
     ~Server();
 
 private:
-    SteamNetworkingIPAddr m_IP;
+    HSteamListenSocket m_Socket;
 };

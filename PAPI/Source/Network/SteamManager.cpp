@@ -38,7 +38,6 @@ bool SteamManager::Init()
 
 	// For networking:
 	// Lets initialise the Steam relay access.
-	// MW @todo: Setup a callback so we know when we have (or don't have) access to the relay.
 	SteamNetworkingUtils()->InitRelayNetworkAccess();
 	
 	m_SteamworksInitialised = true;
@@ -49,6 +48,7 @@ bool SteamManager::Init()
 void SteamManager::Update()
 {
 	SteamAPI_RunCallbacks();
+	// if (HasRelayAccess()) PAPI_INFO("yea"); // This works, but the callback doesn't?
 }
 
 void SteamManager::Shutdown()
@@ -75,4 +75,20 @@ void SteamManager::SetNotRequestingLobbies()
 void SteamManager::OnScreenshot(ScreenshotReady_t *pParam)
 {
 	PAPI_INFO("Screenshot taken: {0}", pParam->m_eResult == k_EResultOK ? "OK" : "Failed");
+}
+
+void SteamManager::OnRelayNetworkStatusChanged(SteamRelayNetworkStatus_t *pParam)
+{
+	// MW @todo: Why is this not being called?
+	
+	if (pParam->m_eAvail == k_ESteamNetworkingAvailability_Current)
+	{
+		m_HasRelayAccess = true;
+		PAPI_INFO("Relay network is now available.");
+	}
+	else
+	{
+		m_HasRelayAccess = false;
+		PAPI_ERROR("Relay network is not available.");
+	}
 }
