@@ -51,7 +51,7 @@ static class Program
         string platform = "Unknown";
         if (buildType.Contains("windows"))
             platform = "Win64";
-        else if (buildType.Contains("Linux"))
+        else if (buildType.Contains("linux"))
             platform = "Linux64";
 
         var lines = File.ReadAllLines($"{dir}/PreprocessorCopies.txt");
