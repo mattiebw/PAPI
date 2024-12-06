@@ -9,6 +9,7 @@
 Ref<TileSet> TileSets::MainTileSet = nullptr;
 uint16_t     TileSets::Empty       = 0;
 uint16_t     TileSets::Grass       = 0;
+uint16_t     TileSets::Flowers     = 0;
 uint16_t     TileSets::StoneFloor  = 0;
 uint16_t     TileSets::StoneWall   = 0;
 
@@ -35,6 +36,11 @@ void TileSets::Init()
 	grassData.SpriteIndex = 0;
 	grassData.IsSolid     = false;
 	Grass                 = MainTileSet->AddTile(grassData);
+
+	TileData FlowerData;
+	FlowerData.SpriteIndex = 10;
+	FlowerData.IsSolid = false;
+	StoneWall = MainTileSet->AddTile(FlowerData);
 
 	TileData stoneFloorData;
 	stoneFloorData.SpriteIndex = 8;

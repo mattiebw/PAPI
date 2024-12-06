@@ -22,5 +22,7 @@ uint16_t DefaultChunkProvider::GetTileAt(int x, int y) const
         return TileSets::StoneFloor;
     else if (noise >= 0.25f)
         return TileSets::StoneWall;
+    else if (noise < 0.08f && noise >= -0.1f)
+        return TileSets::Flowers;
     return TileSets::Grass;
 }
