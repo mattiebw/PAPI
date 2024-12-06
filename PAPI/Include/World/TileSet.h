@@ -20,13 +20,14 @@ public:
 	TileSet& operator=(TileSet &&other) noexcept = delete;
 
 	uint16_t                        AddTile(const TileData &data);
-	NODISCARD FORCEINLINE TileData& GetTile(uint16_t tileIndex) { return m_Tiles[tileIndex]; }
+	NODISCARD FORCEINLINE TileData& GetTile(uint16_t tileIndex) { return tileIndex == 0 ? m_Empty : m_Tiles[tileIndex - 1]; }
 
 	NODISCARD FORCEINLINE const Ref<SpriteSheet>& GetSpritesheet() const { return m_Spritesheet; }
 
 	NODISCARD SpriteSheetSprite GetSpriteForTile(uint16_t tile) const;
 
 protected:
+	TileData m_Empty;
 	std::vector<TileData> m_Tiles;
 
 	Ref<SpriteSheet> m_Spritesheet;

@@ -26,6 +26,7 @@ public:
 	NODISCARD FORCEINLINE glm::ivec2              GetPosition() const { return m_Position; }
 	NODISCARD FORCEINLINE TileMap*                GetTileMap() const { return m_TileMap; }
 	NODISCARD FORCEINLINE const Ref<VertexArray>& GetVertexArray() const { return m_VertexArray; }
+	NODISCARD FORCEINLINE FRect                   GetBounds() const { return FRect(m_Position, m_Size); }
 
 	NODISCARD FORCEINLINE uint32_t GetTile(int x, int y) const { return m_Tiles[y * m_Size.x + x]; }
 	NODISCARD TileData&            GetTileDataForTile(int x, int y) const;

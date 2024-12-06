@@ -3,17 +3,13 @@
 
 #include "Core/Application.h"
 #include "Core/Input/Input.h"
-#include "Core/Input/Scancode.h"
 #include "Game/Player.h"
-#include "Render/Renderer.h"
-#include "Render/Viewport.h"
-#include "Render/Camera.h"
-#include "Render/Font.h"
 #include "World/TileSets.h"
 #include "World/World.h"
 
 #include <misc/cpp/imgui_stdlib.h>
 
+#include "Render/Camera.h"
 #include "World/ChunkProvider.h"
 #include "World/TileMap.h"
 
@@ -28,6 +24,7 @@ void PAPIGameLayer::OnAttach()
 	m_Player           = world->AddEntity<Player>("Player");
 
 	auto tilemap = world->CreateTileMap(TileSets::MainTileSet);
+	tilemap->Z = -10;
 	tilemap->SetChunkProvider(CreateRef<DefaultChunkProvider>());
 
 	m_TextTransform.Position.z = -0.05f;
@@ -44,13 +41,15 @@ void PAPIGameLayer::Update(double delta)
 
 void PAPIGameLayer::Render(double delta)
 {
-	Application::GetTextRenderer().DrawString("Hello", Font::GetDefaultFont(),
-	                                          m_TextTransform.GetTransformationMatrix(), glm::vec4(1.0f));
+	// Application::GetTextRenderer().DrawString("Hello", Font::GetDefaultFont(),
+	//                                           m_TextTransform.GetTransformationMatrix(), glm::vec4(1.0f));
 }
 
 void PAPIGameLayer::RenderImGUI(double delta)
 {
-	ImGui::Begin("Text Test");
-	ImGui::InputText("Player name", &m_Player->Name);
+	ImGui::Begin("Player Info");
+	ImGui::InputText("Player Name", &m_Player->Name);
+	ImGui::InputFloat2("Player Position", glm::value_ptr(m_Player->EntityTransform.Position));
+	ImGui::DragFloat("Camera Zoom", &m_Player->GetCamera()->OrthoSize, 0.1f, 0.0f, 100.0f);
 	ImGui::End();
 }

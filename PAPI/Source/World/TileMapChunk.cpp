@@ -17,8 +17,12 @@ TileMapChunk::TileMapChunk(TileMap *tileMap, glm::ivec2 position, glm::ivec2 siz
 	: m_Position(position), m_Size(size), m_TileMap(tileMap)
 {
 	m_Tiles          = new uint32_t[m_Size.x * m_Size.y];
-	m_TileShaderData = new TileShaderData[m_Size.x * m_Size.y];
 	memset(m_Tiles, 0, sizeof(uint32_t) * m_Size.x * m_Size.y);
+
+	if (!Application::Get()->HasFrontend())
+		return;
+	
+	m_TileShaderData = new TileShaderData[m_Size.x * m_Size.y];
 	memset(m_TileShaderData, 0, sizeof(TileShaderData) * m_Size.x * m_Size.y);
 
 	// Our tile data buffer is just a contiguous buffer of vec2s, representing the top left texture coordinates of the tiles.
@@ -50,17 +54,27 @@ void TileMapChunk::SetTile(int x, int y, uint32_t tile)
 {
 	int index                   = y * m_Size.x + x;
 	m_Tiles[index]              = tile;
-	m_TileShaderData[index].Rot = static_cast<float>(Random::Int(0, 4));
+	if (Application::Get()->HasFrontend())
+		m_TileShaderData[index].Rot = static_cast<float>(Random::Int(0, 4));
 	m_DataDirty                 = true;
 }
 
 void TileMapChunk::UpdateTileData()
 {
+	if (!Application::Get()->HasFrontend())
+		return;
+	
 	if (!m_DataDirty)
 		return;
 
 	for (int i = 0; i < m_Size.x * m_Size.y; i++)
 	{
+		if (m_Tiles[i] == 0)
+		{
+			m_TileShaderData[i].TopLeftTexCoord = glm::vec2(-1.0f);
+			continue;
+		}
+		
 		SpriteSheetSprite tile              = m_TileMap->GetTileSet()->GetSpriteForTile(m_Tiles[i]);
 		m_TileShaderData[i].TopLeftTexCoord = tile.TexCoordsMin;
 	}

@@ -197,6 +197,28 @@ void QuadBatch::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const
 	DrawQuad(position, size, {0.0f, 0.0f}, {1.0f, 1.0f}, tintColor, m_Data->WhiteTexture);
 }
 
+void QuadBatch::DrawRectangle(const FRect &rect, const glm::vec4 &colour)
+{
+	DrawQuad({rect.Position.x + rect.Size.x / 2.0f, rect.Position.y + rect.Size.y / 2.0f, 0.0f},
+	         {rect.Size.x, rect.Size.y}, colour);
+}
+
+void QuadBatch::DrawRectangleLines(const FRect &rect, const glm::vec4 &colour, float thickness)
+{
+	// Top
+	DrawQuad({rect.Position.x + rect.Size.x / 2.0f, rect.Position.y, 0.0f},
+	         {rect.Size.x, thickness}, colour);
+	// Bottom
+	DrawQuad({rect.Position.x + rect.Size.x / 2.0f, rect.Position.y + rect.Size.y, 0.0f},
+	         {rect.Size.x, thickness}, colour);
+	// Left
+	DrawQuad({rect.Position.x, rect.Position.y + rect.Size.y / 2.0f, 0.0f},
+	         {thickness, rect.Size.y}, colour);
+	// Right
+	DrawQuad({rect.Position.x + rect.Size.x, rect.Position.y + rect.Size.y / 2.0f, 0.0f},
+	         {thickness, rect.Size.y}, colour);
+}
+
 void QuadBatch::Flush()
 {
 	if (m_IndicesCount == 0)

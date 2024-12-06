@@ -38,10 +38,8 @@ void Player::AddedToWorld(World *world)
 		m_Viewport->SetWorld(Application::Get()->GetWorldFromPointer(m_World));
 	}
 
-	for (int i = 0; i < 10; i++)
-		world->AddEntity<PulsatingRectangle>();
-
-	SetPosition(glm::vec3(-1, -1, 0));
+	// for (int i = 0; i < 10; i++)
+	// 	world->AddEntity<PulsatingRectangle>();
 }
 
 void Player::Tick(double delta)
@@ -108,4 +106,9 @@ void Player::Render()
 	Application::GetQuadRenderer()->DrawQuad(tf.GetTransformationMatrix(), glm::vec4(1, 1, 1, .25));
 	// sw.End();
 	// PAPI_TRACE("DrawString took {0}us ({1} ms)", sw.GetElapsedMicroseconds(), sw.GetElapsedMilliseconds());
+
+	// auto rect = m_Camera->GetCameraRect();
+	// rect.Position += glm::vec2(0.1f, 0.1f);
+	// rect.Size -= glm::vec2(0.2f, 0.2f);
+	// Application::GetQuadRenderer()->DrawQuad(glm::vec3(rect.GetCenter(), 1), rect.Size, glm::vec4(1, 0, 0, 0.5f));
 }

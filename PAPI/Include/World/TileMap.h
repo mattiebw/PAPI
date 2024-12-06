@@ -10,7 +10,8 @@ public:
 	TileMap(const Ref<TileSet> &tileSet, int chunkWidth = 32, int chunkHeight = 32);
 
 	void               SetTile(int x, int y, uint32_t tile, bool canCreateChunk = false);
-	NODISCARD uint32_t GetTile(int x, int y, bool canCreateChunk = true) const;
+	NODISCARD uint32_t GetTile(int x, int y, bool canCreateChunk = true);
+	NODISCARD uint32_t GetTile(int x, int y) const;
 
 	NODISCARD FORCEINLINE uint32_t            GetChunkWidth() const { return m_ChunkSize.x; };
 	NODISCARD FORCEINLINE uint32_t            GetChunkHeight() const { return m_ChunkSize.y; };
@@ -18,10 +19,12 @@ public:
 
 	NODISCARD FORCEINLINE size_t GetLoadedChunkCount() const { return m_Chunks.size(); };
 
-	NODISCARD TileMapChunk*       GetChunk(glm::ivec2 index) { return m_Chunks[index].get(); }
-	NODISCARD const TileMapChunk* GetChunk(glm::ivec2 index) const { return m_Chunks.at(index).get(); };
+	NODISCARD TileMapChunk*       GetChunk(glm::ivec2 index) { return m_Chunks.at(index).get(); }
+	NODISCARD const TileMapChunk* GetChunk(glm::ivec2 index) const { return m_Chunks.at(index).get(); }
 	NODISCARD TileMapChunk*       GetChunkFromTileCoordinate(int x, int y, bool canCreateChunk = true);
-	NODISCARD bool                IsChunkLoaded(glm::ivec2 index) const { return m_Chunks.at(index).get() != nullptr; };
+	NODISCARD TileMapChunk*       GetChunkFromTileCoordinate(int x, int y) const;
+	NODISCARD TileMapChunk*       LoadChunk(glm::ivec2 index); // Either load the chunk from disk, or generate it.
+	NODISCARD bool                IsChunkLoaded(glm::ivec2 index) const { return m_Chunks.contains(index); }
 	
 	void SetChunkProvider(const Ref<ChunkProvider> &chunkProvider);
 	

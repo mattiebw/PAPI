@@ -102,6 +102,9 @@ public:
 
 	void DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4 &tintColor);
 
+	void DrawRectangle(const FRect& rect, const glm::vec4& colour);
+	void DrawRectangleLines(const FRect& rect, const glm::vec4& colour, float thickness);
+
 	void Flush();
 	void Reset();
 

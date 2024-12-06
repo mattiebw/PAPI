@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "TileSets.h"
+
 #include "Core/Random.h"
 #include <Vendor/FastNoiseLite.h>
 
@@ -26,5 +26,11 @@ class NullChunkProvider : public ChunkProvider
 
 class DefaultChunkProvider : public ChunkProvider
 {
+public:
+	DefaultChunkProvider();
+	
 	uint16_t GetTileAt(int x, int y) const override;
+
+private:
+	FastNoiseLite m_Noise;
 };

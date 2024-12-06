@@ -7,6 +7,7 @@
 #include "Render/SpriteSheet.h"
 
 Ref<TileSet> TileSets::MainTileSet = nullptr;
+uint16_t     TileSets::Empty       = 0;
 uint16_t     TileSets::Grass       = 0;
 uint16_t     TileSets::StoneFloor  = 0;
 uint16_t     TileSets::StoneWall   = 0;

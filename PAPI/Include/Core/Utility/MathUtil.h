@@ -17,7 +17,7 @@ struct TRect
 	{
 	}
 
-	NODISCARD FORCEINLINE bool OverlapsWith(const TRect &other)
+	NODISCARD FORCEINLINE bool OverlapsWith(const TRect &other) const
 	{
 		return Position.x < other.Position.x + other.Size.x && // Not to the right of the other rectangle
 			Position.x + Size.x > other.Position.x &&          // Not to the left of the other rectangle
@@ -25,7 +25,7 @@ struct TRect
 			Position.y + Size.y > other.Position.y;            // Not above the other rectangle
 	}
 
-	NODISCARD FORCEINLINE bool OverlapsWith(T x, T y, T width, T height)
+	NODISCARD FORCEINLINE bool OverlapsWith(T x, T y, T width, T height) const
 	{
 		return Position.x < x + width && // Not to the right of the other rectangle
 			Position.x + Size.x > x &&   // Not to the left of the other rectangle
@@ -33,16 +33,21 @@ struct TRect
 			Position.y + Size.y > y;     // Not above the other rectangle
 	}
 
-	NODISCARD FORCEINLINE bool ContainsRect(const TRect &other)
+	NODISCARD FORCEINLINE bool ContainsRect(const TRect &other) const
 	{
 		return Position.x <= other.Position.x && Position.x + Size.x >= other.Position.x + other.Size.x
 			&& Position.y <= other.Position.y && Position.y + Size.y >= other.Position.y + other.Size.y;
 	}
 
-	NODISCARD FORCEINLINE bool ContainsPoint(const glm::vec2 &point)
+	NODISCARD FORCEINLINE bool ContainsPoint(const glm::vec2 &point) const
 	{
 		return Position.x <= point.x && Position.x + Size.x >= point.x
 			&& Position.y <= point.y && Position.y + Size.y >= point.y;
+	}
+
+	NODISCARD FORCEINLINE glm::vec<2, T> GetCenter() const
+	{
+		return Position + (Size / 2.0f);
 	}
 };
 

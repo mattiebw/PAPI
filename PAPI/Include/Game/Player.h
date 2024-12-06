@@ -15,6 +15,8 @@ class Player : public Entity
 	void Tick(double delta) override;
 	void Render() override;
 
+	NODISCARD FORCEINLINE Ref<Camera>& GetCamera() { return m_Camera; }
+
 	PAPI_RPC(Multicast, SendMovement, glm::vec2 position, glm::vec2 velocity);
 	PAPI_RPC(Multicast, OnDeath);
 
