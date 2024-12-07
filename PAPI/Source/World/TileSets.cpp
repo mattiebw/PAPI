@@ -37,10 +37,10 @@ void TileSets::Init()
 	grassData.IsSolid     = false;
 	Grass                 = MainTileSet->AddTile(grassData);
 
-	TileData FlowerData;
-	FlowerData.SpriteIndex = 10;
-	FlowerData.IsSolid = false;
-	StoneWall = MainTileSet->AddTile(FlowerData);
+	TileData FlowersData;
+	FlowersData.SpriteIndex = 10;
+	FlowersData.IsSolid = false;
+	Flowers = MainTileSet->AddTile(FlowersData);
 
 	TileData stoneFloorData;
 	stoneFloorData.SpriteIndex = 8;
