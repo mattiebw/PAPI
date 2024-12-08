@@ -28,41 +28,64 @@ DefaultChunkProvider::DefaultChunkProvider()
 
 uint16_t DefaultChunkProvider::GetTileAt(int x, int y) const
 {
-    float noise_1 = CNoise.GetNoise(static_cast<float>(x), static_cast<float>(y));
-    if (noise_1 >= 0.8f)
+    float noise_C = CNoise.GetNoise(static_cast<float>(x), static_cast<float>(y));
+    float noise = m_Noise.GetNoise(static_cast<float>(x), static_cast<float>(y));
+    if (noise >= 0.08f && noise < 0.25f)
+        return TileSets::StoneFloor;
+    else if (noise >= 0.25f)
+        return TileSets::StoneWall;
+    else if (noise_C >= 0.8f && noise_C < 0.95f)
     {
-        int Water = rand() % 6;
-        switch (Water)
+        int DWater = rand() % 6;
+        switch (DWater)
         {
         case 0:
-            return TileSets::Water1;
+            return TileSets::DWater1;
             break;
         case 1:
-            return TileSets::Water2;
+            return TileSets::DWater2;
             break;
         case 2:
-            return TileSets::Water3;
+            return TileSets::DWater3;
             break;
         case 3:
-            return TileSets::Water4;
+            return TileSets::DWater4;
             break;
         case 4:
-            return TileSets::Water5;
+            return TileSets::DWater5;
             break;
         case 5:
-            return TileSets::Water6;
+            return TileSets::DWater6;
             break;
         }
     }
-    else
+    else if (noise_C > 0.95f)
     {
-        float noise = m_Noise.GetNoise(static_cast<float>(x), static_cast<float>(y));
-        if (noise >= 0.08f && noise < 0.25f)
-            return TileSets::StoneFloor;
-        else if (noise >= 0.25f)
-            return TileSets::StoneWall;
-        // else is 50% grass and 12.5% for each flower
-        else
+        int LWater = rand() % 6;
+        switch (LWater)
+        {
+        case 0:
+            return TileSets::LWater1;
+            break;
+        case 1:
+            return TileSets::LWater2;
+            break;
+        case 2:
+            return TileSets::LWater3;
+            break;
+        case 3:
+            return TileSets::LWater4;
+            break;
+        case 4:
+            return TileSets::LWater5;
+            break;
+        case 5:
+            return TileSets::LWater6;
+            break;
+        }
+    }
+    // else = all remaining tiles are 50% grass and 12.5% for each flower
+    else
         {
             int Coin = rand() % 2;
 
@@ -91,5 +114,4 @@ uint16_t DefaultChunkProvider::GetTileAt(int x, int y) const
                 break;
             }
         }
-    }
 }
