@@ -9,5 +9,5 @@ public:
 	static void Shutdown();
 
 	static Ref<TileSet> MainTileSet;
-	static uint16_t     Empty, Grass, Flowers, StoneFloor, StoneWall;
+	static uint16_t     Empty, Grass, Flowers, Sunflowers, Lilies, Roses, StoneFloor, StoneWall;
 };

@@ -7,7 +7,7 @@ DefaultChunkProvider::DefaultChunkProvider()
     srand(time(0));
 
     m_Noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-    m_Noise.SetSeed(rand() % 1024);
+    m_Noise.SetSeed(rand());
     m_Noise.SetFractalOctaves(5);
     m_Noise.SetFrequency(0.1f);
     m_Noise.SetFractalLacunarity(0.15f);
