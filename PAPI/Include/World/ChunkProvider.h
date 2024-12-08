@@ -33,4 +33,5 @@ public:
 
 private:
 	FastNoiseLite m_Noise;
+	FastNoiseLite CNoise;
 };

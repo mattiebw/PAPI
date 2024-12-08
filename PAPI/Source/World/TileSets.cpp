@@ -15,6 +15,13 @@ uint16_t     TileSets::Lilies       = 0;
 uint16_t     TileSets::Roses       = 0;
 uint16_t     TileSets::StoneFloor  = 0;
 uint16_t     TileSets::StoneWall   = 0;
+uint16_t     TileSets::Water1      = 0;
+uint16_t     TileSets::Water2      = 0;
+uint16_t     TileSets::Water3      = 0;
+uint16_t     TileSets::Water4      = 0;
+uint16_t     TileSets::Water5      = 0;
+uint16_t     TileSets::Water6      = 0;
+
 
 void TileSets::Init()
 {
@@ -69,6 +76,36 @@ void TileSets::Init()
 	stoneWallData.SpriteIndex = 9;
 	stoneWallData.IsSolid     = true;
 	StoneWall                 = MainTileSet->AddTile(stoneWallData);
+
+	TileData Water1Data;
+	Water1Data.SpriteIndex = 18;
+	Water1Data.IsSolid = true;
+	Water1 = MainTileSet->AddTile(Water1Data);
+
+	TileData Water2Data;
+	Water2Data.SpriteIndex = 19;
+	Water2Data.IsSolid = true;
+	Water2 = MainTileSet->AddTile(Water2Data);
+
+	TileData Water3Data;
+	Water3Data.SpriteIndex = 20;
+	Water3Data.IsSolid = true;
+	Water3 = MainTileSet->AddTile(Water3Data);
+
+	TileData Water4Data;
+	Water4Data.SpriteIndex = 21;
+	Water4Data.IsSolid = true;
+	Water4 = MainTileSet->AddTile(Water4Data);
+
+	TileData Water5Data;
+	Water5Data.SpriteIndex = 22;
+	Water5Data.IsSolid = true;
+	Water5 = MainTileSet->AddTile(Water5Data);
+
+	TileData Water6Data;
+	Water6Data.SpriteIndex = 23;
+	Water6Data.IsSolid = true;
+	Water6 = MainTileSet->AddTile(Water6Data);
 }
 
 void TileSets::Shutdown()
