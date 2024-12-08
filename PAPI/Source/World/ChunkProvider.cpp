@@ -22,7 +22,34 @@ uint16_t DefaultChunkProvider::GetTileAt(int x, int y) const
         return TileSets::StoneFloor;
     else if (noise >= 0.25f)
         return TileSets::StoneWall;
-    else if (noise < 0.08f && noise >= -0.1f)
-        return TileSets::Flowers;
-    return TileSets::Grass;
+    else 
+    {
+        int Coin = rand() % 2;
+        
+        switch (Coin)
+        {
+        case 0:
+            return TileSets::Grass;
+            break;
+        case 1:
+            int Random_Flowers = rand() % 4;
+            switch (Random_Flowers)
+            {
+            case 0:
+                return TileSets::Flowers;
+                break;
+            case 1:
+                return TileSets::Sunflowers;
+                break;
+            case 2:
+                return TileSets::Lilies;
+                break;
+            case 3:
+                return TileSets::Roses;
+                break;
+            }
+            break;
+        }
+    }
+    // 50% grass and 12.5% for each flower
 }
