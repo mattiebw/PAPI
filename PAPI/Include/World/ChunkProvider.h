@@ -32,6 +32,7 @@ public:
 	uint16_t GetTileAt(int x, int y) const override;
 
 private:
-	FastNoiseLite m_Noise;
-	FastNoiseLite CNoise;
+	FastNoiseLite PNoise_1;
+	FastNoiseLite CNoise_1;
+	FastNoiseLite CNoise_2;
 };
