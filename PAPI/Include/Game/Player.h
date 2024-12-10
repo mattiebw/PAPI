@@ -29,4 +29,7 @@ private:
 	Ref<Texture>  m_Texture;
 	Ref<Viewport> m_Viewport;
 	Ref<Camera>   m_Camera;
+
+	bool m_WasPDown = false;
+	bool m_WasBDown = false;
 };

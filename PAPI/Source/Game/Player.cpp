@@ -9,6 +9,7 @@
 #include "Render/Font.h"
 #include "Render/Renderer.h"
 #include "Render/Viewport.h"
+#include "Audio/AudioManager.h"
 
 void Player::OnPersonaNameChange(PersonaStateChange_t *parameter)
 {
@@ -76,6 +77,19 @@ void Player::Tick(double delta)
 			break;
 	}
 	
+	bool pDown = Input::IsKeyDown(PAPI_KEY_P);
+	bool bDown = Input::IsKeyDown(PAPI_KEY_B);
+	if (pDown && !m_WasPDown)
+	{
+		AudioManager::PlayBackgroundMusic();
+	}
+	if (bDown && !m_WasBDown)
+	{
+		AudioManager::PlayPreviousMusic();
+	}
+	m_WasPDown = pDown;
+	m_WasBDown = bDown;
+
 	m_Camera->Transformation.Position.x = MathUtil::LerpSmooth(m_Camera->Transformation.Position.x,
 	                                                           EntityTransform.Position.x, 0.001f,
 	                                                           static_cast<float>(delta));
