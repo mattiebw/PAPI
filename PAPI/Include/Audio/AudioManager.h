@@ -7,6 +7,8 @@ namespace FMOD::Studio
 {
 	class System;
 	class EventInstance;
+	class EventDescription;
+	class Bank;
 }
 
 struct SoundHandle
