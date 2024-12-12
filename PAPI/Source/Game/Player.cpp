@@ -11,9 +11,6 @@
 #include "Render/Viewport.h"
 #include "Audio/AudioManager.h"
 
-static SoundHandle footstepHandle;
-static bool wasMoving = false;
-
 void Player::OnPersonaNameChange(PersonaStateChange_t *parameter)
 {
 	Name = SteamFriends()->GetPersonaName();
