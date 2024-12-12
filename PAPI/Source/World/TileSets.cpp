@@ -86,7 +86,7 @@ void TileSets::Init()
 
 	TileData SandData;
 	SandData.SpriteIndex = 1;
-	SandData.IsSolid = true;
+	SandData.IsSolid = false;
 	Sand = MainTileSet->AddTile(SandData);
 
 	TileData DWater1Data;
