@@ -11,6 +11,9 @@
 #include "Render/Viewport.h"
 #include "Audio/AudioManager.h"
 
+static SoundHandle footstepHandle;
+static bool wasMoving = false;
+
 void Player::OnPersonaNameChange(PersonaStateChange_t *parameter)
 {
 	Name = SteamFriends()->GetPersonaName();
@@ -46,9 +49,6 @@ void Player::AddedToWorld(World *world)
 void Player::Tick(double delta)
 {
 	m_Time += static_cast<float>(delta);
-
-	static bool wasMoving = false;
-	static SoundHandle footstepHandle(nullptr);
 
 	switch (m_EntityNetworkType)
 	{
