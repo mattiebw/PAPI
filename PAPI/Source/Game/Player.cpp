@@ -11,6 +11,11 @@
 #include "Render/Viewport.h"
 #include "Audio/AudioManager.h"
 
+namespace {
+	static SoundHandle footstepHandle;
+	static bool wasMoving = false;
+}
+
 void Player::OnPersonaNameChange(PersonaStateChange_t *parameter)
 {
 	Name = SteamFriends()->GetPersonaName();
@@ -57,6 +62,21 @@ void Player::Tick(double delta)
 				input.x += Input::IsKeyDown(PAPI_KEY_D) ? 1.0f : 0.0f;
 				input.y -= Input::IsKeyDown(PAPI_KEY_S) ? 1.0f : 0.0f;
 				input.y += Input::IsKeyDown(PAPI_KEY_W) ? 1.0f : 0.0f;
+
+				bool isMoving = (input.x != 0.0f || input.y != 0.0f);
+
+				if (!wasMoving && isMoving)
+				{
+					footstepHandle = AudioManager::PlaySound("event:/SFX/Footsteps");
+					footstepHandle.SetVolume(2.0f);
+				}
+
+				if (wasMoving && !isMoving)
+				{
+					footstepHandle.Pause(true);
+				}
+
+				wasMoving = isMoving;
 
 				if (input.x != 0 || input.y != 0)
 				{

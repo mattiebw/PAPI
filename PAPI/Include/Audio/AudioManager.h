@@ -14,10 +14,8 @@ namespace FMOD::Studio
 struct SoundHandle
 {
 public:
-	SoundHandle() : m_Instance(nullptr) {}
-	SoundHandle(FMOD::Studio::EventInstance* instance)
-		: m_Instance(instance)
-	{}
+	SoundHandle() = default;
+	explicit SoundHandle(FMOD::Studio::EventInstance* instance) : m_Instance(instance) {}
 
 	void Stop();
 	void Pause(bool pause);
