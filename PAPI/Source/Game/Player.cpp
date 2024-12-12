@@ -47,6 +47,9 @@ void Player::Tick(double delta)
 {
 	m_Time += static_cast<float>(delta);
 
+	static bool wasMoving = false;
+	static SoundHandle footstepHandle(nullptr);
+
 	switch (m_EntityNetworkType)
 	{
 		case EntityNetworkType::LocalOnly:
@@ -57,6 +60,21 @@ void Player::Tick(double delta)
 				input.x += Input::IsKeyDown(PAPI_KEY_D) ? 1.0f : 0.0f;
 				input.y -= Input::IsKeyDown(PAPI_KEY_S) ? 1.0f : 0.0f;
 				input.y += Input::IsKeyDown(PAPI_KEY_W) ? 1.0f : 0.0f;
+
+				bool isMoving = (input.x != 0.0f || input.y != 0.0f);
+
+				if (!wasMoving && isMoving)
+				{
+					footstepHandle = AudioManager::PlaySound("event:/SFX/Footsteps");
+					footstepHandle.SetVolume(2.0f);
+				}
+
+				if (wasMoving && !isMoving)
+				{
+					footstepHandle.Pause(true);
+				}
+
+				wasMoving = isMoving;
 
 				if (input.x != 0 || input.y != 0)
 				{

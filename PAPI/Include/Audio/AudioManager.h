@@ -12,11 +12,14 @@ namespace FMOD::Studio
 struct SoundHandle
 {
 public:
+	SoundHandle() : m_Instance(nullptr) {}
 	SoundHandle(FMOD::Studio::EventInstance* instance)
 		: m_Instance(instance)
 	{}
 
 	void Stop();
+	void Pause(bool pause);
+	void SetVolume(float volume);
 
 private:
 	FMOD::Studio::EventInstance* m_Instance;

@@ -218,8 +218,69 @@ void AudioManager::StartFadeIn()
 
 SoundHandle AudioManager::PlaySound(const char* soundName)
 {
-	// TODO
-	return SoundHandle(nullptr);
+	if (!m_FMODSystem)
+	{
+		PAPI_WARN("FMOD system not initialized, cannot play sound!");
+		return SoundHandle(nullptr);
+	}
+
+	FMOD::Studio::EventDescription* eventDescription = nullptr;
+	FMOD_RESULT result = m_FMODSystem->getEvent(soundName, &eventDescription);
+	if (result != FMOD_OK || !eventDescription)
+	{
+		std::string error = fmt::format("Failed to get event for sound: {}", soundName);
+		PAPI_ERROR("{}", error);
+		Application::Get()->ShowError(error.c_str(), "FMOD Error");
+		return SoundHandle(nullptr);
+	}
+
+	FMOD::Studio::EventInstance* instance = nullptr;
+	result = eventDescription->createInstance(&instance);
+	if (result != FMOD_OK || !instance)
+	{
+		std::string error = fmt::format("Failed to create instance for sound: {}", soundName);
+		PAPI_ERROR("{}", error);
+		Application::Get()->ShowError(error.c_str(), "FMOD Error");
+		return SoundHandle(nullptr);
+	}
+
+	result = instance->start();
+	if (result != FMOD_OK)
+	{
+		std::string error = fmt::format("Failed to start sound: {}", soundName);
+		PAPI_ERROR("{}", error);
+		Application::Get()->ShowError(error.c_str(), "FMOD Error");
+		instance->release();
+		return SoundHandle(nullptr);
+	}
+
+	return SoundHandle(instance);
+}
+
+void SoundHandle::Stop()
+{
+	if (m_Instance)
+	{
+		m_Instance->stop(FMOD_STUDIO_STOP_IMMEDIATE);
+		m_Instance->release();
+		m_Instance = nullptr;
+	}
+}
+
+void SoundHandle::Pause(bool pause)
+{
+	if (m_Instance)
+	{
+		m_Instance->setPaused(pause);
+	}
+}
+
+void SoundHandle::SetVolume(float volume)
+{
+	if (m_Instance)
+	{
+		m_Instance->setVolume(volume);
+	}
 }
 
 void AudioManager::Update()
