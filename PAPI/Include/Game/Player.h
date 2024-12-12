@@ -2,7 +2,6 @@
 
 #include "Render/Texture.h"
 #include "World/Entity.h"
-#include "Audio/AudioManager.h"
 
 class Viewport;
 class Camera;
@@ -33,7 +32,4 @@ private:
 
 	bool m_WasPDown = false;
 	bool m_WasBDown = false;
-
-	bool m_WasMoving = false;
-	SoundHandle m_FootstepHandle;
 };
