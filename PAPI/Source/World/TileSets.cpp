@@ -13,8 +13,9 @@ uint16_t     TileSets::Flowers     = 0;
 uint16_t     TileSets::Sunflowers  = 0;
 uint16_t     TileSets::Lilies      = 0;
 uint16_t     TileSets::Roses       = 0;
-uint16_t     TileSets::StoneFloor  = 0;
 uint16_t     TileSets::StoneWall   = 0;
+uint16_t     TileSets::MoutainStone= 0;
+uint16_t     TileSets::Snow        = 0;
 uint16_t     TileSets::Sand        = 0;
 uint16_t     TileSets::Mud1        = 0;
 uint16_t     TileSets::Mud2        = 0;
@@ -78,15 +79,20 @@ void TileSets::Init()
 	RosesData.IsSolid = false;
 	Roses = MainTileSet->AddTile(RosesData);
 
-	TileData stoneFloorData;
-	stoneFloorData.SpriteIndex = 8;
-	stoneFloorData.IsSolid     = true;
-	StoneFloor                 = MainTileSet->AddTile(stoneFloorData);
+	TileData StoneWallData;
+	StoneWallData.SpriteIndex = 8;
+	StoneWallData.IsSolid     = true;
+	StoneWall                 = MainTileSet->AddTile(StoneWallData);
 
-	TileData stoneWallData;
-	stoneWallData.SpriteIndex = 9;
-	stoneWallData.IsSolid     = true;
-	StoneWall                 = MainTileSet->AddTile(stoneWallData);
+	TileData MoutainStoneData;
+	MoutainStoneData.SpriteIndex = 9;
+	MoutainStoneData.IsSolid     = true;
+	MoutainStone                 = MainTileSet->AddTile(MoutainStoneData);
+
+	TileData SnowData;
+	SnowData.SpriteIndex = 37;
+	SnowData.IsSolid = true;
+	Snow = MainTileSet->AddTile(SnowData);
 
 	TileData SandData;
 	SandData.SpriteIndex = 1;

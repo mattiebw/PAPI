@@ -7,23 +7,24 @@ DefaultChunkProvider::DefaultChunkProvider()
     srand(time(0));
 
     int Cellular_Seed = rand();
+    int Perlin_Seed = rand();
 
     PNoise_1.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-    PNoise_1.SetSeed(rand());
+    PNoise_1.SetSeed(Perlin_Seed);
     PNoise_1.SetFrequency(0.08f);
     PNoise_1.SetFractalType(FastNoiseLite::FractalType_FBm);
     PNoise_1.SetFractalOctaves(5);
     PNoise_1.SetFractalLacunarity(0.15f);
-    PNoise_1.SetFractalGain(0.2f);
+    PNoise_1.SetFractalGain(0.0f);
 
     PNoise_2.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-    PNoise_2.SetSeed(rand());
-    PNoise_2.SetFrequency(0.05f);
+    PNoise_2.SetSeed(Perlin_Seed);
+    PNoise_2.SetFrequency(0.08f);
     PNoise_2.SetFractalType(FastNoiseLite::FractalType_PingPong);
     PNoise_2.SetFractalOctaves(7);
-    PNoise_2.SetFractalLacunarity(2.0f);
-    PNoise_2.SetFractalGain(0.15f);
-    PNoise_2.SetFractalWeightedStrength(2.5f);
+    PNoise_2.SetFractalLacunarity(0.0f);
+    PNoise_2.SetFractalGain(0.0f);
+    PNoise_2.SetFractalWeightedStrength(1.8f);
     PNoise_2.SetFractalPingPongStrength(2.1f);
 
     CNoise_1.SetNoiseType(FastNoiseLite::NoiseType_Cellular);
@@ -56,34 +57,12 @@ uint16_t DefaultChunkProvider::GetTileAt(int x, int y) const
     float Pnoise_2 = PNoise_2.GetNoise(static_cast<float>(x), static_cast<float>(y));
     float Cnoise_1 = CNoise_1.GetNoise(static_cast<float>(x), static_cast<float>(y));
     float Cnoise_2 = CNoise_2.GetNoise(static_cast<float>(x), static_cast<float>(y));
-    // Path
-    if (Pnoise_2 <= -0.5 && Cnoise_1 < 0.85f)
-    {
-        int Mud = rand() % 2;
-        switch (Mud)
-        {
-        case 0:
-            return TileSets::Mud1;
-            break;
-        case 1:
-            int Grass_Mud = rand() % 3;
-            switch (Grass_Mud)
-            {
-            case 0:
-                return TileSets::Mud2;
-                break;
-            case 1:
-                return TileSets::Mud3;
-                break;
-            case 2:
-                return TileSets::Mud4;
-                break;
-            }
-        }
-    }
+    // uses perlin noise to make snow on mountains
+    if (Pnoise_1 > 0.5f || Pnoise_1 < -0.5f)
+        return TileSets::Snow;
     // uses perlin noise to make solid stone
-    else if (Pnoise_1 >= 0.25f)
-        return TileSets::StoneWall;
+    else if (Pnoise_1 < -0.4f && Pnoise_1 >= -0.5f || Pnoise_1 > 0.4f && Pnoise_1 < 0.5f)
+        return TileSets::MoutainStone;
     // uses two layers of Cellular noise over the Perlin noise to make ponds
     else if (Cnoise_1 >= 0.85f)
     {
@@ -143,36 +122,61 @@ uint16_t DefaultChunkProvider::GetTileAt(int x, int y) const
         }
     }
     // continue using perlin noise to make stone floor 
-    else if (Pnoise_1 >= 0.085f && Pnoise_1 < 0.25f)
-        return TileSets::StoneFloor;
-    // else = all remaining tiles are 50% grass and 12.5% for each flower
-    else
+    else if (Pnoise_1 <= -0.3f && Pnoise_1 >= -0.4f || Pnoise_1 >= 0.3f && Pnoise_1 <= 0.4f)
+        return TileSets::StoneWall;
+    // Paths
+    else if (Pnoise_2 <= -0.79f)
+    {
+        int Mud = rand() % 2;
+        switch (Mud)
         {
-            int Coin = rand() % 2;
-
-            switch (Coin)
+        case 0:
+            return TileSets::Mud1;
+            break;
+        case 1:
+            int Grass_Mud = rand() % 3;
+            switch (Grass_Mud)
             {
             case 0:
-                return TileSets::Grass;
+                return TileSets::Mud2;
                 break;
             case 1:
-                int Random_Flowers = rand() % 4;
-                switch (Random_Flowers)
-                {
-                case 0:
-                    return TileSets::Flowers;
-                    break;
-                case 1:
-                    return TileSets::Sunflowers;
-                    break;
-                case 2:
-                    return TileSets::Lilies;
-                    break;
-                case 3:
-                    return TileSets::Roses;
-                    break;
-                }
+                return TileSets::Mud3;
+                break;
+            case 2:
+                return TileSets::Mud4;
                 break;
             }
         }
+    }
+    // else = all remaining tiles are 50% grass and 12.5% for each flower
+    else
+    {
+        int Coin = rand() % 2;
+
+        switch (Coin)
+        {
+        case 0:
+            return TileSets::Grass;
+            break;
+        case 1:
+            int Random_Flowers = rand() % 4;
+            switch (Random_Flowers)
+            {
+            case 0:
+                return TileSets::Flowers;
+                break;
+            case 1:
+                return TileSets::Sunflowers;
+                break;
+            case 2:
+                return TileSets::Lilies;
+                break;
+            case 3:
+                return TileSets::Roses;
+                break;
+            }
+            break;
+        }
+    }
 }
