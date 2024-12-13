@@ -76,7 +76,7 @@ void TileSets::Init()
 
 	TileData stoneFloorData;
 	stoneFloorData.SpriteIndex = 8;
-	stoneFloorData.IsSolid     = false;
+	stoneFloorData.IsSolid     = true;
 	StoneFloor                 = MainTileSet->AddTile(stoneFloorData);
 
 	TileData stoneWallData;

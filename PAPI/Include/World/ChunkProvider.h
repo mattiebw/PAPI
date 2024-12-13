@@ -33,6 +33,7 @@ public:
 
 private:
 	FastNoiseLite PNoise_1;
+	FastNoiseLite PNoise_2;
 	FastNoiseLite CNoise_1;
 	FastNoiseLite CNoise_2;
 };

@@ -10,17 +10,27 @@ DefaultChunkProvider::DefaultChunkProvider()
 
     PNoise_1.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
     PNoise_1.SetSeed(rand());
-    PNoise_1.SetFrequency(0.1f);
+    PNoise_1.SetFrequency(0.08f);
     PNoise_1.SetFractalType(FastNoiseLite::FractalType_FBm);
     PNoise_1.SetFractalOctaves(5);
     PNoise_1.SetFractalLacunarity(0.15f);
     PNoise_1.SetFractalGain(0.2f);
 
+    PNoise_2.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+    PNoise_2.SetSeed(rand());
+    PNoise_2.SetFrequency(0.05f);
+    PNoise_2.SetFractalType(FastNoiseLite::FractalType_PingPong);
+    PNoise_2.SetFractalOctaves(7);
+    PNoise_2.SetFractalLacunarity(2.0f);
+    PNoise_2.SetFractalGain(0.2f);
+    PNoise_2.SetFractalWeightedStrength(2.5f);
+    PNoise_2.SetFractalPingPongStrength(2.1f);
+
     CNoise_1.SetNoiseType(FastNoiseLite::NoiseType_Cellular);
     CNoise_1.SetSeed(Cellular_Seed);
     CNoise_1.SetFrequency(0.15f);
     CNoise_1.SetFractalType(FastNoiseLite::FractalType_FBm);
-    CNoise_1.SetFractalOctaves(3);
+    CNoise_1.SetFractalOctaves(1);
     CNoise_1.SetFractalLacunarity(2.0f);
     CNoise_1.SetFractalGain(0.0f);
     CNoise_1.SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction_Hybrid);
@@ -42,16 +52,18 @@ DefaultChunkProvider::DefaultChunkProvider()
 
 uint16_t DefaultChunkProvider::GetTileAt(int x, int y) const
 {
-    float Cnoise_1 = CNoise_1.GetNoise(static_cast<float>(x), static_cast<float>(y));
     float Pnoise_1 = PNoise_1.GetNoise(static_cast<float>(x), static_cast<float>(y));
+    float Pnoise_2 = PNoise_2.GetNoise(static_cast<float>(x), static_cast<float>(y));
+    float Cnoise_1 = CNoise_1.GetNoise(static_cast<float>(x), static_cast<float>(y));
     float Cnoise_2 = CNoise_2.GetNoise(static_cast<float>(x), static_cast<float>(y));
-    // uses perlin noise to make rocks
-    if (Pnoise_1 >= 0.08f && Pnoise_1 < 0.25f)
-        return TileSets::StoneFloor;
+    // Path
+    if (Pnoise_2 <= -0.5)
+        return TileSets::Empty;
+    // uses perlin noise to make solid stone
     else if (Pnoise_1 >= 0.25f)
         return TileSets::StoneWall;
     // uses two layers of Cellular noise over the Perlin noise to make ponds
-    else if (Cnoise_1 >= 0.8f)
+    else if (Cnoise_1 >= 0.85f)
     {
         if (Cnoise_2 >= -0.55f && Cnoise_2 < -0.4f)
         {
@@ -108,6 +120,9 @@ uint16_t DefaultChunkProvider::GetTileAt(int x, int y) const
             }
         }
     }
+    // continue using perlin noise to make stone floor 
+    else if (Pnoise_1 >= 0.085f && Pnoise_1 < 0.25f)
+        return TileSets::StoneFloor;
     // else = all remaining tiles are 50% grass and 12.5% for each flower
     else
         {
