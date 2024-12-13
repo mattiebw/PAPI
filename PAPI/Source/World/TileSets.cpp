@@ -16,6 +16,10 @@ uint16_t     TileSets::Roses       = 0;
 uint16_t     TileSets::StoneFloor  = 0;
 uint16_t     TileSets::StoneWall   = 0;
 uint16_t     TileSets::Sand        = 0;
+uint16_t     TileSets::Mud1        = 0;
+uint16_t     TileSets::Mud2        = 0;
+uint16_t     TileSets::Mud3        = 0;
+uint16_t     TileSets::Mud4        = 0;
 uint16_t     TileSets::DWater1     = 0;
 uint16_t     TileSets::DWater2     = 0;
 uint16_t     TileSets::DWater3     = 0;
@@ -88,6 +92,26 @@ void TileSets::Init()
 	SandData.SpriteIndex = 1;
 	SandData.IsSolid = false;
 	Sand = MainTileSet->AddTile(SandData);
+
+	TileData Mud1Data;
+	Mud1Data.SpriteIndex = 32;
+	Mud1Data.IsSolid = false;
+	Mud1 = MainTileSet->AddTile(Mud1Data);
+
+	TileData Mud2Data;
+	Mud2Data.SpriteIndex = 33;
+	Mud2Data.IsSolid = false;
+	Mud2 = MainTileSet->AddTile(Mud2Data);
+
+	TileData Mud3Data;
+	Mud3Data.SpriteIndex = 34;
+	Mud3Data.IsSolid = false;
+	Mud3 = MainTileSet->AddTile(Mud3Data);
+
+	TileData Mud4Data;
+	Mud4Data.SpriteIndex = 35;
+	Mud4Data.IsSolid = false;
+	Mud4 = MainTileSet->AddTile(Mud4Data);
 
 	TileData DWater1Data;
 	DWater1Data.SpriteIndex = 18;

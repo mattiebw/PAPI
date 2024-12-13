@@ -22,7 +22,7 @@ DefaultChunkProvider::DefaultChunkProvider()
     PNoise_2.SetFractalType(FastNoiseLite::FractalType_PingPong);
     PNoise_2.SetFractalOctaves(7);
     PNoise_2.SetFractalLacunarity(2.0f);
-    PNoise_2.SetFractalGain(0.2f);
+    PNoise_2.SetFractalGain(0.15f);
     PNoise_2.SetFractalWeightedStrength(2.5f);
     PNoise_2.SetFractalPingPongStrength(2.1f);
 
@@ -57,8 +57,30 @@ uint16_t DefaultChunkProvider::GetTileAt(int x, int y) const
     float Cnoise_1 = CNoise_1.GetNoise(static_cast<float>(x), static_cast<float>(y));
     float Cnoise_2 = CNoise_2.GetNoise(static_cast<float>(x), static_cast<float>(y));
     // Path
-    if (Pnoise_2 <= -0.5)
-        return TileSets::Empty;
+    if (Pnoise_2 <= -0.5 && Cnoise_1 < 0.85f)
+    {
+        int Mud = rand() % 2;
+        switch (Mud)
+        {
+        case 0:
+            return TileSets::Mud1;
+            break;
+        case 1:
+            int Grass_Mud = rand() % 3;
+            switch (Grass_Mud)
+            {
+            case 0:
+                return TileSets::Mud2;
+                break;
+            case 1:
+                return TileSets::Mud3;
+                break;
+            case 2:
+                return TileSets::Mud4;
+                break;
+            }
+        }
+    }
     // uses perlin noise to make solid stone
     else if (Pnoise_1 >= 0.25f)
         return TileSets::StoneWall;
