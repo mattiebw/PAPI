@@ -127,26 +127,21 @@ uint16_t DefaultChunkProvider::GetTileAt(int x, int y) const
     // Paths
     else if (Pnoise_2 <= -0.79f)
     {
-        int Mud = rand() % 2;
+        int Mud = rand() % 4;
         switch (Mud)
         {
         case 0:
             return TileSets::Mud1;
             break;
         case 1:
-            int Grass_Mud = rand() % 3;
-            switch (Grass_Mud)
-            {
-            case 0:
-                return TileSets::Mud2;
-                break;
-            case 1:
-                return TileSets::Mud3;
-                break;
-            case 2:
-                return TileSets::Mud4;
-                break;
-            }
+            return TileSets::Mud2;
+            break;
+        case 2:
+            return TileSets::Mud3;
+            break;
+        case 3ww:
+            return TileSets::Mud4;
+            break;
         }
     }
     // else = all remaining tiles are 50% grass and 12.5% for each flower
