@@ -7,19 +7,20 @@ namespace FMOD::Studio
 {
 	class System;
 	class EventInstance;
-	class EventDescription;
-	class Bank;
 }
 
 struct SoundHandle
 {
 public:
-	SoundHandle() = default;
-	explicit SoundHandle(FMOD::Studio::EventInstance* instance) : m_Instance(instance) {}
+	SoundHandle() : m_Instance(nullptr) {}
+	SoundHandle(FMOD::Studio::EventInstance* instance)
+		: m_Instance(instance)
+	{}
 
 	void Stop();
 	void Pause(bool pause);
 	void SetVolume(float volume);
+	bool IsPlaying() const;
 
 private:
 	FMOD::Studio::EventInstance* m_Instance;
@@ -33,6 +34,7 @@ public:
 	static void Shutdown();
 	static void PlayBackgroundMusic();
 	static void PlayPreviousMusic();
+	static void PlayBirds();
 	static bool m_FadingOut;
 	static bool m_FadingIn;
 	static float m_CurrentVolume;

@@ -6,6 +6,8 @@
 
 #include "Core/Application.h"
 
+#include <random>
+
 FMOD::Studio::System* AudioManager::m_FMODSystem = nullptr;
 FMOD::Studio::EventInstance* AudioManager::m_BackgroundMusicInstance = nullptr;
 
@@ -216,6 +218,34 @@ void AudioManager::StartFadeIn()
 	m_CurrentVolume = 0.0f;
 }
 
+void AudioManager::PlayBirds()
+{
+	static const float minInterval = 10.0f;
+	static const float maxInterval = 100.0f;
+
+	static float timer = 0.0f;
+	static float nextInterval = minInterval + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (maxInterval - minInterval)));
+	static SoundHandle birdSound;
+
+	float deltaTime = Application::Get()->GetDeltaTime();
+	timer += deltaTime;
+
+	if (birdSound.IsPlaying())
+	{
+		return;
+	}
+
+
+	if (timer >= nextInterval)
+	{
+		timer = 0.0f;
+		nextInterval = minInterval + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (maxInterval - minInterval)));
+
+		birdSound = PlaySound("event:/SFX/Birds");
+		birdSound.SetVolume(2.0f);
+	}
+}
+
 SoundHandle AudioManager::PlaySound(const char* soundName)
 {
 	if (!m_FMODSystem)
@@ -283,6 +313,25 @@ void SoundHandle::SetVolume(float volume)
 	}
 }
 
+bool SoundHandle::IsPlaying() const
+{
+	if (!m_Instance)
+	{
+		return false;
+	}
+
+	FMOD_STUDIO_PLAYBACK_STATE playbackState;
+	FMOD_RESULT result = m_Instance->getPlaybackState(&playbackState);
+
+	if (result != FMOD_OK)
+	{
+		PAPI_ERROR("Failed to retrieve playback state: {}", FMOD_ErrorString(result));
+		return false;
+	}
+
+	return playbackState == FMOD_STUDIO_PLAYBACK_PLAYING;
+}
+
 void AudioManager::Update()
 {
 	if (!Application::Get()->HasFrontend())
@@ -347,6 +396,8 @@ void AudioManager::Update()
 			Application::Get()->ShowError(error.c_str(), "FMOD Error");
 		}
 	}
+
+	PlayBirds();
 }
 
 void AudioManager::Shutdown()
