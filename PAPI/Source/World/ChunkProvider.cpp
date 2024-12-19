@@ -139,7 +139,7 @@ uint16_t DefaultChunkProvider::GetTileAt(int x, int y) const
         case 2:
             return TileSets::Mud3;
             break;
-        case 3ww:
+        case 3:
             return TileSets::Mud4;
             break;
         }
