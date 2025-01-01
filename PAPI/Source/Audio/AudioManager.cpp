@@ -242,7 +242,12 @@ void AudioManager::PlayBirds()
 		nextInterval = minInterval + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (maxInterval - minInterval)));
 
 		birdSound = PlaySound("event:/SFX/Birds");
-		birdSound.SetVolume(2.0f);
+
+		static const float minVolume = 0.5f;
+		static const float maxVolume = 3.0f;
+
+		float randomVolume = minVolume + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (maxVolume - minVolume)));
+		birdSound.SetVolume(randomVolume);
 	}
 }
 
